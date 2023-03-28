@@ -78,6 +78,8 @@
 	<select id="selectList" parameterType="testReq" resultType="egovMap">
 		select
 			ROW_NUMBER() OVER(ORDER BY TEST_TB.ins_dt) AS no,
+		    TEST_TB.TEST_SEQ,
+		    FN_GET_SEQSTRING('SB',JOB_TB.sbk_ym,'G',JOB_TB.sbk_seq) sbkId,
 		    date_format(TEST_TB.ins_dt, '%Y-%m-%d') insDtStr,
 		    concat(FN_GET_SEQSTRING('SB',JOB_TB.sbk_ym,'G',JOB_TB.sbk_seq),'-XXXXX') testId,
 		    IFNULL(FN_CODE_NAME(TEST_STATE_TB.STATE_CODE,'TS'), '-') test_state,
@@ -259,5 +261,38 @@
 			#{udtMemId}
 		);
 	</insert>
+	
+	<select id="testBoardAppDetail" parameterType="String" resultType="sbkRes">
+		SELECT
 		
+			FN_GET_SEQSTRING('SB',SBK_TB.SBK_YM,SBK_TB.type,SBK_TB.SBK_SEQ) sbkId ,
+			
+			/* 신청기기 */
+			JOB_TB.prdct_name,
+			JOB_TB.model_name,
+			EXTEND_MODEL,
+			CMPNY_IDNTF,
+			ATHNT_NMBR,
+			NEW_CMPNY_IDNTF1,
+			NEW_CMPNY_IDNTF2,
+			NEW_CMPNY_IDNTF3,
+			ELCTR_RTNG_V,
+			ELCTR_RTNG_Hz,
+			ELCTR_RTNG_A,
+			ELCTR_RTNG_W,
+			CLOCK_FRQNC,
+			MDL_IDNTF,
+			ADD_DEV
+		
+		FROM SBK_TB	
+			
+			inner join JOB_TB
+		    on SBK_TB.sbk_ym = JOB_TB.sbk_ym
+		    and SBK_TB.sbk_seq = JOB_TB.sbk_seq
+	    
+		where 1=1
+		and SBK_TB.sbk_ym = substring(#{sbkId},3,2)
+		and SBK_TB.sbk_seq = substring(#{sbkId},7,4)
+	</select>
+	
 </mapper>

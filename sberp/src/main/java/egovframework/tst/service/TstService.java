@@ -4,6 +4,7 @@ import java.util.List;
 
 import egovframework.cmm.service.ComParam;
 import egovframework.cnf.service.TestStndr;
+import egovframework.sbk.service.SbkDTO;
 import egovframework.tst.service.TestDTO.Req;
 import egovframework.tst.service.TestDTO.Res;
 
@@ -32,5 +33,7 @@ public interface TstService {
 	boolean testBoardInsert(Req req);
 
 	List<Res> testBoardList(String testSeq);
+
+	SbkDTO.Res testBoardAppDetail(String sbkId);
 
 }

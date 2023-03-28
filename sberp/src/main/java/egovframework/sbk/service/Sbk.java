@@ -563,6 +563,10 @@ public class Sbk {
 	@Column
 	private String appAgreeSignUrl;
 	
+	@ApiModelProperty(value="시험결과이상없음 ", example = "1")
+	@Column
+	private int workChkYn;
+	
 	@ApiModelProperty(value="업무담당자 ", example = "업무담당자")
 	@Column
 	private String workName;

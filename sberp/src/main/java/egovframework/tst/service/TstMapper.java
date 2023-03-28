@@ -5,6 +5,7 @@ import java.util.List;
 import egovframework.cmm.service.ComParam;
 import egovframework.cnf.service.TestStndr;
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
+import egovframework.sbk.service.SbkDTO;
 import egovframework.tst.service.TestDTO.Req;
 import egovframework.tst.service.TestDTO.Res;
 
@@ -27,11 +28,13 @@ public interface TstMapper {
 
 	public List<Res> testMemList(String testSeq);
 
-	boolean testStateInsert(Req req);
+	public boolean testStateInsert(Req req);
 
-	List<Res> testStateList(String testSeq);
+	public List<Res> testStateList(String testSeq);
 	
-	boolean testBoardInsert(Req req);
+	public boolean testBoardInsert(Req req);
 
-	List<Res> testBoardList(String testSeq);
+	public List<Res> testBoardList(String testSeq);
+	
+	public SbkDTO.Res testBoardAppDetail(String sbkId);
 }

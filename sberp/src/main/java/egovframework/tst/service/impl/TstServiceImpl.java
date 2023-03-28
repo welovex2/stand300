@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import egovframework.cmm.service.ComParam;
 import egovframework.cnf.service.TestStndr;
+import egovframework.sbk.service.SbkDTO;
 import egovframework.tst.service.Test;
 import egovframework.tst.service.TestCate;
 import egovframework.tst.service.TestDTO.Req;
@@ -79,6 +80,11 @@ public class TstServiceImpl implements TstService {
 	@Override
 	public List<Res> testBoardList(String testSeq) {
 		return tstMapper.testBoardList(testSeq);
+	}
+
+	@Override
+	public SbkDTO.Res testBoardAppDetail(String sbkId) {
+		return tstMapper.testBoardAppDetail(sbkId);
 	}
 
 }

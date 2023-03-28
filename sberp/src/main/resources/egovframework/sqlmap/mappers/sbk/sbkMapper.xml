@@ -9,6 +9,7 @@
 			JOB_TB.sbk_seq,
 			FN_GET_SEQSTRING('SB',SBK_TB.SBK_YM,SBK_TB.type,SBK_TB.SBK_SEQ) sbkId ,
 			IFNULL(FN_GET_SEQSTRING('Q',JOB_TB.QUO_YM,'G',JOB_TB.QUO_SEQ), '') quoId, 
+			IFNULL(date_format(SBK_TB.est_cmp_dt, '%Y-%m-%d'), '-') estCmpDt,
 			
 			/* 업체정보 */
 			ifnull((select cmpy_code from CMPY_TB where cmpy_seq = JOB_TB.CMPY_SEQ),'') cmpy_code,
@@ -71,6 +72,10 @@
 			TEST_RPRT_ETC,
 			
 			/* 신청규격 */
+			SG_NEW_YN,
+			SG_GB_YN,
+			SG_DG_YN,
+			SG_ETC_YN,
 			CF_JD_YN,
 			CF_JI_YN,
 			CF_JG_YN,
@@ -131,15 +136,21 @@
 			CUS_INFO_AGREE_YN,
 			EST_CMP_TIME,
 			
+			/* 견적서 금액 */
+			QUO_TB.VAT_YN,
+			QUO_TB.COST_TOTAL,
+			QUO_TB.TOTAL_VAT,
+			
 			APP_YEAR,
 			APP_MON,
 			APP_DAY,
 			APP_NAME,
-			APP_SIGN_URL,
+			<![CDATA[concat('/file/getImage.do?atchFileId=',APP_SIGN_URL,'&fileSn=0') APP_SIGN_URL, ]]>
 			APP_AGREE_NAME,
-			APP_AGREE_SIGN_URL,
+			<![CDATA[concat('/file/getImage.do?atchFileId=',APP_AGREE_SIGN_URL,'&fileSn=0') APP_AGREE_SIGN_URL, ]]>
+			WORK_CHK_YN,
 			WORK_NAME,
-			WORK_SIGN_URL
+			<![CDATA[concat('/file/getImage.do?atchFileId=',WORK_SIGN_URL,'&fileSn=0') WORK_SIGN_URL ]]>
 				
 		FROM SBK_TB
 		
@@ -147,6 +158,10 @@
 	    on SBK_TB.sbk_ym = JOB_TB.sbk_ym
 	    and SBK_TB.sbk_seq = JOB_TB.sbk_seq
 	    
+	    left join QUO_TB
+		on QUO_TB.quo_ym = JOB_TB.quo_ym
+		and QUO_TB.quo_seq = JOB_TB.quo_seq
+		    
 	    where 1=1
 	    <if test="quoId != null and quoId != ''">
 	    and JOB_TB.quo_ym = substring(#{quoId},2,4)
@@ -361,6 +376,10 @@
 			EST_CMP_TIME = #{estCmpTime},
 			UDT_MEM_ID = #{udtMemId},
 			UDT_DT = NOW(),
+			SG_NEW_YN = #{sgNewYn},
+			SG_GB_YN = #{sgGbYn},
+			SG_DG_YN = #{sgDgYn},
+			SG_ETC_YN = #{sgEtcYn},
 			CF_JD_YN = #{cfJdYn},
 			CF_JI_YN = #{cfJiYn},
 			CF_JG_YN = #{cfJgYn},
@@ -420,6 +439,7 @@
 			<if test="appAgreeSignUrl != null and appAgreeSignUrl != ''">APP_AGREE_SIGN_URL=#{appAgreeSignUrl},</if>
 			APP_AGREE_NAME=#{appAgreeName},
 			<if test="workSignUrl != null and workSignUrl != ''">WORK_SIGN_URL=#{workSignUrl},</if>
+			WORK_CHK_YN=#{workChkYn},
 			WORK_NAME=#{workName}
 			
 		WHERE sbk_ym = substring(#{sbkId},3,2)
@@ -487,6 +507,10 @@
 				EST_CMP_TIME,
 				INS_MEM_ID,
 				UDT_MEM_ID,
+				SG_NEW_YN,
+				SG_GB_YN,
+				SG_DG_YN,
+				SG_ETC_YN,
 				CF_JD_YN,
 				CF_JI_YN,
 				CF_JG_YN,
@@ -545,6 +569,7 @@
 				APP_SIGN_URL,
 				APP_AGREE_NAME,
 				APP_AGREE_SIGN_URL,
+				WORK_CHK_YN,
 				WORK_NAME,
 				WORK_SIGN_URL
 			)
@@ -605,6 +630,10 @@
 				#{estCmpTime},
 				#{insMemId},
 				#{udtMemId},
+				#{sgNewYn},
+				#{sgGbYn},
+				#{sgDgYn},
+				#{sgEtcYn},
 				#{cfJdYn},
 				#{cfJiYn},
 				#{cfJgYn},
@@ -663,6 +692,7 @@
 				#{appSignUrl},
 				#{appAgreeName},
 				#{appAgreeSignUrl},
+				#{workChkYn},
 				#{workName},
 				#{workSignUrl}
 			);

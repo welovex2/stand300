@@ -21,6 +21,7 @@ import egovframework.cmm.service.ResponseMessage;
 import egovframework.cmm.util.EgovUserDetailsHelper;
 import egovframework.cnf.service.TestStndr;
 import egovframework.rte.fdl.property.EgovPropertyService;
+import egovframework.sbk.service.SbkDTO;
 import egovframework.tst.service.Test;
 import egovframework.tst.service.TestCate;
 import egovframework.tst.service.TestDTO;
@@ -299,6 +300,31 @@ public class TstController {
     	BasicResponse res = BasicResponse.builder().result(result)
     			.message(msg)
     			.data(list)
+				.build();
+    	
+        return res;  
+    }
+
+    @ApiOperation(value = "시험게시판 신청기기 내역")
+    @GetMapping(value="/testBoardAppDetail.do")
+    public BasicResponse testBoardAppDetail(@ApiParam(value = "신청서 고유번호", required = true, example = "1") @RequestParam(value="sbkId") String sbkId) throws Exception{
+    	
+//    	LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
+    	LoginVO user = new LoginVO();
+    	boolean result = true;
+    	String msg = "";
+    	SbkDTO.Res detail = new SbkDTO.Res();
+		
+    	detail = tstService.testBoardAppDetail(sbkId);
+
+    	if (detail == null) {
+    		result = false;
+    		msg = ResponseMessage.NO_DATA;
+    	}
+    	
+    	BasicResponse res = BasicResponse.builder().result(result)
+    			.message(msg)
+    			.data(detail)
 				.build();
     	
         return res;  

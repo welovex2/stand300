@@ -93,6 +93,10 @@ public class SbkDTO{
 		@Column
 		private String mngPhone;
 		
+		@ApiModelProperty(value="담당자팩스 ", example = "031-5252-4555")
+		@Column
+		private String mngFax;
+		
 		@ApiModelProperty(value="제품명 ", example = "블루투스 수신기")
 		@Column
 		private String prdctName;
@@ -140,5 +144,17 @@ public class SbkDTO{
 		@ApiModelProperty(value="신청구분", example = "신규, 동일기자재")
 		@Column
 		private String sgText;
+		
+		@ApiModelProperty(value="부가가치세여부 ", example = "1")
+		@Column
+		private int vatYn;
+		
+		@ApiModelProperty(value="청구액총합 ", example = "3000000")
+		@Column
+		private String CostTotal;
+		
+		@ApiModelProperty(value="VAT포함 총합계 ", example = "3300000")
+		@Column
+		private String TotalVat;
 	}
 }
