@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+
+	<settings>
+		<setting name="mapUnderscoreToCamelCase" value="true" />
+	</settings>
+    
+    <typeAliases>
+    	<typeAlias alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+    	<typeAlias alias="loginVO" type="egovframework.cmm.service.LoginVO"/>
+    	<typeAlias alias="fileVO" type="egovframework.cmm.service.FileVO"/>
+    	
+    	<!-- 상담서 -->
+    	<typeAlias alias="comParam" type="egovframework.cmm.service.ComParam"/>
+    	<typeAlias alias="cnsHisDTO" type="egovframework.cns.service.CnsHisDTO"/>
+    	<typeAlias alias="cnsReq" type="egovframework.cns.service.CnsDTO$Req"/>
+    	<typeAlias alias="cnsRes" type="egovframework.cns.service.CnsDTO$Res"/>
+    	<typeAlias alias="cmpy" type="egovframework.cnf.service.Cmpy"/>
+    	
+    	<!-- 견적서 -->
+    	<typeAlias alias="quo" type="egovframework.quo.service.Quo"/>
+    	<typeAlias alias="tstParam" type="egovframework.tst.service.TstParam"/>
+    	<typeAlias alias="quoReq" type="egovframework.quo.service.QuoDTO$Req"/>
+    	<typeAlias alias="quoRes" type="egovframework.quo.service.QuoDTO$Res"/>
+    	<typeAlias alias="testItemDTO" type="egovframework.tst.service.TestItemDTO"/>
+    	<typeAlias alias="quoModReq" type="egovframework.quo.service.QuoModDTO$Req"/>
+    	<typeAlias alias="quoModRes" type="egovframework.quo.service.QuoModDTO$Res"/>
+    	
+    	<!-- 매출 -->
+    	<typeAlias alias="slsReq" type="egovframework.sls.service.SlsDTO$Req"/>
+    	<typeAlias alias="slsRes" type="egovframework.sls.service.SlsDTO$Res"/>
+    	<typeAlias alias="payReq" type="egovframework.sls.service.PayDTO$Req"/>
+    	<typeAlias alias="payRes" type="egovframework.sls.service.PayDTO$Res"/>
+     	<typeAlias alias="billReq" type="egovframework.sls.service.BillDTO$Req"/>
+    	<typeAlias alias="billRes" type="egovframework.sls.service.BillDTO$Res"/>
+    	   
+    	<!-- 신청서 -->
+    	<typeAlias alias="sbkReq" type="egovframework.sbk.service.SbkDTO$Req"/>
+    	<typeAlias alias="sbkRes" type="egovframework.sbk.service.SbkDTO$Res"/>
+    	<typeAlias alias="testItemRejDTO" type="egovframework.tst.service.TestItemRejDTO"/>
+    	
+    	<!-- 시험 -->
+    	<typeAlias alias="testReq" type="egovframework.tst.service.TestDTO$Req"/>
+    	<typeAlias alias="testRes" type="egovframework.tst.service.TestDTO$Res"/>
+    	
+    </typeAliases>
+</configuration>

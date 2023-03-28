@@ -1,0 +1,780 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="egovframework.sbk.service.SbkMapper">
+
+	<select id="selectDetail" parameterType="sbkReq" resultType="sbkRes">
+		SELECT
+		
+			JOB_TB.sbk_ym,
+			JOB_TB.sbk_seq,
+			FN_GET_SEQSTRING('SB',SBK_TB.SBK_YM,SBK_TB.type,SBK_TB.SBK_SEQ) sbkId ,
+			IFNULL(FN_GET_SEQSTRING('Q',JOB_TB.QUO_YM,'G',JOB_TB.QUO_SEQ), '') quoId, 
+			
+			/* 업체정보 */
+			ifnull((select cmpy_code from CMPY_TB where cmpy_seq = JOB_TB.CMPY_SEQ),'') cmpy_code,
+			fn_cust_type(JOB_TB.CMPY_SEQ) cmpyType,
+			JOB_TB.CMPY_SEQ,
+			
+			/* 신청인 */
+			JOB_TB.cmpy_name,
+			BSNS_RGNMB,
+			RPRSN,
+			CRPRT_RGNMB,
+			ADDRESS,
+			RSDNT_RGNMB,
+			INDST_MF_YN,
+			INDST_SL_YN,
+			INDST_IP_YN,
+			JOB_TB.mng_name,
+			MNG_EMAIL,
+			MNG_TEL,
+			JOB_TB.MNG_FAX,
+			JOB_TB.mng_phone,
+			
+			/* 신청기기 */
+			JOB_TB.prdct_name,
+			JOB_TB.model_name,
+			EXTEND_MODEL,
+			CMPNY_IDNTF,
+			ATHNT_NMBR,
+			NEW_CMPNY_IDNTF1,
+			NEW_CMPNY_IDNTF2,
+			NEW_CMPNY_IDNTF3,
+			ELCTR_RTNG_V,
+			ELCTR_RTNG_Hz,
+			ELCTR_RTNG_A,
+			ELCTR_RTNG_W,
+			CLOCK_FRQNC,
+			MDL_IDNTF,
+			ADD_DEV,
+			
+			/* 제조자 */
+			MNFCT_CMPNY,
+			MNFCT_CNTRY_CODE,
+			MNFCT_ADRES,
+			ADD_MNFCT_CMPNY,
+			ADD_MNFCT_CNTRY,
+			
+			/* 시험 */
+			TEST_PLACE_IN_YN,
+			TEST_PLACE_OUT_YN,
+			TEST_ADRES,
+			ELCTR_TEST_C_YN,
+			ELCTR_TEST_K_YN,
+			ELCTR_TEST_N_YN,
+			TEST_RPRT_K_YN,
+			TEST_RPRT_N_YN,
+			TEST_RPRT_JODAL_YN,
+			TEST_RPRT_SPRT_YN,
+			TEST_RPRT_SPRT,
+			TEST_RPRT_ETC_YN,
+			TEST_RPRT_ETC,
+			
+			/* 신청규격 */
+			CF_JD_YN,
+			CF_JI_YN,
+			CF_JG_YN,
+			CF_JJ_YN,
+			CF_ETC1_YN,
+			CF_ETC1,
+			CF_AI_YN,
+			CF_AH_YN,
+			CF_GJ_YN,
+			CF_DJ_YN,
+			CF_EH_YN,
+			CF_ETC2_YN,
+			CF_ETC2,
+			CF_CD_YN,
+		    CF_CC_YN,
+		    CF_FCC_YN,
+		    CF_VCCI_YN,
+		    CF_PSE_YN,
+			TEST_EMC_YN,
+			TEST_EM_YN,
+			TEST_EMF_YN,
+			TEST_TEL_YN,
+			TEST_ROHS_YN,
+			TEST_SS_YN,
+			TEST_SAF_YN,
+			TEST_SM_YN,
+			TEST_DJ_YN,
+			TEST_EH_YN,
+			TEST_RF_YN,
+			TEST_SAR_YN,
+			TEST_OUT_YN,
+			TEST_IN_YN,
+			CLASS_A_YN,
+			CLASS_B_YN,
+			PP_YN,
+			PP_NAME,
+			PP_NUM,
+			PP_BL,
+			PP_CNT,
+			DOC_IS_YN,
+			DOC_SS_YN,
+			DOC_HD_YN,
+			DOC_BB_YN,
+			DOC_PD_YN,
+			DOC_Bl_YN,
+			DOC_JB_YN,
+			DOC_JS_YN,
+			DOC_CR_YN,
+			DOC_SI_YN,
+			DOC_SG_YN,
+			DOC_SB_YN,
+			CNFRM_YN,
+			IM_EUT_YN,
+			IM_CLNT_YN,
+			IM_DLVRY_YN,
+			IM_DSPSL_YN,
+			IM_ETC_YN,
+			CUS_INFO_AGREE_YN,
+			EST_CMP_TIME,
+			
+			APP_YEAR,
+			APP_MON,
+			APP_DAY,
+			APP_NAME,
+			APP_SIGN_URL,
+			APP_AGREE_NAME,
+			APP_AGREE_SIGN_URL,
+			WORK_NAME,
+			WORK_SIGN_URL
+				
+		FROM SBK_TB
+		
+	    inner join JOB_TB
+	    on SBK_TB.sbk_ym = JOB_TB.sbk_ym
+	    and SBK_TB.sbk_seq = JOB_TB.sbk_seq
+	    
+	    where 1=1
+	    <if test="quoId != null and quoId != ''">
+	    and JOB_TB.quo_ym = substring(#{quoId},2,4)
+		and JOB_TB.quo_seq = substring(#{quoId},8,4)
+		</if>
+		<if test="sbkId != null and sbkId != ''">
+	    and SBK_TB.sbk_ym = substring(#{sbkId},3,2)
+		and SBK_TB.sbk_seq = substring(#{sbkId},7,4)
+		</if>
+	</select>
+	
+	<select id="selectTestItemList" parameterType="sbkReq" resultType="egovMap">
+		select
+		
+			ROW_NUMBER() OVER(ORDER BY TEST_ITEM_TB.TEST_ITEM_SEQ) AS no
+			/* 시험항목 및 비용 */
+			,TEST_ITEM_TB.test_item_seq
+			,B.test_cate_seq crtfc1
+			,B.name crtfc1Name
+			,A.test_cate_seq crtfc2
+			,A.name crtfc2Name
+			,TEST_STNDR_TB.TEST_TYPE_CODE
+			,TEST_STNDR_TB.TEST_STNDR_SEQ
+			,TEST_STNDR_TB.TEST_STNDR
+			,concat(B.name,'-',A.name) testCate
+			,fn_code_name(TEST_STNDR_TB.TEST_TYPE_CODE,'TT') TEST_TYPE
+			,TEST_ITEM_TB.product
+			,TEST_ITEM_TB.model
+			,TEST_ITEM_TB.memo
+			,TEST_ITEM_TB.FEE
+			,TEST_ITEM_TB.LCNS_TAX
+			,TEST_ITEM_TB.TEST_FEE
+			,TEST_ITEM_TB.CHRGS
+			,TEST_ITEM_TB.ADVNC_PYMNT
+			,TEST_ITEM_TB.SPCL_DSCNT
+			,TEST_ITEM_TB.CNSLT_FEE
+			,TEST_ITEM_TB.OTSRC_FEE
+			,TEST_ITEM_TB.NET_SALES
+			,ifnull(FN_DEPT_NAME(TEST_ITEM_TB.rev_id), '') RevDept 
+			,ifnull(FN_MEM_NAME(TEST_ITEM_TB.rev_id), '') RevName
+			<![CDATA[,concat('/file/getImage.do?atchFileId=',TEST_ITEM_TB.REV_SIGN_URL,'&fileSn=0') REV_SIGN_URL]]>
+			,SIGN_STATE_CODE
+			,ifnull(fn_code_name(TEST_ITEM_TB.SIGN_STATE_CODE ,'SS'), '-') SIGN_STATE
+			,ifnull(date_format(REV_SIGN_DT, '%Y-%m-%d'), '') REV_SIGN_DT
+			,'미완료' rawYn
+			,ifnull(TEST_SEQ, 0) TEST_SEQ
+			,if(TEST_TB.TEST_SEQ is null, '신청하기',fn_code_name(TEST_STNDR_TB.TEST_TYPE_CODE,'TT')) TEST_STATE
+			/* 반려메모현황 */ 
+			, IFNULL(date_format(TEST_ITEM_REJ_TB.ins_dt, '%Y-%m-%d'),'') rejDtStr
+			, fn_code_name(TEST_ITEM_REJ_TB.TOPIC_CODE,'SR') rejType
+			, IFNULL(TEST_ITEM_REJ_TB.memo, '') rejMemo
+		from JOB_TB    
+		
+			inner join TEST_ITEM_TB
+		    on JOB_TB.quo_ym = TEST_ITEM_TB.quo_ym
+		    and JOB_TB.quo_seq = TEST_ITEM_TB.quo_seq
+		    
+		    inner join TEST_STNDR_TB
+		    on TEST_ITEM_TB.TEST_STNDR_SEQ = TEST_STNDR_TB.TEST_STNDR_SEQ
+		    
+		    inner join TEST_CATE_TB A
+		    on TEST_STNDR_TB.CRTF_TYPE_SEQ = A.test_cate_seq
+		    
+			inner join TEST_CATE_TB B
+		    on A.TOP_DEPTH_SEQ = B.test_cate_seq	
+		    
+		    left join TEST_TB
+		    on TEST_TB.TEST_ITEM_SEQ = TEST_ITEM_TB.TEST_ITEM_SEQ
+		    
+		    /* 반려메모현황 */ 
+		    left join TEST_ITEM_REJ_TB
+            on TEST_ITEM_REJ_TB.TEST_ITEM_REJ_SEQ = (
+								select TEST_ITEM_REJ_SEQ
+                                from TEST_ITEM_REJ_TB sub
+                                where sub.TEST_ITEM_SEQ = TEST_ITEM_TB.TEST_ITEM_SEQ
+                                order by TEST_ITEM_REJ_SEQ desc
+                                limit 1
+            )
+            
+		where 1=1
+		
+		<if test="quoId != null and quoId != ''">
+	    and JOB_TB.quo_ym = substring(#{quoId},2,4)
+		and JOB_TB.quo_seq = substring(#{quoId},8,4)
+		</if>
+		<if test="sbkId != null and sbkId != ''">
+	    and JOB_TB.sbk_ym = substring(#{sbkId},3,2)
+		and JOB_TB.sbk_seq = substring(#{sbkId},7,4)
+		</if>  
+		
+		order by no 
+	</select>
+	
+	<select id="selectRef" parameterType="sbkReq" resultType="String">
+  		SELECT FN_GET_SEQSTRING('SB',ifnull(#{sbkYm},date_format(now(), '%y')),'G',#{sbkSeq}) FROM DUAL
+	</select>
+	
+	<insert id="insertJob" parameterType="sbkReq" >
+		INSERT INTO JOB_TB
+			(sbk_ym,
+			SBK_SEQ,
+			CMPY_SEQ,
+			CMPY_NAME,
+			MNG_NAME,
+			MNG_PHONE,
+			MNG_FAX,
+			PRDCT_NAME,
+			MODEL_NAME,
+			INS_MEM_ID,
+			UDT_MEM_ID
+		)
+		VALUES
+		(
+			substring(#{sbkId},3,2),
+			substring(#{sbkId},7,4),
+			#{cmpySeq},
+		<![CDATA[
+			#{cmpyName},
+			#{mngName},
+			replace(#{mngPhone},'-',''),
+			replace(#{mngFax},'-',''),
+			#{prdctName},
+			#{modelName},
+			#{insMemId},
+			#{udtMemId}
+		)
+		]]>
+	</insert>
+
+	<update id="updateJob" parameterType="sbkReq" >
+		UPDATE JOB_TB
+		SET
+			CMPY_SEQ = #{cmpySeq},
+			CMPY_NAME = #{cmpyName},
+			MNG_NAME = #{mngName},
+			MNG_PHONE = replace(#{mngPhone},'-',''),
+			MNG_FAX = replace(#{mngFax},'-',''),
+			PRDCT_NAME = (select ifnull(group_concat(DISTINCT  product), #{prdctName}) 
+								from TEST_ITEM_TB where quo_ym = substring(#{quoId},2,4) and quo_seq = substring(#{quoId},8,4) and state != 'D'),
+			MODEL_NAME = (select ifnull(group_concat(DISTINCT  model), #{modelName})
+								from TEST_ITEM_TB where quo_ym = substring(#{quoId},2,4) and quo_seq = substring(#{quoId},8,4) and state != 'D'),
+			UDT_MEM_ID = #{udtMemId},
+			UDT_DT = NOW()
+			
+		WHERE JOB_TB.sbk_ym = substring(#{sbkId},3,2)
+		AND JOB_TB.sbk_seq = substring(#{sbkId},7,4)
+	</update>
+		
+	<update id="updateJobSbk" parameterType="sbkReq" >
+		UPDATE JOB_TB
+		SET 
+			sbk_ym = substring(#{sbkId},3,2),
+			SBK_SEQ = substring(#{sbkId},7,4),
+			UDT_MEM_ID = #{udtMemId},
+			UDT_DT = now()
+		WHERE JOB_TB.quo_ym = substring(#{quoId},2,4)
+		AND JOB_TB.quo_seq = substring(#{quoId},8,4)
+	</update>
+	
+	<update id="update" parameterType="sbkReq">
+		UPDATE SBK_TB
+		SET 
+			EST_CMP_DT = #{estCmpDt},
+			BSNS_RGNMB = #{bsnsRgnmb},
+			RPRSN = #{rprsn},
+			CRPRT_RGNMB = #{crprtRgnmb},
+			ADDRESS = #{address},
+			RSDNT_RGNMB = #{rsdntRgnmb},
+			INDST_MF_YN = #{indstMfYn},
+			INDST_SL_YN = #{indstSlYn},
+			INDST_IP_YN = #{indstIpYn},
+			MNG_TEL = replace(#{mngTel},'-',''),
+			MNG_EMAIL = #{mngEmail},
+			EXTEND_MODEL = #{extendModel},
+			CMPNY_IDNTF = #{cmpnyIdntf},
+			ATHNT_NMBR = #{athntNmbr},
+			NEW_CMPNY_IDNTF1 = #{newCmpnyIdntf1},
+			NEW_CMPNY_IDNTF2 = #{newCmpnyIdntf2},
+			NEW_CMPNY_IDNTF3 = #{newCmpnyIdntf3},
+			ELCTR_RTNG_V = #{elctrRtngV},
+			ELCTR_RTNG_Hz = #{elctrRtngHz},
+			ELCTR_RTNG_A = #{elctrRtngA},
+			ELCTR_RTNG_W = #{elctrRtngW},
+			CLOCK_FRQNC = #{clockFrqnc},
+			MDL_IDNTF = #{mdlIdntf},
+			ADD_DEV = #{addDev},
+			MNFCT_CMPNY = #{mnfctCmpny},
+			MNFCT_CNTRY_CODE = #{mnfctCntryCode},
+			MNFCT_ADRES = #{mnfctAdres},
+			ADD_MNFCT_CMPNY = #{addMnfctCmpny},
+			ADD_MNFCT_CNTRY = #{addMnfctCntry},
+			TEST_PLACE_IN_YN = #{testPlaceInYn},
+			TEST_PLACE_OUT_YN = #{testPlaceOutYn},
+			TEST_ADRES = #{testAdres},
+			ELCTR_TEST_C_YN = #{elctrTestCYn},
+			ELCTR_TEST_K_YN = #{elctrTestKYn},
+			ELCTR_TEST_N_YN = #{elctrTestNYn},
+			TEST_RPRT_K_YN = #{testRprtKYn},
+			TEST_RPRT_N_YN = #{testRprtNYn},
+			TEST_RPRT_JODAL_YN = #{testRprtJodalYn},
+			TEST_RPRT_SPRT_YN = #{testRprtSprtYn},
+			TEST_RPRT_SPRT = #{testRprtSprt},
+			TEST_RPRT_ETC_YN = #{testRprtEtcYn},
+			TEST_RPRT_ETC = #{testRprtEtc},
+			CNFRM_YN = #{cnfrmYn},
+			IM_EUT_YN = #{imEutYn},
+			IM_CLNT_YN = #{imClntYn},
+			IM_DLVRY_YN = #{imDlvryYn},
+			IM_DSPSL_YN = #{imDspslYn},
+			IM_ETC_YN = #{imEtcYn},
+			CUS_INFO_AGREE_YN = #{cusInfoAgreeYn},
+			EST_CMP_TIME = #{estCmpTime},
+			UDT_MEM_ID = #{udtMemId},
+			UDT_DT = NOW(),
+			CF_JD_YN = #{cfJdYn},
+			CF_JI_YN = #{cfJiYn},
+			CF_JG_YN = #{cfJgYn},
+			CF_JJ_YN = #{cfJjYn},
+			CF_ETC1_YN = #{cfEtc1Yn},
+			CF_ETC1=#{cfEtc1},
+			CF_AI_YN=#{cfAiYn},
+			CF_AH_YN=#{cfAhYn},
+			CF_GJ_YN=#{cfGjYn},
+			CF_DJ_YN=#{cfDjYn},
+			CF_EH_YN=#{cfEhYn},
+			CF_ETC2_YN=#{cfEtc2Yn},
+			CF_ETC2=#{cfEtc2},
+			CF_CD_YN=#{cfCdYn},
+		    CF_CC_YN=#{cfCcYn},
+		    CF_FCC_YN=#{cfFccYn},
+		    CF_VCCI_YN=#{cfVcciYn},
+		    CF_PSE_YN=#{cfPseYn},
+			TEST_EMC_YN=#{testEmcYn},
+			TEST_EM_YN=#{testEmYn},
+			TEST_EMF_YN=#{testEmfYn},
+			TEST_TEL_YN=#{testTelYn},
+			TEST_ROHS_YN=#{testRohsYn},
+			TEST_SS_YN=#{testSsYn},
+			TEST_SAF_YN=#{testSafYn},
+			TEST_SM_YN=#{testSmYn},
+			TEST_DJ_YN=#{testDjYn},
+			TEST_EH_YN=#{testEhYn},
+			TEST_RF_YN=#{testRfYn},
+			TEST_SAR_YN=#{testSarYn},
+			TEST_OUT_YN=#{testOutYn},
+			TEST_IN_YN=#{testInYn},
+			CLASS_A_YN=#{classAYn},
+			CLASS_B_YN=#{classBYn},
+			PP_YN=#{ppYn},
+			PP_NAME=#{ppName},
+			PP_NUM=#{ppNum},
+			PP_BL=#{ppBl},
+			PP_CNT=#{ppCnt},
+			DOC_IS_YN=#{docIsYn},
+			DOC_SS_YN=#{docSsYn},
+			DOC_HD_YN=#{docHdYn},
+			DOC_BB_YN=#{docBbYn},
+			DOC_PD_YN=#{docPdYn},
+			DOC_Bl_YN=#{docBlYn},
+			DOC_JB_YN=#{docJbYn},
+			DOC_JS_YN=#{docJsYn},
+			DOC_CR_YN=#{docCrYn},
+			DOC_SI_YN=#{docSiYn},
+			DOC_SG_YN=#{docSgYn},
+			DOC_SB_YN=#{docSbYn},
+			APP_YEAR=#{appYear},
+			APP_MON=#{appMon},
+			APP_DAY=#{appDay},
+			<if test="appSignUrl != null and appSignUrl != ''">APP_SIGN_URL=#{appSignUrl},</if>
+			APP_NAME=#{appName},
+			<if test="appAgreeSignUrl != null and appAgreeSignUrl != ''">APP_AGREE_SIGN_URL=#{appAgreeSignUrl},</if>
+			APP_AGREE_NAME=#{appAgreeName},
+			<if test="workSignUrl != null and workSignUrl != ''">WORK_SIGN_URL=#{workSignUrl},</if>
+			WORK_NAME=#{workName}
+			
+		WHERE sbk_ym = substring(#{sbkId},3,2)
+		AND sbk_seq = substring(#{sbkId},7,4)
+	</update>
+		
+	<insert id="insert" parameterType="sbkReq">
+		<selectKey keyProperty="sbkSeq" resultType="int" order="BEFORE">
+	        SELECT ifnull(max(SBK_SEQ),0)+1 FROM SBK_TB WHERE SBK_ym = date_format(now(), '%y')
+	    </selectKey>
+			INSERT INTO SBK_TB
+			(
+				SBK_YM,
+				SBK_SEQ,
+				TYPE,
+				EST_CMP_DT,
+				BSNS_RGNMB,
+				RPRSN,
+				CRPRT_RGNMB,
+				ADDRESS,
+				RSDNT_RGNMB,
+				INDST_MF_YN,
+				INDST_SL_YN,
+				INDST_IP_YN,
+				MNG_TEL,
+				MNG_EMAIL,
+				EXTEND_MODEL,
+				CMPNY_IDNTF,
+				ATHNT_NMBR,
+				NEW_CMPNY_IDNTF1,
+				NEW_CMPNY_IDNTF2,
+				NEW_CMPNY_IDNTF3,
+				ELCTR_RTNG_V,
+				ELCTR_RTNG_Hz,
+				ELCTR_RTNG_A,
+				ELCTR_RTNG_W,
+				CLOCK_FRQNC,
+				MDL_IDNTF,
+				ADD_DEV,
+				MNFCT_CMPNY,
+				MNFCT_CNTRY_CODE,
+				MNFCT_ADRES,
+				ADD_MNFCT_CMPNY,
+				ADD_MNFCT_CNTRY,
+				TEST_PLACE_IN_YN,
+				TEST_PLACE_OUT_YN,
+				TEST_ADRES,
+				ELCTR_TEST_C_YN,
+				ELCTR_TEST_K_YN,
+				ELCTR_TEST_N_YN,
+				TEST_RPRT_K_YN,
+				TEST_RPRT_N_YN,
+				TEST_RPRT_JODAL_YN,
+				TEST_RPRT_SPRT_YN,
+				TEST_RPRT_SPRT,
+				TEST_RPRT_ETC_YN,
+				TEST_RPRT_ETC,
+				CNFRM_YN,
+				IM_EUT_YN,
+				IM_CLNT_YN,
+				IM_DLVRY_YN,
+				IM_DSPSL_YN,
+				IM_ETC_YN,
+				CUS_INFO_AGREE_YN,
+				EST_CMP_TIME,
+				INS_MEM_ID,
+				UDT_MEM_ID,
+				CF_JD_YN,
+				CF_JI_YN,
+				CF_JG_YN,
+				CF_JJ_YN,
+				CF_ETC1_YN,
+				CF_ETC1,
+				CF_AI_YN,
+				CF_AH_YN,
+				CF_GJ_YN,
+				CF_DJ_YN,
+				CF_EH_YN,
+				CF_ETC2_YN,
+				CF_ETC2,
+				CF_CD_YN,
+			    CF_CC_YN,
+			    CF_FCC_YN,
+			    CF_VCCI_YN,
+			    CF_PSE_YN,
+				TEST_EMC_YN,
+				TEST_EM_YN,
+				TEST_EMF_YN,
+				TEST_TEL_YN,
+				TEST_ROHS_YN,
+				TEST_SS_YN,
+				TEST_SAF_YN,
+				TEST_SM_YN,
+				TEST_DJ_YN,
+				TEST_EH_YN,
+				TEST_RF_YN,
+				TEST_SAR_YN,
+				TEST_OUT_YN,
+				TEST_IN_YN,
+				CLASS_A_YN,
+				CLASS_B_YN,
+				PP_YN,
+				PP_NAME,
+				PP_NUM,
+				PP_BL,
+				PP_CNT,
+				DOC_IS_YN,
+				DOC_SS_YN,
+				DOC_HD_YN,
+				DOC_BB_YN,
+				DOC_PD_YN,
+				DOC_Bl_YN,
+				DOC_JB_YN,
+				DOC_JS_YN,
+				DOC_CR_YN,
+				DOC_SI_YN,
+				DOC_SG_YN,
+				DOC_SB_YN,
+				APP_YEAR,
+				APP_MON,
+				APP_DAY,
+				APP_NAME,
+				APP_SIGN_URL,
+				APP_AGREE_NAME,
+				APP_AGREE_SIGN_URL,
+				WORK_NAME,
+				WORK_SIGN_URL
+			)
+			VALUES
+			(
+				date_format(now(), '%y'),
+				#{sbkSeq},
+				'G',
+				#{estCmpDt},
+				#{bsnsRgnmb},
+				#{rprsn},
+				#{crprtRgnmb},
+				#{address},
+				#{rsdntRgnmb},
+				#{indstMfYn},
+				#{indstSlYn},
+				#{indstIpYn},
+				replace(#{mngTel},'-',''),
+				#{mngEmail},
+				#{extendModel},
+				#{cmpnyIdntf},
+				#{athntNmbr},
+				#{newCmpnyIdntf1},
+				#{newCmpnyIdntf2},
+				#{newCmpnyIdntf3},
+				#{elctrRtngV},
+				#{elctrRtngHz},
+				#{elctrRtngA},
+				#{elctrRtngW},
+				#{clockFrqnc},
+				#{mdlIdntf},
+				#{addDev},
+				#{mnfctCmpny},
+				#{mnfctCntryCode},
+				#{mnfctAdres},
+				#{addMnfctCmpny},
+				#{addMnfctCntry},
+				#{testPlaceInYn},
+				#{testPlaceOutYn},
+				#{testAdres},
+				#{elctrTestCYn},
+				#{elctrTestKYn},
+				#{elctrTestNYn},
+				#{testRprtKYn},
+				#{testRprtNYn},
+				#{testRprtJodalYn},
+				#{testRprtSprtYn},
+				#{testRprtSprt},
+				#{testRprtEtcYn},
+				#{testRprtEtc},
+				#{cnfrmYn},
+				#{imEutYn},
+				#{imClntYn},
+				#{imDlvryYn},
+				#{imDspslYn},
+				#{imEtcYn},
+				#{cusInfoAgreeYn},
+				#{estCmpTime},
+				#{insMemId},
+				#{udtMemId},
+				#{cfJdYn},
+				#{cfJiYn},
+				#{cfJgYn},
+				#{cfJjYn},
+				#{cfEtc1Yn},
+				#{cfEtc1},
+				#{cfAiYn},
+				#{cfAhYn},
+				#{cfGjYn},
+				#{cfDjYn},
+				#{cfEhYn},
+				#{cfEtc2Yn},
+				#{cfEtc2},
+				#{cfCdYn},
+				#{cfCcYn},
+				#{cfFccYn},
+				#{cfVcciYn},
+				#{cfPseYn},
+				#{testEmcYn},
+				#{testEmYn},
+				#{testEmfYn},
+				#{testTelYn},
+				#{testRohsYn},
+				#{testSsYn},
+				#{testSafYn},
+				#{testSmYn},
+				#{testDjYn},
+				#{testEhYn},
+				#{testRfYn},
+				#{testSarYn},
+				#{testOutYn},
+				#{testInYn},
+				#{classAYn},
+				#{classBYn},
+				#{ppYn},
+				#{ppName},
+				#{ppNum},
+				#{ppBl},
+				#{ppCnt},
+				#{docIsYn},
+				#{docSsYn},
+				#{docHdYn},
+				#{docBbYn},
+				#{docPdYn},
+				#{docBlYn},
+				#{docJbYn},
+				#{docJsYn},
+				#{docCrYn},
+				#{docSiYn},
+				#{docSgYn},
+				#{docSbYn},
+				#{appYear},
+				#{appMon},
+				#{appDay},
+				#{appName},
+				#{appSignUrl},
+				#{appAgreeName},
+				#{appAgreeSignUrl},
+				#{workName},
+				#{workSignUrl}
+			);
+
+	</insert>
+
+	<select id="selectListCnt" parameterType="comParam" resultType="int">
+		SELECT 
+			count(SBK_TB.sbk_seq)
+		FROM SBK_TB
+		
+			INNER JOIN JOB_TB
+			ON SBK_TB.SBK_YM = JOB_TB.SBK_YM
+			AND SBK_TB.SBK_SEQ = JOB_TB.SBK_SEQ
+			AND JOB_TB.state != 'D'
+		
+			LEFT JOIN CMPY_TB
+			ON JOB_TB.CMPY_SEQ = CMPY_TB.CMPY_SEQ
+    
+		where 1=1
+		<if test="startDate != null and endDate != null">
+        	and date_format(SBK_TB.ins_dt, '%Y%m%d') between date_format(#{startDate}, '%Y%m%d') and date_format(#{endDate}, '%Y%m%d')
+        </if>
+	</select>
+	
+	<select id="selectList" parameterType="comParam" resultType="egovMap">
+		SELECT 
+		
+			ROW_NUMBER() OVER(ORDER BY SBK_TB.ins_dt) AS no,
+			date_format(SBK_TB.ins_dt, '%Y-%m-%d') insDtStr,
+			FN_GET_SEQSTRING('SB',SBK_TB.sbk_ym,type,SBK_TB.sbk_seq) sbkId,
+			IFNULL(date_format(SBK_TB.est_cmp_dt, '%Y-%m-%d'), '-') estCmpDt,
+			JOB_TB.CMPY_SEQ, 
+		    IFNULL(FN_CODE_NAME(CMPY_TB.CMPY_CODE,'PT'), '미등록') cmpy_type,
+		    IFNULL(CMPY_TB.CMPY_NAME, '') cmpyTitle,
+		    IFNULL(JOB_TB.CMPY_NAME, '') cmpyName,
+		    JOB_TB.PRDCT_NAME,
+		    CONCAT_WS(',', IF(SG_NEW_YN=1,'신규',null),IF(SG_GB_YN=1,'기술기준 변경',null),IF(SG_DG_YN=1,'동일기자재',null),IF(SG_ETC_YN=1,'기술기준외 변경',null)) sgText,
+		    FN_MEM_NAME(SBK_TB.ins_mem_id) memName,
+			IFNULL(JOB_TB.CNS_SEQ, '') CNS_SEQ,		  
+		    IFNULL(FN_LAST_CNS_MENO(JOB_TB.CNS_SEQ), '') lastMemo,
+		    IFNULL(date_format('', '%Y-%m-%d'), '-') carryInDt
+		    
+		FROM SBK_TB
+		
+			INNER JOIN JOB_TB
+			ON SBK_TB.SBK_YM = JOB_TB.SBK_YM
+			AND SBK_TB.SBK_SEQ = JOB_TB.SBK_SEQ
+			AND JOB_TB.state != 'D'
+		
+			LEFT JOIN CMPY_TB
+			ON JOB_TB.CMPY_SEQ = CMPY_TB.CMPY_SEQ
+    
+		where 1=1
+		<if test="startDate != null and endDate != null">
+        	and date_format(SBK_TB.ins_dt, '%Y%m%d') between date_format(#{startDate}, '%Y%m%d') and date_format(#{endDate}, '%Y%m%d')
+        </if>
+        order by no desc
+        LIMIT #{pageUnit} OFFSET #{firstIndex};
+	</select>
+	
+	
+	<update id="updateTestItemSign">
+			UPDATE TEST_ITEM_TB
+			SET
+				<if test="revId != null and revId != ''">
+				REV_ID = #{revId},
+				REV_SIGN_DT = NOW(),
+				SIGN_STATE_CODE = '2',
+				</if>
+				<if test="(revSignUrl != null and revSignUrl != '') or state = 'D'">REV_SIGN_URL = #{revSignUrl},</if>
+		<![CDATA[
+				UDT_MEM_ID = #{udtMemId},
+				UDT_DT = NOW()
+			WHERE TEST_ITEM_SEQ = #{testItemSeq}
+		]]>
+	</update>
+	
+	<select id="signRejectList" parameterType="String" resultType="egovMap">
+		select
+			date_format(TEST_ITEM_REJ_TB.ins_dt, '%Y-%m-%d') instDtStr,
+		    MEMBER_TB.MEM_NAME insName,
+		    fn_code_name(TEST_ITEM_REJ_TB.TOPIC_CODE,'SR') topicType,
+		    memo
+		    
+		from TEST_ITEM_REJ_TB
+		
+			inner join MEMBER_TB
+			on TEST_ITEM_REJ_TB.ins_mem_id = MEMBER_TB.id
+		
+		where 1=1
+		and TEST_ITEM_REJ_TB.TEST_ITEM_SEQ = #{testItemSeq}
+		order by TEST_ITEM_REJ_SEQ desc
+	</select>
+	
+	<insert id="signRejectInsert" parameterType="testItemRejDTO" >
+		INSERT INTO TEST_ITEM_REJ_TB
+		(
+			TEST_ITEM_SEQ,
+			TOPIC_CODE,
+			MEMO,
+			INS_MEM_ID,
+			UDT_MEM_ID
+		)
+		VALUES
+		(
+			#{testItemSeq},
+			#{topicCode},
+			#{memo},
+			#{insMemId},
+			#{udtMemId}
+		);
+	</insert>
+	
+</mapper>

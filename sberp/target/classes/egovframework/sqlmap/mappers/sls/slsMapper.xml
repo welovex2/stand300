@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="egovframework.sls.service.SlsMapper">
+
+	<select id="selectListCnt" parameterType="comParam" resultType="int">
+		select
+			Count(SLS_TB.sls_seq)
+		from SLS_TB
+          
+			inner join QUO_TB
+            on SLS_TB.quo_ym = QUO_TB.quo_ym
+            and SLS_TB.quo_seq = QUO_TB.quo_seq
+
+           	INNER JOIN JOB_TB
+		    ON SLS_TB.QUO_YM = JOB_TB.QUO_YM
+		    AND SLS_TB.quo_seq = JOB_TB.QUO_SEQ
+		    AND JOB_TB.state != 'D'
+            
+            LEFT JOIN (
+				SELECT QUO_YM, QUO_SEQ, 	
+					SUM(FEE) AS TOTAL_FEE,
+					SUM(LCNS_TAX) AS TOTAL_LCNS_TAX,
+					SUM(TEST_FEE) AS TOTAL_TEST_FEE,
+					SUM(CHRGS) AS TOTAL_CHRGS,
+					SUM(ADVNC_PYMNT) AS TOTAL_ADVNC_PYMNT,
+					SUM(SPCL_DSCNT) AS TOTAL_SPCL_DSCNT,
+					SUM(CNSLT_FEE) AS TOTAL_CNSLT_FEE,
+					SUM(OTSRC_FEE) AS TOTAL_OTSRC_FEE,
+					SUM(NET_SALES) AS TOTAL_NET_SALES
+				FROM TEST_ITEM_TB
+		        where state != 'D'
+		        group by QUO_YM, QUO_SEQ
+		    ) items
+		    ON QUO_TB.QUO_YM = items.QUO_YM
+		    AND QUO_TB.quo_seq = items.QUO_SEQ
+            
+            inner join MEMBER_TB
+            on SLS_TB.cnfrm_id = MEMBER_TB.id
+			
+            LEFT JOIN CMPY_TB
+			ON JOB_TB.CMPY_SEQ = CMPY_TB.CMPY_SEQ
+            
+            left join PAY_STATUS_TB
+            on PAY_STATUS_TB.PAY_STATUS_SEQ = (
+								select PAY_STATUS_SEQ
+                                from PAY_STATUS_TB sub
+                                where sub.sls_ym = SLS_TB.sls_ym
+                                and sub.sls_seq = SLS_TB.sls_seq
+                                order by PAY_STATUS_SEQ desc
+                                limit 1
+            )
+            
+            left join BILL_STATUS_TB
+            on BILL_STATUS_TB.BILL_STATUS_SEQ = (
+								select BILL_STATUS_SEQ
+                                from BILL_STATUS_TB sub
+                                where sub.sls_ym = SLS_TB.sls_ym
+                                and sub.sls_seq = SLS_TB.sls_seq
+                                order by BILL_STATUS_SEQ desc
+                                limit 1
+            )
+            
+            left join QUO_MOD_TB
+            on QUO_MOD_TB.QUO_MOD_SEQ = (
+								select QUO_MOD_SEQ
+                                from QUO_MOD_TB sub
+                                where sub.quo_ym = QUO_TB.quo_ym
+                                and sub.quo_seq = QUO_TB.quo_seq
+                                order by QUO_MOD_SEQ desc
+                                limit 1
+            )
+            
+		where 1=1
+		and SLS_TB.state != 'D'
+		<if test="startDate != null and endDate != null">
+        	and date_format(SLS_TB.ins_dt, '%Y%m%d') between date_format(#{startDate}, '%Y%m%d') and date_format(#{endDate}, '%Y%m%d')
+        </if>
+	</select>
+	<select id="selectList" parameterType="comParam" resultType="egovMap">
+		select
+		
+			ROW_NUMBER() OVER(ORDER BY SLS_TB.ins_dt) AS no,
+			FN_GET_SEQSTRING('M',SLS_TB.sls_ym,'',SLS_TB.sls_seq) slsId,
+            if(QUO_TB.chq_seq=0,'-',QUO_TB.chq_seq) chqId,
+            FN_GET_SEQSTRING('Q',QUO_TB.quo_ym,QUO_TB.type,QUO_TB.quo_seq) quoId,
+            IFNULL(date_format(SLS_TB.CNFRM_DT, '%Y-%m-%d'),'') cnfrmDtStr,
+            MEMBER_TB.MEM_NAME cnfrmName,
+            IFNULL(FN_CODE_NAME(CMPY_TB.CMPY_CODE,'PT'), '미등록') cmpy_type,
+            IFNULL(CMPY_TB.CMPY_NAME, '') cmpyTitle,
+            IFNULL(JOB_TB.CMPY_NAME, '') cmpyName,
+            JOB_TB.PRDCT_NAME,
+            
+            FEE,
+			LCNS_TAX,
+			TEST_FEE,
+            COST_TOTAL,
+            TOTAL_VAT,
+			CHRGS,
+			ADVNC_PYMNT,
+			SPCL_DSCNT,
+			CNSLT_FEE,
+			OTSRC_FEE,
+			NET_SALES,
+           
+            JOB_TB.CNS_SEQ,
+			IFNULL(FN_LAST_CNS_MENO(JOB_TB.CNS_SEQ), '') lastMemo,
+            
+            IFNULL(fn_code_name(PAY_STATUS_TB.STATE_CODE, 'MP'), '미납') payState,
+            IFNULL(date_format(PAY_STATUS_TB.ins_dt, '%Y-%m-%d'),'') payDtStr,
+            PAY_STATUS_TB.pay,
+            
+			IFNULL(fn_code_name(BILL_STATUS_TB.STATE_CODE, 'MB'),'미발행') billState,
+            IFNULL(date_format(BILL_STATUS_TB.ins_dt, '%Y-%m-%d'),'') billDtStr,
+            BILL_STATUS_TB.bill,
+
+			IFNULL(fn_code_name(QUO_MOD_TB.STATE_CODE, 'MM'), '') quoState,
+            IFNULL(date_format(QUO_MOD_TB.PRMS_DT, '%Y-%m-%d'),'') prmsDtStr,
+            IFNULL(FN_MEM_NAME(QUO_MOD_TB.PRMS_ID),'') prmsName
+            
+		from SLS_TB
+          
+			inner join QUO_TB
+            on SLS_TB.quo_ym = QUO_TB.quo_ym
+            and SLS_TB.quo_seq = QUO_TB.quo_seq
+
+           	INNER JOIN JOB_TB
+		    ON SLS_TB.QUO_YM = JOB_TB.QUO_YM
+		    AND SLS_TB.quo_seq = JOB_TB.QUO_SEQ
+		    AND JOB_TB.state != 'D'
+            
+            LEFT JOIN (
+				SELECT QUO_YM, QUO_SEQ, 	
+					SUM(FEE) AS FEE,
+					SUM(LCNS_TAX) AS LCNS_TAX,
+					SUM(TEST_FEE) AS TEST_FEE,
+					SUM(CHRGS) AS CHRGS,
+					SUM(ADVNC_PYMNT) AS ADVNC_PYMNT,
+					SUM(SPCL_DSCNT) AS SPCL_DSCNT,
+					SUM(CNSLT_FEE) AS CNSLT_FEE,
+					SUM(OTSRC_FEE) AS OTSRC_FEE,
+					SUM(NET_SALES) AS NET_SALES
+				FROM TEST_ITEM_TB
+		        where state != 'D'
+		        group by QUO_YM, QUO_SEQ
+		    ) items
+		    ON QUO_TB.QUO_YM = items.QUO_YM
+		    AND QUO_TB.quo_seq = items.QUO_SEQ
+            
+            inner join MEMBER_TB
+            on SLS_TB.cnfrm_id = MEMBER_TB.id
+			
+            LEFT JOIN CMPY_TB
+			ON JOB_TB.CMPY_SEQ = CMPY_TB.CMPY_SEQ
+            
+            left join PAY_STATUS_TB
+            on PAY_STATUS_TB.PAY_STATUS_SEQ = (
+								select PAY_STATUS_SEQ
+                                from PAY_STATUS_TB sub
+                                where sub.sls_ym = SLS_TB.sls_ym
+                                and sub.sls_seq = SLS_TB.sls_seq
+                                order by PAY_STATUS_SEQ desc
+                                limit 1
+            )
+            
+            left join BILL_STATUS_TB
+            on BILL_STATUS_TB.BILL_STATUS_SEQ = (
+								select BILL_STATUS_SEQ
+                                from BILL_STATUS_TB sub
+                                where sub.sls_ym = SLS_TB.sls_ym
+                                and sub.sls_seq = SLS_TB.sls_seq
+                                order by BILL_STATUS_SEQ desc
+                                limit 1
+            )
+            
+            left join QUO_MOD_TB
+            on QUO_MOD_TB.QUO_MOD_SEQ = (
+								select QUO_MOD_SEQ
+                                from QUO_MOD_TB sub
+                                where sub.quo_ym = QUO_TB.quo_ym
+                                and sub.quo_seq = QUO_TB.quo_seq
+                                order by QUO_MOD_SEQ desc
+                                limit 1
+            )
+            
+		where 1=1
+		and SLS_TB.state != 'D'
+		<if test="startDate != null and endDate != null">
+        	and date_format(SLS_TB.ins_dt, '%Y%m%d') between date_format(#{startDate}, '%Y%m%d') and date_format(#{endDate}, '%Y%m%d')
+        </if>
+        order by no desc
+		LIMIT #{pageUnit} OFFSET #{firstIndex};
+	</select>
+	
+	<insert id="insert" parameterType="slsReq" >
+		INSERT INTO SLS_TB
+		(
+			SLS_YM,
+			SLS_SEQ,
+			QUO_YM,
+			QUO_SEQ,
+			CNFRM_ID,
+			CNFRM_DT,
+			INS_MEM_ID,
+			UDT_MEM_ID
+		)
+		VALUES
+		(
+			date_format(now(), '%y%m'),
+			(SELECT ifnull(max(sub.SLS_SEQ),0)+1 FROM SLS_TB sub WHERE sub.SLS_YM = date_format(now(), '%y%m')),
+			substring(#{quoId},2,4),
+			substring(#{quoId},8,4),
+			#{insMemId},
+			CURDATE() ,
+			#{insMemId},
+			#{udtMemId}
+		);
+	</insert>
+	
+	<select id="selectDetail" parameterType="String" resultType="slsRes">
+		SELECT sls_seq FROM SLS_TB
+		WHERE SLS_TB.quo_ym = substring(#{quoId},2,4)
+		AND SLS_TB.quo_seq = substring(#{quoId},8,4)
+		and STATE != 'D'
+	</select>
+	
+	<update id="updateQuoState" parameterType="slsReq">
+		UPDATE QUO_TB
+		SET
+			QUO_STATE_CODE = #{quoStateCode},
+			UDT_MEM_ID = #{udtMemId},
+			UDT_DT = current_timestamp(),	
+			STATE = 'U'
+		WHERE QUO_TB.quo_ym = substring(#{quoId},2,4)
+		AND QUO_TB.quo_seq = substring(#{quoId},8,4)
+	</update>
+	
+	<select id="selectByTestListCnt" parameterType="comParam" resultType="int">
+		select
+			Count(SLS_TB.sls_seq)
+		from SLS_TB
+          
+			inner join QUO_TB
+            on SLS_TB.quo_ym = QUO_TB.quo_ym
+            and SLS_TB.quo_seq = QUO_TB.quo_seq
+
+           	INNER JOIN JOB_TB
+		    ON SLS_TB.QUO_YM = JOB_TB.QUO_YM
+		    AND SLS_TB.quo_seq = JOB_TB.QUO_SEQ
+		    AND JOB_TB.state != 'D'
+            
+            inner JOIN TEST_ITEM_TB
+		    ON QUO_TB.QUO_YM = TEST_ITEM_TB.QUO_YM
+		    AND QUO_TB.quo_seq = TEST_ITEM_TB.QUO_SEQ
+            and TEST_ITEM_TB.state != 'D'
+            
+            inner join TEST_STNDR_TB
+		    on TEST_ITEM_TB.TEST_STNDR_SEQ = TEST_STNDR_TB.TEST_STNDR_SEQ
+		    
+		    inner join TEST_CATE_TB A
+		    on TEST_STNDR_TB.CRTF_TYPE_SEQ = A.test_cate_seq
+		    
+			inner join TEST_CATE_TB B
+		    on A.TOP_DEPTH_SEQ = B.test_cate_seq
+            
+            inner join MEMBER_TB
+            on SLS_TB.cnfrm_id = MEMBER_TB.id
+			
+            LEFT JOIN CMPY_TB
+			ON JOB_TB.CMPY_SEQ = CMPY_TB.CMPY_SEQ
+            
+            left join PAY_STATUS_TB
+            on PAY_STATUS_TB.PAY_STATUS_SEQ = (
+								select PAY_STATUS_SEQ
+                                from PAY_STATUS_TB sub
+                                where sub.sls_ym = SLS_TB.sls_ym
+                                and sub.sls_seq = SLS_TB.sls_seq
+                                order by PAY_STATUS_SEQ desc
+                                limit 1
+            )
+            
+            left join BILL_STATUS_TB
+            on BILL_STATUS_TB.BILL_STATUS_SEQ = (
+								select BILL_STATUS_SEQ
+                                from BILL_STATUS_TB sub
+                                where sub.sls_ym = SLS_TB.sls_ym
+                                and sub.sls_seq = SLS_TB.sls_seq
+                                order by BILL_STATUS_SEQ desc
+                                limit 1
+            )
+            
+            left join QUO_MOD_TB
+            on QUO_MOD_TB.QUO_MOD_SEQ = (
+								select QUO_MOD_SEQ
+                                from QUO_MOD_TB sub
+                                where sub.quo_ym = QUO_TB.quo_ym
+                                and sub.quo_seq = QUO_TB.quo_seq
+                                order by QUO_MOD_SEQ desc
+                                limit 1
+            )
+            
+		where 1=1
+		<if test="startDate != null and endDate != null">
+        	and date_format(SLS_TB.ins_dt, '%Y%m%d') between date_format(#{startDate}, '%Y%m%d') and date_format(#{endDate}, '%Y%m%d')
+        </if>
+	</select>
+	<select id="selectByTestList" parameterType="comParam" resultType="egovMap">
+		select
+		
+			ROW_NUMBER() OVER(ORDER BY SLS_TB.ins_dt) AS no,
+			FN_GET_SEQSTRING('M',SLS_TB.sls_ym,'',SLS_TB.sls_seq) slsId,
+            if(QUO_TB.chq_seq=0,'-',QUO_TB.chq_seq) chqId,
+            FN_GET_SEQSTRING('Q',QUO_TB.quo_ym,QUO_TB.type,QUO_TB.quo_seq) quoId,
+            IFNULL(date_format(SLS_TB.CNFRM_DT, '%Y-%m-%d'),'') cnfrmDtStr,
+            MEMBER_TB.MEM_NAME cnfrmName,
+            IFNULL(FN_CODE_NAME(CMPY_TB.CMPY_CODE,'PT'), '미등록') cmpy_type,
+            IFNULL(CMPY_TB.CMPY_NAME, '') cmpyTitle,
+            IFNULL(JOB_TB.CMPY_NAME, '') cmpyName,
+            JOB_TB.PRDCT_NAME,
+            JOB_TB.MODEL_NAME,
+            
+            concat(B.name,'-',A.name) testCate,
+			fn_code_name(TEST_STNDR_TB.TEST_TYPE_CODE,'TT') TEST_TYPE,
+            
+            FEE,
+			LCNS_TAX,
+			TEST_FEE,
+            (FEE+LCNS_TAX+TEST_FEE) COST_TOTAL,
+            ADVNC_PYMNT,
+			SPCL_DSCNT,
+			CNSLT_FEE,
+			OTSRC_FEE,
+			NET_SALES,
+           
+            JOB_TB.CNS_SEQ,
+			IFNULL(FN_LAST_CNS_MENO(JOB_TB.CNS_SEQ), '') lastMemo,
+            IFNULL(fn_code_name(PAY_STATUS_TB.STATE_CODE, 'MP'), '미납') payState
+			
+		from SLS_TB
+          
+			inner join QUO_TB
+            on SLS_TB.quo_ym = QUO_TB.quo_ym
+            and SLS_TB.quo_seq = QUO_TB.quo_seq
+
+           	INNER JOIN JOB_TB
+		    ON SLS_TB.QUO_YM = JOB_TB.QUO_YM
+		    AND SLS_TB.quo_seq = JOB_TB.QUO_SEQ
+		    AND JOB_TB.state != 'D'
+            
+            inner JOIN TEST_ITEM_TB
+		    ON QUO_TB.QUO_YM = TEST_ITEM_TB.QUO_YM
+		    AND QUO_TB.quo_seq = TEST_ITEM_TB.QUO_SEQ
+            and TEST_ITEM_TB.state != 'D'
+            
+            inner join TEST_STNDR_TB
+		    on TEST_ITEM_TB.TEST_STNDR_SEQ = TEST_STNDR_TB.TEST_STNDR_SEQ
+		    
+		    inner join TEST_CATE_TB A
+		    on TEST_STNDR_TB.CRTF_TYPE_SEQ = A.test_cate_seq
+		    
+			inner join TEST_CATE_TB B
+		    on A.TOP_DEPTH_SEQ = B.test_cate_seq
+            
+            inner join MEMBER_TB
+            on SLS_TB.cnfrm_id = MEMBER_TB.id
+			
+            LEFT JOIN CMPY_TB
+			ON JOB_TB.CMPY_SEQ = CMPY_TB.CMPY_SEQ
+            
+            left join PAY_STATUS_TB
+            on PAY_STATUS_TB.PAY_STATUS_SEQ = (
+								select PAY_STATUS_SEQ
+                                from PAY_STATUS_TB sub
+                                where sub.sls_ym = SLS_TB.sls_ym
+                                and sub.sls_seq = SLS_TB.sls_seq
+                                order by PAY_STATUS_SEQ desc
+                                limit 1
+            )
+            
+            left join BILL_STATUS_TB
+            on BILL_STATUS_TB.BILL_STATUS_SEQ = (
+								select BILL_STATUS_SEQ
+                                from BILL_STATUS_TB sub
+                                where sub.sls_ym = SLS_TB.sls_ym
+                                and sub.sls_seq = SLS_TB.sls_seq
+                                order by BILL_STATUS_SEQ desc
+                                limit 1
+            )
+            
+            left join QUO_MOD_TB
+            on QUO_MOD_TB.QUO_MOD_SEQ = (
+								select QUO_MOD_SEQ
+                                from QUO_MOD_TB sub
+                                where sub.quo_ym = QUO_TB.quo_ym
+                                and sub.quo_seq = QUO_TB.quo_seq
+                                order by QUO_MOD_SEQ desc
+                                limit 1
+            )
+            
+		where 1=1
+		<if test="startDate != null and endDate != null">
+        	and date_format(SLS_TB.ins_dt, '%Y%m%d') between date_format(#{startDate}, '%Y%m%d') and date_format(#{endDate}, '%Y%m%d')
+        </if>
+        
+        order by no desc
+		LIMIT #{pageUnit} OFFSET #{firstIndex};
+	</select>
+	
+	<select id="selectPayList" parameterType="String" resultType="egovMap">
+		select
+			date_format(PAY_STATUS_TB.ins_dt, '%Y-%m-%d') instDtStr,
+		    MEMBER_TB.MEM_NAME insName,
+		    fn_code_name(PAY_STATUS_TB.state_code,'MP') stateType,
+		    PAY,
+		    memo
+		from PAY_STATUS_TB
+		
+			inner join MEMBER_TB
+			on PAY_STATUS_TB.ins_mem_id = MEMBER_TB.id
+		
+		where 1=1
+		and PAY_STATUS_TB.sls_ym = substring(#{slsId},2,4)
+		and PAY_STATUS_TB.sls_seq = substring(#{slsId},7,4)
+		order by PAY_STATUS_SEQ desc
+	</select>
+	
+	<insert id="payInsert" parameterType="PayReq" >
+		INSERT INTO PAY_STATUS_TB
+		(
+			SLS_YM,
+			SLS_SEQ,
+			STATE_CODE,
+			PAY,
+			MEMO,
+			INS_MEM_ID,
+			UDT_MEM_ID
+		)
+		VALUES
+		(
+			substring(#{slsId},2,4),
+			substring(#{slsId},7,4),
+			#{stateCode},
+			#{pay},
+			#{memo},
+			#{insMemId},
+			#{udtMemId}
+		);
+	</insert>
+
+	<select id="selectBillList" parameterType="String" resultType="egovMap">
+		select
+			date_format(BILL_STATUS_TB.ins_dt, '%Y-%m-%d') instDtStr,
+		    MEMBER_TB.MEM_NAME insName,
+		    fn_code_name(BILL_STATUS_TB.state_code,'MB') stateType,
+		    BILL,
+		    memo
+		from BILL_STATUS_TB
+		
+			inner join MEMBER_TB
+			on BILL_STATUS_TB.ins_mem_id = MEMBER_TB.id
+		
+		where 1=1
+		and BILL_STATUS_TB.sls_ym = substring(#{slsId},2,4)
+		and BILL_STATUS_TB.sls_seq = substring(#{slsId},7,4)
+		order by BILL_STATUS_SEQ desc
+	</select>
+	
+	<insert id="billInsert" parameterType="billReq" >
+		INSERT INTO BILL_STATUS_TB
+		(
+			SLS_YM,
+			SLS_SEQ,
+			STATE_CODE,
+			BILL,
+			MEMO,
+			INS_MEM_ID,
+			UDT_MEM_ID
+		)
+		VALUES
+		(
+			substring(#{slsId},2,4),
+			substring(#{slsId},7,4),
+			#{stateCode},
+			#{bill},
+			#{memo},
+			#{insMemId},
+			#{udtMemId}
+		);
+	</insert>
+	
+	<select id="selectQuoId" parameterType="String" resultType="String">
+		SELECT FN_GET_SEQSTRING('Q',SLS_TB.QUO_YM,'G',SLS_TB.QUO_SEQ) quoId 
+		FROM SLS_TB
+		WHERE SLS_TB.sls_ym = substring(#{slsId},2,4)
+		AND SLS_TB.sls_seq = substring(#{slsId},7,4)
+	</select>
+	
+	<update id="delete">
+		UPDATE SLS_TB
+		SET
+			QUO_YM = '',
+			QUO_SEQ = 0,
+			UDT_MEM_ID = #{memId},
+			UDT_DT = NOW(),
+			STATE = 'D'
+			
+		WHERE SLS_TB.sls_ym = substring(#{slsId},2,4)
+		AND SLS_TB.sls_seq = substring(#{slsId},7,4)
+	</update>
+	
+</mapper>

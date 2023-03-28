@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="egovframework.tst.service.TstMapper">
+	
+	<select id="selectCrtfList" parameterType="int" resultType="egovMap">
+  		SELECT test_cate_seq,
+				name
+		FROM TEST_CATE_TB
+		WHERE use_yn = 1
+		AND ifnull(top_depth_seq,0) = #{topCode}
+	</select>
+
+	<select id="selectStndrList" parameterType="tstParam" resultType="egovMap">
+		select test_stndr_seq, test_stndr
+		from TEST_STNDR_TB
+		where use_yn = 1
+		and country_code = #{countryCode}
+		and crtf_type_seq = #{crtfTypeSeq}
+		and test_type_code = #{testTypeCode}
+	</select>
+
+</mapper>
