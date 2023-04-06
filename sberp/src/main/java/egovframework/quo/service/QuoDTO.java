@@ -15,7 +15,7 @@ import lombok.ToString;
 
 public class QuoDTO {
 
-	@Getter @Setter @ToString
+	@Getter @Setter @ToString(callSuper = true)
 	@ApiModel(value="QuoDTO.Req", description = "견적서 등록")
 	public static class Req extends Quo {
 		

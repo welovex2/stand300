@@ -1,18 +1,15 @@
 package egovframework.quo.service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import javax.persistence.Column;
 
-import org.springmodules.validation.bean.conf.loader.annotation.handler.NotNull;
-
-import egovframework.tst.service.TestItem;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
-@Getter @Setter
+@Getter @Setter @ToString
 public class Quo {
 
 

@@ -52,15 +52,21 @@ public class CnsController {
 		validator = factory.getValidator();
 	}
 	
-    @ApiOperation(value = "상담서 리스트")
+    @ApiOperation(value = "상담서 리스트", notes="검색박스는 공통코드 CS, 필요한항목만 노출시켜서 사용\n고객유형(PT)")
     @GetMapping(value="/list.do")
     public BasicResponse cnsList(@ModelAttribute ComParam param) throws Exception{
     	
 //    	LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
     	LoginVO user = new LoginVO();
-		
+    	boolean result = true;
+    	String msg = "";
+    	
     	List<CnsDTO.Res> list = new ArrayList<CnsDTO.Res>();
 
+    	System.out.println("================");
+    	System.out.println(param.toString());
+    	System.out.println("================");
+    	
     	//페이징
     	param.setPageUnit(propertyService.getInt("pageUnit"));
     	param.setPageSize(propertyService.getInt("pageSize"));
@@ -78,7 +84,13 @@ public class CnsController {
 		pagingVO.setTotalPage((int) Math.ceil(pagingVO.getTotalCount() / (double) pagingVO.getDisplayRow()));
     	list = cnsService.selectList(param);
 
-    	BasicResponse res = BasicResponse.builder().result(true)
+    	if (list == null) {
+    		result = false;
+    		msg = ResponseMessage.NO_DATA;
+    	}
+    	
+    	BasicResponse res = BasicResponse.builder().result(result)
+    							.message(msg)
     							.data(list)
     							.paging(pagingVO)
     							.build();

@@ -9,6 +9,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import egovframework.cmm.service.ComParam;
+import egovframework.cmm.service.HisDTO;
 import egovframework.rte.psl.dataaccess.util.EgovMap;
 import egovframework.sbk.service.SbkDTO;
 import egovframework.sbk.service.SbkDTO.Req;
@@ -102,6 +103,11 @@ public class SbkServiceImpl implements SbkService {
 	@Override
 	public boolean signRejectInsert(TestItemRej req) {
 		return sbkMapper.signRejectInsert(req);
+	}
+
+	@Override
+	public List<HisDTO> hisList(String sbkId) {
+		return sbkMapper.hisList(sbkId);
 	}
 
 }

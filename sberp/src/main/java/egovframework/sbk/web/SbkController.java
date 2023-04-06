@@ -28,12 +28,12 @@ import egovframework.cmm.service.BasicResponse;
 import egovframework.cmm.service.ComParam;
 import egovframework.cmm.service.EgovFileMngService;
 import egovframework.cmm.service.FileVO;
+import egovframework.cmm.service.HisDTO;
 import egovframework.cmm.service.LoginVO;
 import egovframework.cmm.service.PagingVO;
 import egovframework.cmm.service.ResponseMessage;
 import egovframework.cmm.util.EgovFileMngUtil;
 import egovframework.cmm.util.EgovUserDetailsHelper;
-import egovframework.quo.service.QuoDTO;
 import egovframework.rte.fdl.property.EgovPropertyService;
 import egovframework.sbk.service.SbkDTO;
 import egovframework.sbk.service.SbkService;
@@ -153,7 +153,7 @@ public class SbkController {
     		MediaType.MULTIPART_FORM_DATA_VALUE, 
     		MediaType.MULTIPART_FORM_DATA_VALUE, 
     		MediaType.APPLICATION_JSON_VALUE})
-    public BasicResponse sbkInsert(@RequestPart(value = "appFile", required = false) MultipartFile appFile,
+    public BasicResponse insert(@RequestPart(value = "appFile", required = false) MultipartFile appFile,
     		@RequestPart(value = "agreeFile", required = false) MultipartFile agreeFile,
     		@RequestPart(value = "workFile", required = false) MultipartFile workFile,
 										@RequestPart(value="sbk") SbkDTO.Req sbk) throws Exception{
@@ -186,8 +186,7 @@ public class SbkController {
         	return res;
         }
     	
-    	//Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
-    	Boolean isAuthenticated = true;
+    	Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
     	
     	if (isAuthenticated) {
     		FileVO FileResult = null;
@@ -354,7 +353,6 @@ public class SbkController {
     public BasicResponse signRejectInsert(@RequestBody TestItemRej req) throws Exception{
 //    	LoginVO user = new LoginVO();
     	LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
-//    	if (user == null) { return new ResponseEntity(BasicResponse.res(StatusCode.UNAUTHORIZED, ResponseMessage.NO_LOGIN), HttpStatus.OK); }
     	
     	// 로그인정보
     	req.setInsMemId(user.getId());
@@ -377,5 +375,31 @@ public class SbkController {
 				.build();
     	
     	return res;
+    }
+    
+    
+    @ApiOperation(value = "신청서 수정 히스토리")
+    @GetMapping(value="/hisList.do")
+    public BasicResponse hisList(@ApiParam(value = "신청서 고유번호", required = true, example = "SB23-G0044") @RequestParam(value="sbkId") String sbkId) throws Exception{
+    	
+//    	LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
+    	LoginVO user = new LoginVO();
+    	boolean result = true;
+    	String msg = "";
+    	List<HisDTO> list = new ArrayList<HisDTO>();
+		
+    	list = sbkService.hisList(sbkId);
+
+    	if (list == null) {
+    		result = false;
+    		msg = ResponseMessage.NO_DATA;
+    	}
+    	
+    	BasicResponse res = BasicResponse.builder().result(result)
+    			.message(msg)
+    			.data(list)
+				.build();
+    	
+        return res;  
     }
 }

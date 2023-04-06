@@ -126,7 +126,7 @@
 				date_format(now(), '%y%m'),
 				#{quoSeq},
 				#{chqSeq},
-				#{issueDt},
+				ifnull(#{issueDt},now()),
 				#{trgtCrtfc},
 				#{prdInf},
 				#{powerSuplyYn},
@@ -620,5 +620,23 @@
 		</if>
 
 	</update>
+	
+	<select id="hisList" parameterType="String" resultType="egovMap">
+		select 
+		
+			date_format(QUO_HIS_TB.ins_dt, '%Y-%m-%d %T') intDtStr,
+		    MEMBER_TB.MEM_NAME,
+		    FN_POS_NAME(QUO_HIS_TB.MEM_ID) memPos
+			
+		from QUO_HIS_TB
+		
+			inner join MEMBER_TB
+		    on QUO_HIS_TB.MEM_ID = MEMBER_TB.ID
+		    
+		where 1=1
+		and QUO_HIS_TB.QUO_ID = #{quoId}
+		
+		order by QUO_HIS_TB.INS_DT desc
+	</select>
 		
 </mapper>

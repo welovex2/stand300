@@ -10,7 +10,7 @@ import lombok.ToString;
 
 public class TestDTO {
 
-	@Getter @Setter @ToString
+	@Getter @Setter @ToString(callSuper = true)
 	@ApiModel(value="TestDTO.Req", description = "시험 등록")
 	public static class Req extends Test {
 		@ApiModelProperty(value="메모 ", example = "바빠서..")
@@ -20,6 +20,10 @@ public class TestDTO {
 		@ApiModelProperty(value="시험상태 ", example = "1")
 		@Column
 		private String stateCode;
+		
+		@ApiModelProperty(value="시험담당자 ID ", example = "c")
+		@Column
+		private String testMngId;
 	}
 	
 	@Getter @Setter

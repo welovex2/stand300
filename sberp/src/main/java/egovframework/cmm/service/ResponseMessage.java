@@ -22,5 +22,6 @@ public class ResponseMessage {
     public static final String DUPLICATE_SBK = "이미등록된 신청서가 있습니다";
     public static final String DUPLICATE_CNS = "이미등록된 상담서가 있습니다";
     public static final String DUPLICATE_TEST = "이미등록된 시험이 있습니다";
+    public static final String DUPLICATE_RAW = "이미등록된 로데이터가 있습니다";
     
 }

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="egovframework.sys.service.MacMapper">
+
+	<select id="selectListCnt" parameterType="comParam" resultType="int">
+		select
+			count(MACHINE_SEQ)
+		from MACHINE_TB
+		where 1=1
+		AND STATE != 'D'
+		<if test="startDate != null and endDate != null">
+        	and date_format(MACHINE_TB.ins_dt, '%Y%m%d') between date_format(#{startDate}, '%Y%m%d') and date_format(#{endDate}, '%Y%m%d')
+        </if>
+		<foreach collection="searchVO" item="item">
+			<if test="item.searchCode != null and item.searchCode != ''">
+				<choose>
+					<when test="item.searchWord == 'CE'">and CE_YN = 1</when>
+				</choose>
+			</if>
+		</foreach>
+	</select>
+
+	<select id="selectList" parameterType="comParam" resultType="egovMap">
+		select
+			ROW_NUMBER() OVER(ORDER BY MACHINE_TB.DIS_ORDR, MACHINE_SEQ) AS no,
+			MACHINE_SEQ,
+		    name,
+		    model,
+		    MNFCT_CMPNY,
+		    MNFCT_SERIAL,
+		    REFORM_DT,
+		    REFORM_PERIOD
+		from MACHINE_TB
+		where 1=1
+		AND STATE != 'D'
+		<if test="startDate != null and endDate != null">
+        	and date_format(MACHINE_TB.ins_dt, '%Y%m%d') between date_format(#{startDate}, '%Y%m%d') and date_format(#{endDate}, '%Y%m%d')
+        </if>
+		<foreach collection="searchVO" item="item">
+			<if test="item.searchCode != null and item.searchCode != ''">
+				<choose>
+					<when test="item.searchWord == 'CE'">and CE_YN = 1</when>
+				</choose>
+			</if>
+		</foreach>
+		order by no desc
+		LIMIT #{pageUnit} OFFSET #{firstIndex};
+	</select>
+	
+</mapper>

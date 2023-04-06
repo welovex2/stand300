@@ -14,7 +14,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.Resource;
@@ -30,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 //import java.util.HashMap;
 
 import egovframework.cmm.service.FileVO;
+import egovframework.raw.dto.SetupDTO;
 import egovframework.rte.fdl.idgnr.EgovIdGnrService;
 import egovframework.rte.fdl.property.EgovPropertyService;
 
@@ -65,81 +65,85 @@ public class EgovFileMngUtil {
     /**
      * 첨부파일에 대한 목록 정보를 취득한다.
      *
-     * @param files
+     * @param list
      * @return
      * @throws Exception
      */
-    public List<FileVO> parseFileInf(Map<String, MultipartFile> files, String KeyStr, int fileKeyParam, String atchFileId, String storePath) throws Exception {
-	int fileKey = fileKeyParam;
-
-	String storePathString = "";
-	String atchFileIdString = "";
-
-	if ("".equals(storePath) || storePath == null) {
-	    storePathString = propertyService.getString("Globals.fileStorePath");
-	} else {
-	    storePathString = propertyService.getString(storePath);
-	}
-
-	if ("".equals(atchFileId) || atchFileId == null) {
-	    atchFileIdString = idgenService.getNextStringId();
-	} else {
-	    atchFileIdString = atchFileId;
-	}
-
-	File saveFolder = new File(storePathString);
-
-	if (!saveFolder.exists() || saveFolder.isFile()) {
-	    saveFolder.mkdirs();
-	}
-
-	Iterator<Entry<String, MultipartFile>> itr = files.entrySet().iterator();
-	MultipartFile file;
-	String filePath = "";
-	List<FileVO> result  = new ArrayList<FileVO>();
-	FileVO fvo;
-
-	while (itr.hasNext()) {
-	    Entry<String, MultipartFile> entry = itr.next();
-
-	    file = entry.getValue();
-	    String orginFileName = file.getOriginalFilename();
-
-	    //--------------------------------------
-	    // 원 파일명이 없는 경우 처리
-	    // (첨부가 되지 않은 input file type)
-	    //--------------------------------------
-	    if ("".equals(orginFileName)) {
-		continue;
-	    }
-	    ////------------------------------------
-
-	    int index = orginFileName.lastIndexOf(".");
-	    //String fileName = orginFileName.substring(0, index);
-	    String fileExt = orginFileName.substring(index + 1);
-	    String newName = KeyStr + EgovStringUtil.getTimeStamp() + fileKey;
-	    long _size = file.getSize();
-
-	    if (!"".equals(orginFileName)) {
-		filePath = storePathString + File.separator + newName;
-		file.transferTo(new File(filePath));
-	    }
-	    fvo = new FileVO();
-	    fvo.setFileExtsn(fileExt);
-	    fvo.setFileStreCours(storePathString);
-	    fvo.setFileMg(Long.toString(_size));
-	    fvo.setOrignlFileNm(orginFileName);
-	    fvo.setStreFileNm(newName);
-	    fvo.setAtchFileId(atchFileIdString);
-	    fvo.setFileSn(String.valueOf(fileKey));
-
-	    //writeFile(file, newName, storePathString);
-	    result.add(fvo);
-
-	    fileKey++;
-	}
-
-	return result;
+    public List<FileVO> parseSetupFile(List<SetupDTO> files, String KeyStr, int fileKeyParam, String atchFileId, String storePath) throws Exception {
+		int fileKey = fileKeyParam;
+	
+		String storePathString = "";
+		String atchFileIdString = "";
+	
+		// 현재 날짜 구하기
+		LocalDate now = LocalDate.now();
+		// 포맷 정의
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyMM");
+	    // 포맷 적용
+	    String formatedNow = now.format(formatter);
+	    
+		if ("".equals(storePath) || storePath == null) {
+		    storePathString = propertyService.getString("Globals.fileStorePath").concat(KeyStr).concat("/").concat(formatedNow);
+		} else {
+		    storePathString = propertyService.getString(storePath);
+		}
+	
+		if ("".equals(atchFileId) || atchFileId == null) {
+		    atchFileIdString = idgenService.getNextStringId();
+		} else {
+		    atchFileIdString = atchFileId;
+		}
+	
+		File saveFolder = new File(storePathString);
+	
+		if (!saveFolder.exists() || saveFolder.isFile()) {
+		    saveFolder.mkdirs();
+		}
+	
+		MultipartFile file;
+		String filePath = "";
+		List<FileVO> result  = new ArrayList<FileVO>();
+		FileVO fvo;
+	
+		int i = 0;
+		while (files.size() > i) {
+	
+		    file = files.get(i).getImage();
+		    String orginFileName = file.getOriginalFilename();
+	
+		    //--------------------------------------
+		    // 원 파일명이 없는 경우 처리
+		    // (첨부가 되지 않은 input file type)
+		    //--------------------------------------
+		    if ("".equals(orginFileName)) {
+			continue;
+		    }
+		    ////------------------------------------
+	
+		    int index = orginFileName.lastIndexOf(".");
+		    String fileExt = orginFileName.substring(index + 1);
+		    String newName = EgovStringUtil.getTimeStamp() + fileKey;
+		    long _size = file.getSize();
+	
+		    if (!"".equals(orginFileName)) {
+				filePath = storePathString + File.separator + newName;
+				file.transferTo(new File(filePath));
+		    }
+		    fvo = new FileVO();
+		    fvo.setFileExtsn(fileExt);
+		    fvo.setFileStreCours(storePathString);
+		    fvo.setFileMg(Long.toString(_size));
+		    fvo.setOrignlFileNm(orginFileName);
+		    fvo.setStreFileNm(newName);
+		    fvo.setAtchFileId(atchFileIdString);
+		    fvo.setFileSn(String.valueOf(fileKey));
+		    fvo.setFileCn(files.get(i).getTitle());
+		    result.add(fvo);
+	
+		    fileKey++;i++;
+		}
+	
+		return result;
     }
 
     /**
@@ -150,81 +154,81 @@ public class EgovFileMngUtil {
      * @throws Exception
      */
     public List<FileVO> parseFile(List<MultipartFile> files, String KeyStr, int fileKeyParam, String atchFileId, String storePath) throws Exception {
-	int fileKey = fileKeyParam;
-
-	String storePathString = "";
-	String atchFileIdString = "";
-
-	// 현재 날짜 구하기
-	LocalDate now = LocalDate.now();
-	// 포맷 정의
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyMM");
-    // 포맷 적용
-    String formatedNow = now.format(formatter);
-    
-	if ("".equals(storePath) || storePath == null) {
-	    storePathString = propertyService.getString("Globals.fileStorePath").concat(KeyStr).concat("/").concat(formatedNow);
-	} else {
-	    storePathString = propertyService.getString(storePath);
-	}
-
-	if ("".equals(atchFileId) || atchFileId == null) {
-	    atchFileIdString = idgenService.getNextStringId();
-	} else {
-	    atchFileIdString = atchFileId;
-	}
-
-	File saveFolder = new File(storePathString);
-
-	if (!saveFolder.exists() || saveFolder.isFile()) {
-	    saveFolder.mkdirs();
-	}
-
-	MultipartFile file;
-	String filePath = "";
-	List<FileVO> result  = new ArrayList<FileVO>();
-	FileVO fvo;
-
-	while (files.size() > fileKey) {
-
-	    file = files.get(fileKey);
-	    String orginFileName = file.getOriginalFilename();
-
-	    //--------------------------------------
-	    // 원 파일명이 없는 경우 처리
-	    // (첨부가 되지 않은 input file type)
-	    //--------------------------------------
-	    if ("".equals(orginFileName)) {
-		continue;
-	    }
-	    ////------------------------------------
-
-	    int index = orginFileName.lastIndexOf(".");
-	    String fileExt = orginFileName.substring(index + 1);
-	    String newName = EgovStringUtil.getTimeStamp() + fileKey;
-	    long _size = file.getSize();
-
-	    if (!"".equals(orginFileName)) {
-			filePath = storePathString + File.separator + newName;
-			System.out.println("파일 저장 full path="+filePath);
-			file.transferTo(new File(filePath));
-	    }
-	    fvo = new FileVO();
-	    fvo.setFileExtsn(fileExt);
-	    fvo.setFileStreCours(storePathString);
-	    fvo.setFileMg(Long.toString(_size));
-	    fvo.setOrignlFileNm(orginFileName);
-	    fvo.setStreFileNm(newName);
-	    fvo.setAtchFileId(atchFileIdString);
-	    fvo.setFileSn(String.valueOf(fileKey));
-
-	    //writeFile(file, newName, storePathString);
-	    result.add(fvo);
-
-	    fileKey++;
-	}
-
-	return result;
+		int fileKey = fileKeyParam;
+	
+		String storePathString = "";
+		String atchFileIdString = "";
+	
+		// 현재 날짜 구하기
+		LocalDate now = LocalDate.now();
+		// 포맷 정의
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyMM");
+	    // 포맷 적용
+	    String formatedNow = now.format(formatter);
+	    
+		if ("".equals(storePath) || storePath == null) {
+		    storePathString = propertyService.getString("Globals.fileStorePath").concat(KeyStr).concat("/").concat(formatedNow);
+		} else {
+		    storePathString = propertyService.getString(storePath);
+		}
+	
+		if ("".equals(atchFileId) || atchFileId == null) {
+		    atchFileIdString = idgenService.getNextStringId();
+		} else {
+		    atchFileIdString = atchFileId;
+		}
+	
+		File saveFolder = new File(storePathString);
+	
+		if (!saveFolder.exists() || saveFolder.isFile()) {
+		    saveFolder.mkdirs();
+		}
+	
+		MultipartFile file;
+		String filePath = "";
+		List<FileVO> result  = new ArrayList<FileVO>();
+		FileVO fvo;
+	
+		int i = 0;
+		while (files.size() > i) {
+	
+		    file = files.get(i);
+		    String orginFileName = file.getOriginalFilename();
+	
+		    //--------------------------------------
+		    // 원 파일명이 없는 경우 처리
+		    // (첨부가 되지 않은 input file type)
+		    //--------------------------------------
+		    if ("".equals(orginFileName)) {
+			continue;
+		    }
+		    ////------------------------------------
+	
+		    int index = orginFileName.lastIndexOf(".");
+		    String fileExt = orginFileName.substring(index + 1);
+		    String newName = EgovStringUtil.getTimeStamp() + fileKey;
+		    long _size = file.getSize();
+	
+		    if (!"".equals(orginFileName)) {
+				filePath = storePathString + File.separator + newName;
+				file.transferTo(new File(filePath));
+		    }
+		    fvo = new FileVO();
+		    fvo.setFileExtsn(fileExt);
+		    fvo.setFileStreCours(storePathString);
+		    fvo.setFileMg(Long.toString(_size));
+		    fvo.setOrignlFileNm(orginFileName);
+		    fvo.setStreFileNm(newName);
+		    fvo.setAtchFileId(atchFileIdString);
+		    fvo.setFileSn(String.valueOf(fileKey));
+	
+		    //writeFile(file, newName, storePathString);
+		    result.add(fvo);
+	
+		    fileKey++;i++;
+		}
+	
+		return result;
     }
  
     /**

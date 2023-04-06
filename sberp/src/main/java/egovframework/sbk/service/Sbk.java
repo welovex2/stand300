@@ -80,7 +80,7 @@ public class Sbk {
 	
 	@ApiModelProperty(value="담당자이메일 ", example = "info@standardbank.co.kr")
 	@Column
-	@Pattern(regexp = "^[a-zA-Z0-9+-\\_.]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$", message = "이메일을 확인하세요.") 
+//	@Pattern(regexp = "^[a-zA-Z0-9+-\\_.]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$", message = "이메일을 확인하세요.") 
 	private String mngEmail;
 
 
@@ -531,20 +531,20 @@ public class Sbk {
 
 	@ApiModelProperty(value="신청년 ", example = "2023")
 	@Column
-	@Pattern(regexp = "^[0-9-]*$", message = "4 자리의 숫자만 입력 가능합니다.") 
-	@Size(min=2, max=4, message = "4 자리의 숫자만 입력 가능합니다.")
+	@Pattern(regexp = "^[0-9-]*$", message = "신청년은 4 자리의 숫자만 입력 가능합니다.") 
+	@Size(min=0, max=4, message = "신청년은 4 자리의 숫자만 입력 가능합니다.")
 	private String appYear;
 	
 	@ApiModelProperty(value="신청월 ", example = "03")
 	@Column
-	@Pattern(regexp = "^[0-9-]*$", message = "2 자리의 숫자만 입력 가능합니다.") 
-	@Size(min=1, max=2, message = "2 자리의 숫자만 입력 가능합니다.")
+	@Pattern(regexp = "^[0-9-]*$", message = "신청월은 2 자리의 숫자만 입력 가능합니다.") 
+	@Size(min=0, max=2, message = "신청월은 2 자리의 숫자만 입력 가능합니다.")
 	private String appMon;
 	
 	@ApiModelProperty(value="신청일 ", example = "24")
 	@Column
-	@Pattern(regexp = "^[0-9-]*$", message = "2 자리의 숫자만 입력 가능합니다.") 
-	@Size(min=1, max=2, message = "2 자리의 숫자만 입력 가능합니다.")
+	@Pattern(regexp = "^[0-9-]*$", message = "신청일은 2 자리의 숫자만 입력 가능합니다.") 
+	@Size(min=0, max=2, message = "신청일은 2 자리의 숫자만 입력 가능합니다.")
 	private String appDay;
 	
 	@ApiModelProperty(value="신청인 ", example = "신청인")

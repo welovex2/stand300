@@ -63,18 +63,21 @@ public class TstController {
 	
     @ApiOperation(value = "시험 신청하기")
     @PostMapping(value="/makeTest.do")
-    public BasicResponse makeTest(@ApiParam(value = "testItemSeq 값만 전송") @RequestBody TestDTO.Req req) throws Exception{
+    public BasicResponse makeTest(@ApiParam(value = "testItemSeq, testTypeCode 값 전송") @RequestBody TestDTO.Req req) throws Exception{
     	
 //    	LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
     	LoginVO user = new LoginVO();
     	boolean result = true;
     	String msg = "";
-    	Test detail = new Test();
     	
     	// 로그인정보
     	req.setInsMemId(user.getId());
     	req.setUdtMemId(user.getId());
     	
+		System.out.println("=-===========");
+		System.out.println(req.toString());
+		System.out.println("=-===========");
+		
     	Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
     	
     	if (isAuthenticated) {
@@ -91,7 +94,6 @@ public class TstController {
     	
     	BasicResponse res = BasicResponse.builder().result(result)
     			.message(msg)
-    			.data(detail)
 				.build();
     	
         return res;   
@@ -99,7 +101,7 @@ public class TstController {
     }
     
     
-    @ApiOperation(value = "시험리스트", notes = "결과값은 StbDTO.Res 참고")
+    @ApiOperation(value = "시험리스트", notes = "결과값은 TestDTO.Res 참고")
     @GetMapping(value="/list.do")
     public BasicResponse sbkList(@ModelAttribute ComParam param) throws Exception{
     	
@@ -307,7 +309,7 @@ public class TstController {
 
     @ApiOperation(value = "시험게시판 신청기기 내역")
     @GetMapping(value="/testBoardAppDetail.do")
-    public BasicResponse testBoardAppDetail(@ApiParam(value = "신청서 고유번호", required = true, example = "1") @RequestParam(value="sbkId") String sbkId) throws Exception{
+    public BasicResponse testBoardAppDetail(@ApiParam(value = "신청서 고유번호", required = true, example = "SB23-G0052") @RequestParam(value="sbkId") String sbkId) throws Exception{
     	
 //    	LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
     	LoginVO user = new LoginVO();

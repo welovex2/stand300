@@ -9,14 +9,13 @@ import javax.validation.constraints.Size;
 import egovframework.tst.service.TestItem;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 public class SbkDTO{
 
-	@Getter @Setter @ToString
+	@Getter @Setter @ToString(callSuper = true)
 	@ApiModel(value="SbkDTO.Req", description = "신청서 작성")
 	public static class Req extends Sbk {
 		@ApiModelProperty(value="견적서번호", example = " ")

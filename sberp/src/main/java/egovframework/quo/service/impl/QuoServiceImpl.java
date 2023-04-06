@@ -10,6 +10,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import egovframework.cmm.service.ComParam;
+import egovframework.cmm.service.HisDTO;
 import egovframework.quo.service.QuoDTO.Req;
 import egovframework.quo.service.QuoDTO.Res;
 import egovframework.quo.service.QuoMapper;
@@ -118,5 +119,10 @@ public class QuoServiceImpl implements QuoService {
 	@Override
 	public List<QuoModDTO.Res> selectStatusList(String quoSeq) {
 		return quoMapper.selectStatusList(quoSeq);
+	}
+
+	@Override
+	public List<HisDTO> hisList(String quoId) {
+		return quoMapper.hisList(quoId);
 	}
 }

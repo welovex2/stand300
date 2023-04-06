@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 import egovframework.cmm.service.ComParam;
+import egovframework.cmm.service.HisDTO;
 import egovframework.quo.service.QuoDTO.Req;
 import egovframework.quo.service.QuoDTO.Res;
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
@@ -44,4 +45,7 @@ public interface QuoMapper {
 	public boolean insertState(QuoModDTO.Req req);
 	
 	public boolean updateState(QuoModDTO.Req req);
+	
+	public List<HisDTO> hisList(String quoId);
+
 }

@@ -28,9 +28,6 @@ public class CnsServiceImpl extends EgovAbstractServiceImpl implements CnsServic
 	public List<Res> selectList(ComParam param) throws Exception {
 		
 		List<Res> list = cnsMapper.selectList(param);
-		
-		if (list == null)
-            throw processException("info.nodata.msg");
     	
 		return list;
 	}

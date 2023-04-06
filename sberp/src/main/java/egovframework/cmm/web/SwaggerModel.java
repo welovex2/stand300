@@ -8,6 +8,7 @@ import egovframework.sbk.service.SbkDTO;
 import egovframework.sls.service.BillDTO;
 import egovframework.sls.service.PayDTO;
 import egovframework.sls.service.SlsDTO;
+import egovframework.tst.service.TestDTO;
 
 @RestController
 public class SwaggerModel {
@@ -39,6 +40,12 @@ public class SwaggerModel {
 	@GetMapping(value="/SbkDTO.Res")
 	public SbkDTO.Res sbkList() throws Exception{
 		SbkDTO.Res result = new SbkDTO.Res();
+		return result; 
+	}
+	
+	@GetMapping(value="/TestDTO.Res")
+	public TestDTO.Res tstList() throws Exception{
+		TestDTO.Res result = new TestDTO.Res();
 		return result; 
 	}
 	

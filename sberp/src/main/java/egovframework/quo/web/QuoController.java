@@ -27,6 +27,7 @@ import egovframework.cmm.service.BasicResponse;
 import egovframework.cmm.service.ComParam;
 import egovframework.cmm.service.EgovFileMngService;
 import egovframework.cmm.service.FileVO;
+import egovframework.cmm.service.HisDTO;
 import egovframework.cmm.service.LoginVO;
 import egovframework.cmm.service.PagingVO;
 import egovframework.cmm.service.ResponseMessage;
@@ -318,5 +319,30 @@ public class QuoController {
     	
         return res;   
         
+    }
+    
+    @ApiOperation(value = "견적서 수정 히스토리")
+    @GetMapping(value="/hisList.do")
+    public BasicResponse hisList(@ApiParam(value = "견적서 고유번호", required = true, example = "Q2303-G0086") @RequestParam(value="quoId") String quoId) throws Exception{
+    	
+//    	LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
+    	LoginVO user = new LoginVO();
+    	boolean result = true;
+    	String msg = "";
+    	List<HisDTO> list = new ArrayList<HisDTO>();
+		
+    	list = quoService.hisList(quoId);
+
+    	if (list == null) {
+    		result = false;
+    		msg = ResponseMessage.NO_DATA;
+    	}
+    	
+    	BasicResponse res = BasicResponse.builder().result(result)
+    			.message(msg)
+    			.data(list)
+				.build();
+    	
+        return res;  
     }
 }

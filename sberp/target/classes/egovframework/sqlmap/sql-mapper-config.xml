@@ -45,5 +45,11 @@
     	<typeAlias alias="testReq" type="egovframework.tst.service.TestDTO$Req"/>
     	<typeAlias alias="testRes" type="egovframework.tst.service.TestDTO$Res"/>
     	
+    	<!-- 로데이터 -->
+    	<typeAlias alias="rawData" type="egovframework.raw.service.RawData"/>
+    	<typeAlias alias="ceDTO" type="egovframework.raw.dto.CeDTO"/>
+    	<typeAlias alias="reDTO" type="egovframework.raw.dto.ReDTO"/>
+    	<typeAlias alias="esdDTO" type="egovframework.raw.dto.EsdDTO"/>
+    	
     </typeAliases>
 </configuration>

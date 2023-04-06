@@ -41,7 +41,7 @@ public class LoginController {
 			System.out.println(enpassword);
 			enpassword = EgovFileScrty.encryptPassword("admins!", "system");
 			System.out.println(enpassword);
-			enpassword = EgovFileScrty.encryptPassword("sbkpw!@", "admin");
+			enpassword = EgovFileScrty.encryptPassword("stb9394!@", "admin");
 			System.out.println(enpassword);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

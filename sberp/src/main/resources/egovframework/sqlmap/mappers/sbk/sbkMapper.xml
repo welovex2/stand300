@@ -28,9 +28,9 @@
 			INDST_IP_YN,
 			JOB_TB.mng_name,
 			MNG_EMAIL,
-			MNG_TEL,
-			JOB_TB.MNG_FAX,
-			JOB_TB.mng_phone,
+			FN_GET_PHONE_FORMAT(ifnull(MNG_TEL, '')) MNG_TEL,
+			FN_GET_PHONE_FORMAT(ifnull(JOB_TB.MNG_FAX, '')) MNG_FAX,
+			FN_GET_PHONE_FORMAT(ifnull(JOB_TB.mng_phone, '')) mng_phone,
 			
 			/* 신청기기 */
 			JOB_TB.prdct_name,
@@ -201,6 +201,8 @@
 			,TEST_ITEM_TB.OTSRC_FEE
 			,TEST_ITEM_TB.NET_SALES
 			,ifnull(FN_DEPT_NAME(TEST_ITEM_TB.rev_id), '') RevDept 
+			,ifnull(MEMBER_TB.dept_seq, '') dept_seq
+            ,ifnull(TEST_ITEM_TB.rev_id, '') rev_id
 			,ifnull(FN_MEM_NAME(TEST_ITEM_TB.rev_id), '') RevName
 			<![CDATA[,concat('/file/getImage.do?atchFileId=',TEST_ITEM_TB.REV_SIGN_URL,'&fileSn=0') REV_SIGN_URL]]>
 			,SIGN_STATE_CODE
@@ -240,6 +242,9 @@
                                 order by TEST_ITEM_REJ_SEQ desc
                                 limit 1
             )
+            
+            left join MEMBER_TB
+            on TEST_ITEM_TB.rev_id = MEMBER_TB.id
             
 		where 1=1
 		
@@ -324,7 +329,9 @@
 	<update id="update" parameterType="sbkReq">
 		UPDATE SBK_TB
 		SET 
+			<if test="estCmpDt != null and estCmpDt != ''">
 			EST_CMP_DT = #{estCmpDt},
+			</if>
 			BSNS_RGNMB = #{bsnsRgnmb},
 			RPRSN = #{rprsn},
 			CRPRT_RGNMB = #{crprtRgnmb},
@@ -455,7 +462,9 @@
 				SBK_YM,
 				SBK_SEQ,
 				TYPE,
+				<if test="estCmpDt != null and estCmpDt != ''">
 				EST_CMP_DT,
+				</if>
 				BSNS_RGNMB,
 				RPRSN,
 				CRPRT_RGNMB,
@@ -578,7 +587,9 @@
 				date_format(now(), '%y'),
 				#{sbkSeq},
 				'G',
+				<if test="estCmpDt != null and estCmpDt != ''">
 				#{estCmpDt},
+				</if>
 				#{bsnsRgnmb},
 				#{rprsn},
 				#{crprtRgnmb},
@@ -806,5 +817,23 @@
 			#{udtMemId}
 		);
 	</insert>
+	
+	<select id="hisList" parameterType="String" resultType="egovMap">
+		select 
+		
+			date_format(SBK_HIS_TB.ins_dt, '%Y-%m-%d %T') intDtStr,
+		    MEMBER_TB.MEM_NAME,
+		    FN_POS_NAME(SBK_HIS_TB.MEM_ID) memPos
+			
+		from SBK_HIS_TB
+		
+			inner join MEMBER_TB
+		    on SBK_HIS_TB.MEM_ID = MEMBER_TB.ID
+		    
+		where 1=1
+		and SBK_HIS_TB.SBK_ID = #{sbkId}
+		
+		order by SBK_HIS_TB.INS_DT desc
+	</select>
 	
 </mapper>

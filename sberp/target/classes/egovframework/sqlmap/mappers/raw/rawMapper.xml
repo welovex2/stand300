@@ -1,0 +1,705 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="egovframework.raw.service.RawMapper">
+
+
+	<insert id="insert" parameterType="rawData">
+		<selectKey resultType="int" keyProperty="rawSeq" order="BEFORE">
+	        SELECT ifnull(MAX(raw_seq)+1,1) rawSeq FROM RAW_TB
+	    </selectKey> 
+		INSERT INTO RAW_TB
+		(
+			RAW_SEQ,
+			SBK_NO,
+			SBK_ID,
+			TEST_SEQ,
+			APLCN,
+			EQPMN,
+			MODEL,
+			MNFCT_SERIAL,
+			MNFCT_CMPNY,
+			MNFCT_CNTRY,
+			RCPT_DT,
+			REPORT_NO,
+			TEST_S_DT,
+			TEST_E_DT,
+			TEST_BY,
+			TEST_SIGN_URL,
+			REV_BY,
+			REV_SIGN_URL,
+			TBR_KC_EMC_YN,
+			TBR_KC_RF_EMC_YN,
+			TBR_EMCD_YN,
+			TBR_FCC_YN,
+			TBR_PSE_YN,
+			TBR_KT_YN,
+			TBR_ETC,
+			TBR_ETC_YN,
+			CLASS_A_YN,
+			CLASS_B_YN,
+			CLASS_ETC,
+			CLASS_ETC_YN,
+			METHOD_CE_YN,
+			METHOD_REB_YN,
+			METHOD_REA_YN,
+			METHOD_DP_YN,
+			METHOD_CLICK_YN,
+			METHOD_HAR_YN,
+			METHOD_FLICKER_YN,
+			METHOD_ETC1,
+			METHOD_ETC1_YN,
+			METHOD_ETC2,
+			METHOD_ETC2_YN,
+			TEST_STNDR_ETC1,
+			TEST_STNDR_ETC2,
+			TEST_STNDR_ETC3,
+			TEST_STNDR_ETC4,
+			TEST_STNDR_ETC5,
+			TEST_STNDR_ETC6,
+			TEST_STNDR_ETC7,
+			TEST_STNDR_ETC8,
+			TEST_STNDR_ETC9,
+			TEST_STNDR_ETC1_YN,
+			TEST_STNDR_ETC2_YN,
+			TEST_STNDR_ETC3_YN,
+			TEST_STNDR_ETC4_YN,
+			TEST_STNDR_ETC5_YN,
+			TEST_STNDR_ETC6_YN,
+			TEST_STNDR_ETC7_YN,
+			TEST_STNDR_ETC8_YN,
+			TEST_STNDR_ETC9_YN,
+			TEST_ITEM_ESD_YN,
+			TEST_ITEM_RS_YN,
+			TEST_ITEM_EFT_YN,
+			TEST_ITEM_SUR_YN,
+			TEST_ITEM_CS_YN,
+			TEST_ITEM_MFD_YN,
+			TEST_ITEM_VDP_YN,
+			TEST_ITEM_CTI_YN,
+			TEST_ITEM_ETC,
+			TEST_ITEM_ETC_YN,
+			TEST_STNDR2_KSC1_YN,
+			TEST_STNDR2_KSC2_YN,
+			TEST_STNDR2_KSC3_YN,
+			TEST_STNDR2_KSC4_YN,
+			TEST_STNDR2_KSC5_YN,
+			TEST_STNDR2_KSC6_YN,
+			TEST_STNDR2_KSC7_YN,
+			TEST_STNDR2_KSR_YN,
+			TEST_STNDR2_ETC,
+			TEST_STNDR2_ETC_YN,
+			TEST_STNDR2_KS_ETC1,
+			TEST_STNDR2_KS_ETC2,
+			TEST_STNDR2_KS_ETC3,
+			TEST_STNDR2_KS_ETC4,
+			TEST_STNDR2_KS_ETC5,
+			TEST_STNDR2_KS_ETC6,
+			TEST_STNDR2_KS_ETC7,
+			TEST_STNDR2_KS_ETC8,
+			TEST_STNDR2_KS_ETC9,
+			TEST_STNDR2_KS_ETC1_YN,
+			TEST_STNDR2_KS_ETC2_YN,
+			TEST_STNDR2_KS_ETC3_YN,
+			TEST_STNDR2_KS_ETC4_YN,
+			TEST_STNDR2_KS_ETC5_YN,
+			TEST_STNDR2_KS_ETC6_YN,
+			TEST_STNDR2_KS_ETC7_YN,
+			TEST_STNDR2_KS_ETC8_YN,
+			TEST_STNDR2_KS_ETC9_YN,
+			MEMO,
+			PRD_EXPLN,
+			PRD_USES,
+			CLOCK_FRQNC,
+			RATED_POWER,
+			TEST_POWER,
+			USER_PORT,
+			ADMIN_PORT,
+			PRD_FNC,
+			WRL_FNC,
+			CMP,
+			ETC,
+			WHT_USE_CRT_YN,
+			CRT_NBR,
+			CRT_MEMO,
+			MOD_URL,
+			MOD_MEMO,
+			MOD_CHECK1_YN,
+			MOD_CHECK2_YN,
+			TEST_FLOOR_YN,
+			TEST_TABLE_YN,
+			TEST_FSTT_YN,
+			TEST_ETC_YN,
+			OPR_CND,
+			SETUP_URL,
+			STD_MEMO,
+			INS_MEM_ID,
+			UDT_MEM_ID
+		)
+		VALUES
+		(
+			#{rawSeq},
+			(select ifnull(max(sbk_no)+1,1) from RAW_TB sub where sub.SBK_ID = #{sbkId}),
+			#{sbkId},
+			#{testSeq},
+			#{aplcn},
+			#{eqpmn},
+			#{model},
+			#{mnfctSerial},
+			#{mnfctCmpny},
+			#{mnfctCntry},
+			#{rcptDt},
+			#{reportNo},
+			#{testSDt},
+			#{testEDt},
+			#{testBy},
+			#{testSignUrl},
+			#{revBy},
+			#{revSignUrl},
+			#{tbrKcEmcYn},
+			#{tbrKcRfEmcYn},
+			#{tbrEmcdYn},
+			#{tbrFccYn},
+			#{tbrPseYn},
+			#{tbrKtYn},
+			#{tbrEtc},
+			#{tbrEtcYn},
+			#{classAYn},
+			#{classBYn},
+			#{classEtc},
+			#{classEtcYn},
+			#{methodCeYn},
+			#{methodRebYn},
+			#{methodReaYn},
+			#{methodDpYn},
+			#{methodClickYn},
+			#{methodHarYn},
+			#{methodFlickerYn},
+			#{methodEtc1},
+			#{methodEtc1Yn},
+			#{methodEtc2},
+			#{methodEtc2Yn},
+			#{testStndrEtc1},
+			#{testStndrEtc2},
+			#{testStndrEtc3},
+			#{testStndrEtc4},
+			#{testStndrEtc5},
+			#{testStndrEtc6},
+			#{testStndrEtc7},
+			#{testStndrEtc8},
+			#{testStndrEtc9},
+			#{testStndrEtc1Yn},
+			#{testStndrEtc2Yn},
+			#{testStndrEtc3Yn},
+			#{testStndrEtc4Yn},
+			#{testStndrEtc5Yn},
+			#{testStndrEtc6Yn},
+			#{testStndrEtc7Yn},
+			#{testStndrEtc8Yn},
+			#{testStndrEtc9Yn},
+			#{testItemEsdYn},
+			#{testItemRsYn},
+			#{testItemEftYn},
+			#{testItemSurYn},
+			#{testItemCsYn},
+			#{testItemMfdYn},
+			#{testItemVdpYn},
+			#{testItemCtiYn},
+			#{testItemEtc},
+			#{testItemEtcYn},
+			#{testStndr2Ksc1Yn},
+			#{testStndr2Ksc2Yn},
+			#{testStndr2Ksc3Yn},
+			#{testStndr2Ksc4Yn},
+			#{testStndr2Ksc5Yn},
+			#{testStndr2Ksc6Yn},
+			#{testStndr2Ksc7Yn},
+			#{testStndr2KsrYn},
+			#{testStndr2Etc},
+			#{testStndr2EtcYn},
+			#{testStndr2KsEtc1},
+			#{testStndr2KsEtc2},
+			#{testStndr2KsEtc3},
+			#{testStndr2KsEtc4},
+			#{testStndr2KsEtc5},
+			#{testStndr2KsEtc6},
+			#{testStndr2KsEtc7},
+			#{testStndr2KsEtc8},
+			#{testStndr2KsEtc9},
+			#{testStndr2KsEtc1Yn},
+			#{testStndr2KsEtc2Yn},
+			#{testStndr2KsEtc3Yn},
+			#{testStndr2KsEtc4Yn},
+			#{testStndr2KsEtc5Yn},
+			#{testStndr2KsEtc6Yn},
+			#{testStndr2KsEtc7Yn},
+			#{testStndr2KsEtc8Yn},
+			#{testStndr2KsEtc9Yn},
+			#{memo},
+			#{prdExpln},
+			#{prdUses},
+			#{clockFrqnc},
+			#{ratedPower},
+			#{testPower},
+			#{userPort},
+			#{adminPort},
+			#{prdFnc},
+			#{wrlFnc},
+			#{cmp},
+			#{etc},
+			#{whtUseCrtYn},
+			#{crtNbr},
+			#{crtMemo},
+			#{modUrl},
+			#{modMemo},
+			#{modCheck1Yn},
+			#{modCheck2Yn},
+			#{testFloorYn},
+			#{testTableYn},
+			#{testFsttYn},
+			#{testEtcYn},
+			#{oprCnd},
+			#{setupUrl},
+			#{stdMemo},
+			#{insMemId},
+			#{udtMemId}
+		);
+	</insert>
+	
+	<insert id="insertTchn">
+		INSERT INTO RAW_TCHN_TB
+		(
+			RAW_SEQ,
+			TYPE,
+			CHECK_YN,
+			TEXT
+		)
+		VALUES
+		<foreach collection="rawTchnList" item="item" separator=",">
+		(
+			#{rawSeq},
+			#{item.type},
+			#{item.checkYn},
+			#{item.text}
+		)
+		</foreach>
+	</insert>
+
+	<update id="updateTchn">
+		<foreach collection="rawTchnList" item="item" separator=";">
+			UPDATE RAW_TCHN_TB
+			SET
+				TYPE = #{item.type},
+				CHECK_YN = #{item.checkYn},
+				TEXT = #{item.text},
+				STATE = #{item.state}
+			WHERE TCHN_SEQ = #{item.tchnSeq}
+		</foreach>
+	</update>
+
+	<update id="deleteTchn">
+		<foreach collection="rawTchnList" item="item" separator=";">
+			UPDATE RAW_TCHN_TB
+			SET
+				STATE = #{item.state}
+			WHERE TCHN_SEQ = #{item.tchnSeq}
+		</foreach>
+	</update>
+		
+	<insert id="insertAsstn">
+		INSERT INTO RAW_ASSTN_TB
+		(
+			RAW_SEQ,
+			EQPMN,
+			MODEL,
+			SERIAL_NO,
+			MNFCT_CMPNY,
+			MEMO
+		)
+		VALUES
+		<foreach collection="rawAsstnList" item="item" separator=",">
+		(
+			#{rawSeq},
+			#{item.eqpmn},
+			#{item.model},
+			#{item.serialNo},
+			#{item.mnfctCmpny},
+			#{item.memo}
+		)
+		</foreach>
+	</insert>
+
+	<update id="updateAsstn">
+		<foreach collection="rawAsstnList" item="item" separator=";">
+		UPDATE RAW_ASSTN_TB
+		SET
+			EQPMN = #{item.eqpmn},
+			MODEL = #{item.model},
+			SERIAL_NO = #{item.serialNo},
+			MNFCT_CMPNY = #{item.mnfctCmpny},
+			MEMO = #{item.memo},
+			STATE = #{item.state}
+		WHERE ASSTN_SEQ = #{item.asstnSeq}
+		</foreach>
+	</update>
+
+	<update id="deleteAsstn">
+		<foreach collection="rawAsstnList" item="item" separator=";">
+		UPDATE RAW_ASSTN_TB
+		SET
+			STATE = #{item.state}
+		WHERE ASSTN_SEQ = #{item.asstnSeq}
+		</foreach>
+	</update>
+			
+	<insert id="insertSys">
+		INSERT INTO RAW_SYS_TB
+		(
+			RAW_SEQ,
+			ITEM,
+			MODEL,
+			SERIAL_NO,
+			MNFCT_CMPNY,
+			MEMO
+		)
+		VALUES
+		<foreach collection="rawSysList" item="item" separator=",">
+		(
+			#{rawSeq},
+			#{item.item},
+			#{item.model},
+			#{item.serialNo},
+			#{item.mnfctCmpny},
+			#{item.memo}
+		)
+		</foreach>
+	</insert>
+
+	<update id="updateSys">
+		<foreach collection="rawSysList" item="item" separator=";">
+		UPDATE RAW_SYS_TB
+		SET
+			ITEM = #{item.item},
+			MODEL = #{item.model},
+			SERIAL_NO = #{item.serialNo},
+			MNFCT_CMPNY = #{item.mnfctCmpny},
+			MEMO = #{item.memo},
+			STATE = #{item.state}
+		WHERE SYS_SEQ = #{item.sysSeq}		
+		</foreach>
+	</update>
+
+	<update id="deleteSys">
+		<foreach collection="rawSysList" item="item" separator=";">
+		UPDATE RAW_SYS_TB
+		SET
+			STATE = #{item.state}
+		WHERE SYS_SEQ = #{item.sysSeq}		
+		</foreach>
+	</update>
+			
+	<insert id="insertCable">
+		INSERT INTO RAW_CABLE_TB
+		(
+			RAW_SEQ,
+			DF_NAME,
+			DF_MODE,
+			DF_PORT,
+			DT_NAME,
+			DT_PORT,
+			CS_M,
+			CS_YN
+		)
+		VALUES
+		<foreach collection="rawCableList" item="item" separator=",">
+		(
+			#{rawSeq},
+			#{item.dfName},
+			#{item.dfMode},
+			#{item.dfPort},
+			#{item.dtName},
+			#{item.dtPort},
+			#{item.csM},
+			#{item.csYn}
+		)
+		</foreach>
+	</insert>
+	
+	<update id="updateCable">
+		<foreach collection="rawCableList" item="item" separator=";">
+		UPDATE RAW_CABLE_TB
+		SET
+			DF_NAME = #{item.dfName},
+			DF_MODE = #{item.dfMode},
+			DF_PORT = #{item.dfPort},
+			DT_NAME = #{item.dtName},
+			DT_PORT = #{item.dtPort},
+			CS_M = #{item.csM},
+			CS_YN = #{item.csYn},
+			STATE = #{item.state}
+		WHERE CABLE_SEQ = #{item.cableSeq}
+		</foreach>
+	</update>
+
+	<update id="deleteCable">
+		<foreach collection="rawCableList" item="item" separator=";">
+		UPDATE RAW_CABLE_TB
+		SET
+			STATE = #{item.state}
+		WHERE CABLE_SEQ = #{item.cableSeq}
+		</foreach>
+	</update>
+	
+	<update id="update" parameterType="rawData">
+		UPDATE RAW_TB
+		SET 
+			APLCN = #{aplcn},
+			EQPMN = #{eqpmn},
+			MODEL = #{model},
+			MNFCT_SERIAL = #{mnfctSerial},
+			MNFCT_CMPNY = #{mnfctCmpny},
+			MNFCT_CNTRY = #{mnfctCntry},
+			RCPT_DT = #{rcptDt},
+			REPORT_NO = #{reportNo},
+			TEST_S_DT = #{testSDt},
+			TEST_E_DT = #{testEDt},
+			TEST_BY = #{testBy},
+			<if test="testSignUrl != null and testSignUrl != ''">TEST_SIGN_URL = #{testSignUrl},</if>
+			REV_BY = #{revBy},
+			<if test="revSignUrl != null and revSignUrl != ''">REV_SIGN_URL = #{revSignUrl},</if>
+			TBR_KC_EMC_YN = #{tbrKcEmcYn},
+			TBR_KC_RF_EMC_YN = #{tbrKcRfEmcYn},
+			TBR_EMCD_YN = #{tbrEmcdYn},
+			TBR_FCC_YN = #{tbrFccYn},
+			TBR_PSE_YN = #{tbrPseYn},
+			TBR_KT_YN = #{tbrKtYn},
+			TBR_ETC = #{tbrEtc},
+			TBR_ETC_YN = #{tbrEtcYn},
+			CLASS_A_YN = #{classAYn},
+			CLASS_B_YN = #{classBYn},
+			CLASS_ETC = #{classEtc},
+			CLASS_ETC_YN = #{classEtcYn},
+			METHOD_CE_YN = #{methodCeYn},
+			METHOD_REB_YN = #{methodRebYn},
+			METHOD_REA_YN = #{methodReaYn},
+			METHOD_DP_YN = #{methodDpYn},
+			METHOD_CLICK_YN = #{methodClickYn},
+			METHOD_HAR_YN = #{methodHarYn},
+			METHOD_FLICKER_YN = #{methodFlickerYn},
+			METHOD_ETC1 = #{methodEtc1},
+			METHOD_ETC1_YN = #{methodEtc1Yn},
+			METHOD_ETC2 = #{methodEtc2},
+			METHOD_ETC2_YN = #{methodEtc2Yn},
+			TEST_STNDR_ETC1 = #{testStndrEtc1},
+			TEST_STNDR_ETC2 = #{testStndrEtc2},
+			TEST_STNDR_ETC3 = #{testStndrEtc3},
+			TEST_STNDR_ETC4 = #{testStndrEtc4},
+			TEST_STNDR_ETC5 = #{testStndrEtc5},
+			TEST_STNDR_ETC6 = #{testStndrEtc6},
+			TEST_STNDR_ETC7 = #{testStndrEtc7},
+			TEST_STNDR_ETC8 = #{testStndrEtc8},
+			TEST_STNDR_ETC9_YN = #{testStndrEtc9Yn},
+		    TEST_ITEM_ESD_YN = #{testItemEsdYn},
+		    TEST_ITEM_RS_YN = #{testItemRsYn},
+		    TEST_ITEM_EFT_YN = #{testItemEftYn},
+		    TEST_ITEM_SUR_YN = #{testItemSurYn},
+		    TEST_ITEM_CS_YN = #{testItemCsYn},
+		    TEST_ITEM_MFD_YN = #{testItemMfdYn},
+		    TEST_ITEM_VDP_YN = #{testItemVdpYn},
+		    TEST_ITEM_CTI_YN = #{testItemCtiYn},
+		    TEST_ITEM_ETC = #{testItemEtc},
+		    TEST_ITEM_ETC_YN = #{testItemEtcYn},
+		    TEST_STNDR2_KSC1_YN = #{testStndr2Ksc1Yn},
+		    TEST_STNDR2_KSC2_YN = #{testStndr2Ksc2Yn},
+		    TEST_STNDR2_KSC3_YN = #{testStndr2Ksc3Yn},
+		    TEST_STNDR2_KSC4_YN = #{testStndr2Ksc4Yn},
+		    TEST_STNDR2_KSC5_YN = #{testStndr2Ksc5Yn},
+		    TEST_STNDR2_KSC6_YN = #{testStndr2Ksc6Yn},
+		    TEST_STNDR2_KSC7_YN = #{testStndr2Ksc7Yn},
+		    TEST_STNDR2_KSR_YN = #{testStndr2KsrYn},
+		    TEST_STNDR2_ETC = #{testStndr2Etc},
+		    TEST_STNDR2_ETC_YN = #{testStndr2EtcYn},
+		    TEST_STNDR2_KS_ETC1 = #{testStndr2KsEtc1},
+		    TEST_STNDR2_KS_ETC2 = #{testStndr2KsEtc2},
+		    TEST_STNDR2_KS_ETC3 = #{testStndr2KsEtc3},
+		    TEST_STNDR2_KS_ETC4 = #{testStndr2KsEtc4},
+		    TEST_STNDR2_KS_ETC5 = #{testStndr2KsEtc5},
+		    TEST_STNDR2_KS_ETC6 = #{testStndr2KsEtc6},
+		    TEST_STNDR2_KS_ETC7 = #{testStndr2KsEtc7},
+		    TEST_STNDR2_KS_ETC8 = #{testStndr2KsEtc8},
+		    TEST_STNDR2_KS_ETC9 = #{testStndr2KsEtc9},
+		    TEST_STNDR2_KS_ETC1_YN = #{testStndr2KsEtc1Yn},
+		    TEST_STNDR2_KS_ETC2_YN = #{testStndr2KsEtc2Yn},
+		    TEST_STNDR2_KS_ETC3_YN = #{testStndr2KsEtc3Yn},
+		    TEST_STNDR2_KS_ETC4_YN = #{testStndr2KsEtc4Yn},
+			TEST_STNDR2_KS_ETC5_YN = #{testStndr2KsEtc5Yn},
+			TEST_STNDR2_KS_ETC6_YN = #{testStndr2KsEtc6Yn},
+			TEST_STNDR2_KS_ETC7_YN = #{testStndr2KsEtc7Yn},
+			TEST_STNDR2_KS_ETC8_YN = #{testStndr2KsEtc8Yn},
+			TEST_STNDR2_KS_ETC9_YN = #{testStndr2KsEtc9Yn},
+			MEMO = #{memo},
+			PRD_EXPLN = #{prdExpln},
+			PRD_USES = #{prdUses},
+			CLOCK_FRQNC = #{clockFrqnc},
+			RATED_POWER = #{ratedPower},
+			TEST_POWER = #{testPower},
+			USER_PORT = #{userPort},
+			ADMIN_PORT = #{adminPort},
+			PRD_FNC = #{prdFnc},
+			WRL_FNC = #{wrlFnc},
+			CMP = #{cmp},
+			ETC = #{etc},
+			WHT_USE_CRT_YN = #{whtUseCrtYn},
+			CRT_NBR = #{crtNbr},
+			CRT_MEMO = #{crtMemo},
+			<if test="modUrl != null and modUrl != ''">MOD_URL = #{modUrl},</if>
+			MOD_MEMO = #{modMemo},
+			MOD_CHECK1_YN = #{modCheck1Yn},
+			MOD_CHECK2_YN = #{modCheck2Yn},
+			TEST_FLOOR_YN = #{testFloorYn},
+			TEST_TABLE_YN = #{testTableYn},
+			TEST_FSTT_YN = #{testFsttYn},
+			TEST_ETC_YN = #{testEtcYn},
+			OPR_CND = #{oprCnd},
+			<if test="setupUrl != null and setupUrl != ''">SETUP_URL = #{setupUrl},</if>
+			STD_MEMO = #{stdMemo},
+			UDT_MEM_ID = #{udtMemId},
+			UDT_DT = NOW()
+		WHERE RAW_SEQ = #{rawSeq}
+	</update>
+	
+	<select id="detail" parameterType="int" resultType="rawData">
+		SELECT RAW_SEQ,
+		    SBK_NO,
+		    SBK_ID,
+		    TEST_SEQ,
+		    APLCN,
+		    EQPMN,
+		    MODEL,
+		    MNFCT_SERIAL,
+		    MNFCT_CMPNY,
+		    MNFCT_CNTRY,
+		    RCPT_DT,
+		    REPORT_NO,
+		    TEST_S_DT,
+		    TEST_E_DT,
+		    TEST_BY,
+		    TEST_SIGN_URL,
+		    REV_BY,
+		    REV_SIGN_URL,
+		    TBR_KC_EMC_YN,
+		    TBR_KC_RF_EMC_YN,
+		    TBR_EMCD_YN,
+		    TBR_FCC_YN,
+		    TBR_PSE_YN,
+		    TBR_KT_YN,
+		    TBR_ETC,
+		    TBR_ETC_YN,
+		    CLASS_A_YN,
+		    CLASS_B_YN,
+		    CLASS_ETC,
+		    CLASS_ETC_YN,
+		    METHOD_CE_YN,
+		    METHOD_REB_YN,
+		    METHOD_REA_YN,
+		    METHOD_DP_YN,
+		    METHOD_CLICK_YN,
+		    METHOD_HAR_YN,
+		    METHOD_FLICKER_YN,
+		    METHOD_ETC1,
+		    METHOD_ETC1_YN,
+		    METHOD_ETC2,
+		    METHOD_ETC2_YN,
+		    TEST_STNDR_ETC1,
+		    TEST_STNDR_ETC2,
+		    TEST_STNDR_ETC3,
+		    TEST_STNDR_ETC4,
+		    TEST_STNDR_ETC5,
+		    TEST_STNDR_ETC6,
+		    TEST_STNDR_ETC7,
+		    TEST_STNDR_ETC8,
+		    TEST_STNDR_ETC9,
+		    TEST_STNDR_ETC1_YN,
+		    TEST_STNDR_ETC2_YN,
+		    TEST_STNDR_ETC3_YN,
+		    TEST_STNDR_ETC4_YN,
+		    TEST_STNDR_ETC5_YN,
+		    TEST_STNDR_ETC6_YN,
+		    TEST_STNDR_ETC7_YN,
+		    TEST_STNDR_ETC8_YN,
+		    TEST_STNDR_ETC9_YN,
+		    TEST_ITEM_ESD_YN,
+		    TEST_ITEM_RS_YN,
+		    TEST_ITEM_EFT_YN,
+		    TEST_ITEM_SUR_YN,
+		    TEST_ITEM_CS_YN,
+		    TEST_ITEM_MFD_YN,
+		    TEST_ITEM_VDP_YN,
+		    TEST_ITEM_CTI_YN,
+		    TEST_ITEM_ETC,
+		    TEST_ITEM_ETC_YN,
+		    TEST_STNDR2_KSC1_YN,
+		    TEST_STNDR2_KSC2_YN,
+		    TEST_STNDR2_KSC3_YN,
+		    TEST_STNDR2_KSC4_YN,
+		    TEST_STNDR2_KSC5_YN,
+		    TEST_STNDR2_KSC6_YN,
+		    TEST_STNDR2_KSC7_YN,
+		    TEST_STNDR2_KSR_YN,
+		    TEST_STNDR2_ETC,
+		    TEST_STNDR2_ETC_YN,
+		    TEST_STNDR2_KS_ETC1,
+		    TEST_STNDR2_KS_ETC2,
+		    TEST_STNDR2_KS_ETC3,
+		    TEST_STNDR2_KS_ETC4,
+		    TEST_STNDR2_KS_ETC5,
+		    TEST_STNDR2_KS_ETC6,
+		    TEST_STNDR2_KS_ETC7,
+		    TEST_STNDR2_KS_ETC8,
+		    TEST_STNDR2_KS_ETC9,
+		    TEST_STNDR2_KS_ETC1_YN,
+		    TEST_STNDR2_KS_ETC2_YN,
+		    TEST_STNDR2_KS_ETC3_YN,
+		    TEST_STNDR2_KS_ETC4_YN,
+		    TEST_STNDR2_KS_ETC5_YN,
+		    TEST_STNDR2_KS_ETC6_YN,
+		    TEST_STNDR2_KS_ETC7_YN,
+		    TEST_STNDR2_KS_ETC8_YN,
+		    TEST_STNDR2_KS_ETC9_YN,
+		    MEMO,
+		    PRD_EXPLN,
+		    PRD_USES,
+		    CLOCK_FRQNC,
+		    RATED_POWER,
+		    TEST_POWER,
+		    USER_PORT,
+		    ADMIN_PORT,
+		    PRD_FNC,
+		    WRL_FNC,
+		    CMP,
+		    ETC,
+		    WHT_USE_CRT_YN,
+		    CRT_NBR,
+		    CRT_MEMO,
+		    MOD_URL,
+		    MOD_MEMO,
+		    MOD_CHECK1_YN,
+		    MOD_CHECK2_YN,
+		    TEST_FLOOR_YN,
+		    TEST_TABLE_YN,
+		    TEST_FSTT_YN,
+		    TEST_ETC_YN,
+		    OPR_CND,
+		    SETUP_URL,
+		    STD_MEMO,
+		    INS_MEM_ID,
+		    INS_DT,
+		    UDT_MEM_ID,
+		    UDT_DT,
+		    STATE
+		FROM RAW_TB
+		WHERE TEST_SEQ = #{testSeq}
+	</select>
+</mapper>
+
+
+

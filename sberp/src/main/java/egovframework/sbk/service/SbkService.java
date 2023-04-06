@@ -3,6 +3,7 @@ package egovframework.sbk.service;
 import java.util.List;
 
 import egovframework.cmm.service.ComParam;
+import egovframework.cmm.service.HisDTO;
 import egovframework.sbk.service.SbkDTO.Req;
 import egovframework.sbk.service.SbkDTO.Res;
 import egovframework.tst.service.TestItemDTO;
@@ -25,5 +26,7 @@ public interface SbkService {
 	List<TestItemRej> signRejectList(String testItemSeq);
 
 	boolean signRejectInsert(TestItemRej req);
+
+	List<HisDTO> hisList(String sbkId);
 
 }

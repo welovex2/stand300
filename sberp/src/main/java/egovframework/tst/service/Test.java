@@ -10,9 +10,10 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @ApiModel(description = "시험")
-@Getter @Setter
+@Getter @Setter @ToString
 public class Test {
 
 
@@ -20,20 +21,17 @@ public class Test {
 	@Column
 	private int testSeq;
 	
+	@ApiModelProperty(value="시험부서별 서브 시험번호 ", example = "")
+	@Column
+	private int testNo;
+	
 	@ApiModelProperty(value="시험항목 고유번호 ", example = "")
 	@Column
 	private int testItemSeq;
 	
-	
-	@ApiModelProperty(value="시험 상태 ", example = "1")
+	@ApiModelProperty(value="시험부서코드 ", example = "EM")
 	@Column
-	private String testStatCode;
-	
-	
-	@ApiModelProperty(value="시험 담당자 ", example = "a")
-	@Column
-	private String testMngId;
-	
+	private String testTypeCode;
 	
 	@ApiModelProperty(value="등록자 아이디 ", example = "", hidden=true)
 	@Column

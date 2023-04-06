@@ -4,6 +4,13 @@
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d %5p [%c] %m%n" />
         </Console>
+        <RollingFile name="FILE_APPENDER" fileName="./logs/${date:yyyy}/${date:MM}/dailyLog.log"
+        						 filePattern="./logs/${date:yyyy}/${date:MM}/dailyLog_%d{yyyyMMdd}.log">
+	       	<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+			</Policies>
+   		</RollingFile>
     </Appenders>
     <Loggers>
 		<!-- Query Loggers -->
