@@ -27,6 +27,7 @@ import egovframework.cmm.service.ResponseMessage;
 import egovframework.cmm.util.EgovFileMngUtil;
 import egovframework.cmm.util.EgovUserDetailsHelper;
 import egovframework.raw.dto.CeDTO;
+import egovframework.raw.dto.EftDTO;
 import egovframework.raw.dto.EsdDTO;
 import egovframework.raw.dto.RawDTO;
 import egovframework.raw.dto.ReDTO;
@@ -500,7 +501,7 @@ public class RawController {
 		// 로그인정보
 		req.setInsMemId(user.getId());
 		req.setUdtMemId(user.getId());
-		req.setMacType("ED");
+		req.setMacType("RS");
 		
 		System.out.println("=-===========");
 		System.out.println(req.toString());
@@ -544,6 +545,79 @@ public class RawController {
 	    	    }
 
 	    	    result = rawService.insertRs(req);
+	        	
+	        } else {
+	    		result = false;
+	    		msg = ResponseMessage.UNAUTHORIZED;
+	    	}
+	    
+	    }   
+		
+		BasicResponse res = BasicResponse.builder().result(result)
+				.message(msg)
+				.build();
+		
+		return res;
+	}
+
+    @ApiOperation(value = "로데이터 > EFT / B U R S T 등록"
+			, notes="1. 수정시 eftSeq 필수\n "
+				  + "2. signFile 시험자 서명")
+	@PostMapping(value="/insertEft.do")
+	public BasicResponse insertEft(@RequestPart(value="eftDTO") EftDTO req,
+			@RequestPart(value = "signFile", required = false) MultipartFile signFile) throws Exception {
+		
+		LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
+		String msg = "";
+		boolean result = false;
+		
+		// 로그인정보
+		req.setInsMemId(user.getId());
+		req.setUdtMemId(user.getId());
+		req.setMacType("RS");
+		
+		System.out.println("=-===========");
+		System.out.println(req.toString());
+		System.out.println("=-===========");
+		
+		ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+	    Validator validator = validatorFactory.getValidator();
+	    
+	    Set<ConstraintViolation<EftDTO>> violations = validator.validate(req);
+	    
+	    for (ConstraintViolation<EftDTO> violation : violations) {
+	    	msg = violation.getMessage();
+	    	
+	    	System.out.println(msg);
+	    	BasicResponse res = BasicResponse.builder().result(false)
+	    			.message(msg)
+					.build();
+	    	
+	    	return res;
+	    }
+	    
+	    Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+	    
+	    // 이미 등록된 로데이터가 있는지 확인
+	    if(req.getEftSeq() == 0 && !ObjectUtils.isEmpty(rawService.eftDetail(req.getRawSeq()))) {
+	    	result = false;
+			msg = ResponseMessage.DUPLICATE_RAW;
+	    } else {
+	    
+	        if (isAuthenticated) {
+	        	
+	        	List<FileVO> FileResult = null;
+	        	FileVO oneFile = null;
+	        	String atchFileId = "";
+	    		
+	        	// 시험자 서명
+	    	    if (!ObjectUtils.isEmpty(signFile)) {
+	    	    	oneFile = fileUtil.parseFile(signFile, "RAW", 0, "", "");
+		    		atchFileId = fileMngService.insertFileInf(oneFile);
+		    		req.setSignUrl(atchFileId);
+	    	    }
+
+	    	    result = rawService.insertEft(req);
 	        	
 	        } else {
 	    		result = false;

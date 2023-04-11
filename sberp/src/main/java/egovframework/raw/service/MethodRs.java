@@ -76,17 +76,32 @@ public class MethodRs {
 	@Column
 	private String temp;
 
-
+	
+	@ApiModelProperty(value="온도 ", example = "")
+	@Column
+	private String tempPlus;
+	
+	
 	@ApiModelProperty(value="습도 ", example = "")
 	@Column
 	private String hmdt;
 
-
+	
+	@ApiModelProperty(value="습도 ", example = "")
+	@Column
+	private String hmdtPlus;
+	
+	
 	@ApiModelProperty(value="기압 ", example = "")
 	@Column
 	private String brmt;
 
 
+	@ApiModelProperty(value="기압 ", example = "")
+	@Column
+	private String brmtPlus;
+	
+	
 	@ApiModelProperty(value="변조AM_YN ", example = "")
 	@Column
 	private int mdltAmYn;

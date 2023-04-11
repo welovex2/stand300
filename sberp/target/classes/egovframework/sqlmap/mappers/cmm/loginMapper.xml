@@ -28,9 +28,9 @@
 	<select id="actionLogin" resultMap="login">
 <!-- 		<isEqual property="userSe" compareValue="USR"> -->
 			<![CDATA[
-            SELECT ID AS id
-                 , MEM_NAME AS name
-                 #, PASSWORD AS password
+            SELECT ID
+                 , MEM_NAME
+                 , PASSWORD
               FROM MEMBER_TB
              WHERE ID = #{id}
                AND PASSWORD = #{password}

@@ -44,11 +44,11 @@ public class LoginVO {
 		id = ids.get(ran.nextInt(3));
 	}
 	
-	@ApiModelProperty(value="사원번호", example = "0001", required = true)
+	@ApiModelProperty(value="사원번호", example = "0001", hidden = true)
 	@Column
 	private String empNo;
 	
-	@ApiModelProperty(value="아이디 ", example = "welovex2", required = true)
+	@ApiModelProperty(value="아이디 ", example = "system", required = true)
 	@Column
 	private String id;
 	
@@ -60,7 +60,7 @@ public class LoginVO {
 	@Column
 	private String email;
 	
-	@ApiModelProperty(value="비밀번호", example = "sberp2023!", required = true)
+	@ApiModelProperty(value="비밀번호", example = "akstp!", required = true)
 	@Column
 	private String password;
 	

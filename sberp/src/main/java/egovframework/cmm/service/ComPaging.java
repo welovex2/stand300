@@ -1,7 +1,10 @@
 package egovframework.cmm.service;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter @Setter
 public class ComPaging {
 
 	@ApiModelProperty(value="현재페이지 ", example = "1", required = true)
@@ -22,53 +25,7 @@ public class ComPaging {
 	@ApiModelProperty(value="한 페이지당 게시되는 게시물 건 수 ", example = "10", hidden = true)
     private int recordCountPerPage = 10;
     
-	public int getPageIndex() {
-		return pageIndex;
-	}
-
-	public void setPageIndex(int pageIndex) {
-		this.pageIndex = pageIndex;
-	}
-
-	public int getPageUnit() {
-		return pageUnit;
-	}
-
-	public void setPageUnit(int pageUnit) {
-		this.pageUnit = pageUnit;
-	}
-
-	public int getPageSize() {
-		return pageSize;
-	}
-
-	public void setPageSize(int pageSize) {
-		this.pageSize = pageSize;
-	}
-
-	public int getFirstIndex() {
-		return firstIndex;
-	}
-
-	public void setFirstIndex(int firstIndex) {
-		this.firstIndex = firstIndex;
-	}
-
-	public int getLastIndex() {
-		return lastIndex;
-	}
-
-	public void setLastIndex(int lastIndex) {
-		this.lastIndex = lastIndex;
-	}
-
-	public int getRecordCountPerPage() {
-		return recordCountPerPage;
-	}
-
-	public void setRecordCountPerPage(int recordCountPerPage) {
-		this.recordCountPerPage = recordCountPerPage;
-	}
-    
+	@ApiModelProperty(value="총 게시물 갯수 ", example = "24", hidden = true)
+    private int totalCount = 10;
     
 }

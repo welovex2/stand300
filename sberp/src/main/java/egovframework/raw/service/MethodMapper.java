@@ -5,8 +5,10 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 import egovframework.raw.dto.CeDTO;
+import egovframework.raw.dto.EftDTO;
 import egovframework.raw.dto.EsdDTO;
 import egovframework.raw.dto.ReDTO;
+import egovframework.raw.dto.RsDTO;
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
 
 @Mapper("MethodMapper")
@@ -35,5 +37,13 @@ public interface MethodMapper {
 	public void updateEsdSub(@Param("esdSeq") int esdSeq, @Param("MethodEsdSubList") List<MethodEsdSub> sUItems);
 
 	public void deleteEsdSub(@Param("esdSeq") int esdSeq, @Param("MethodEsdSubList") List<MethodEsdSub> sDItems);
+
+	public RsDTO rsDetail(int rawSeq);
+
+	public void insertRs(RsDTO req);
+	
+	EftDTO eftDetail(int rawSeq);
+
+	boolean insertEft(EftDTO req);
 
 }

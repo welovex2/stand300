@@ -107,7 +107,11 @@ public class SbkController {
         
     }
     
-    @ApiOperation(value = "신청서리스트", notes = "결과값은 StbDTO.Res 참고")
+    @ApiOperation(value = "신청서리스트", notes = "1.결과값은 StbDTO.Res 참고\n"
+    											+ "2.검색박스는 공통코드 CS, 필요한항목만 노출시켜서 사용\n"
+    											+ " 고객유형(PT)\n"
+    											+ " 신청구분:신규-1,기술기준변경-2,동일기자재-3,기술기준외변경-4\n"
+    											+ " 시험배정(TT), 미배정-9999")
     @GetMapping(value="/list.do")
     public BasicResponse sbkList(@ModelAttribute ComParam param) throws Exception{
     	
@@ -131,6 +135,7 @@ public class SbkController {
     	int cnt = sbkService.selectListCnt(param);
     	
     	pagingVO.setTotalCount(cnt);
+    	param.setTotalCount(cnt);
 		pagingVO.setTotalPage((int) Math.ceil(pagingVO.getTotalCount() / (double) pagingVO.getDisplayRow()));
     	list = sbkService.selectList(param);
 

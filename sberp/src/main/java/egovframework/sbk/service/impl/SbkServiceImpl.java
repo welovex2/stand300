@@ -5,12 +5,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import egovframework.cmm.service.ComParam;
 import egovframework.cmm.service.HisDTO;
-import egovframework.rte.psl.dataaccess.util.EgovMap;
 import egovframework.sbk.service.SbkDTO;
 import egovframework.sbk.service.SbkDTO.Req;
 import egovframework.sbk.service.SbkDTO.Res;
@@ -77,16 +75,6 @@ public class SbkServiceImpl implements SbkService {
 	@Override
 	public List<Res> selectList(ComParam param) throws Exception {
 		List<SbkDTO.Res> list = sbkMapper.selectList(param);
-		
-		if(!ObjectUtils.isEmpty(list)) {
-			Req req = new Req();
-			for(Object detail : list) {
-				EgovMap map = (EgovMap) detail;
-				req.setSbkId((String)map.get("sbkId"));
-				map.put("items", sbkMapper.selectTestItemList(req));
-			}
-		}
-		
 		return list;
 	}
 

@@ -1,6 +1,7 @@
 package egovframework.raw.service;
 
 import egovframework.raw.dto.CeDTO;
+import egovframework.raw.dto.EftDTO;
 import egovframework.raw.dto.EsdDTO;
 import egovframework.raw.dto.ReDTO;
 import egovframework.raw.dto.RsDTO;
@@ -28,5 +29,9 @@ public interface RawService {
 	RsDTO rsDetail(int rawSeq);
 
 	boolean insertRs(RsDTO req);
+
+	EftDTO eftDetail(int rawSeq);
+
+	boolean insertEft(EftDTO req);
 
 }

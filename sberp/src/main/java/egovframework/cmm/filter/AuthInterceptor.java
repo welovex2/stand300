@@ -1,17 +1,16 @@
 package egovframework.cmm.filter;
 
-import java.nio.charset.StandardCharsets;
-
-import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.util.StreamUtils;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.ModelAndViewDefiningException;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import egovframework.cmm.service.LoginVO;
+import egovframework.cmm.service.ResponseMessage;
+import egovframework.cmm.util.EgovUserDetailsHelper;
 
 public class AuthInterceptor extends HandlerInterceptorAdapter {
     /**
@@ -22,21 +21,28 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
         LoginVO loginVO = null;
        
         try {
-            loginVO = (LoginVO) request.getSession().getAttribute("loginVO");
-            System.out.println(">> 로그인 확인 인터셉터 >> preHandle >>");
+            loginVO = (LoginVO) request.getSession().getAttribute("LoginVO");
+            
+            Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+            if (isAuthenticated) {
+            	
+            }
+            
 //            ServletInputStream inputStream = request.getInputStream();
 //            String messageBody = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
 //            System.out.println(messageBody);
 //            UserData data = objectMapper.readValue(messageBody, UserData.class);
 //            log.info("username={}, age={}", data.getUsername(), data.getAge());
-            return true;
-//            if (loginVO != null && loginVO.getUserId() != null) {
-//                return true;
-//            } else {
-//                ModelAndView modelAndView = new ModelAndView("forward:/loginView.do");
-//                modelAndView.addObject("message", "세션이 만료되어 로그아웃 되었습니다. 다시 로그인 해주세요.");
-//                throw new ModelAndViewDefiningException(modelAndView);
-//            }
+//            return true;
+            if (loginVO != null && loginVO.getId() != null) {
+                return true;
+            } else {
+            	System.out.println(ResponseMessage.NO_LOGIN);
+//            	response.setContentType("application/json");
+//            	response.setCharacterEncoding("UTF-8");
+//            	response.getWriter().write("{\"result\":false,\"message\":\"".concat(ResponseMessage.NO_LOGIN).concat("\"}"));
+            	return true;
+            }
         } catch (Exception e) {
             ModelAndView modelAndView = new ModelAndView("forward:/loginView.do");
             modelAndView.addObject("message", "세션이 만료되어 로그아웃 되었습니다. 다시 로그인 해주세요.");
@@ -56,6 +62,7 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
          if(!"/loginView.do".equals(requestURI)) {
 	          loginVO = (LoginVO) request.getSession().getAttribute("loginVO");
 	          System.out.println(">> 로그인 확인 인터셉터 >> postHandle >>");
+	          
 //	          if (loginVO != null && loginVO.getUserId() != null) {
 //	           SearchVO searchVO = new SearchVO();
 //	           searchVO.setSchMenuUrl(requestURI);

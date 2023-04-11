@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import egovframework.raw.dto.CeDTO;
+import egovframework.raw.dto.EftDTO;
 import egovframework.raw.dto.EsdDTO;
 import egovframework.raw.dto.ReDTO;
 import egovframework.raw.dto.RsDTO;
@@ -203,8 +204,36 @@ public class RawServiceImpl implements RawService {
 	}
 
 	@Override
+	@Transactional
 	public boolean insertRs(RsDTO req) {
-		return false;
+		boolean result = true;
+		
+		methodMapper.insertRs(req);
+		
+		// 측정설비
+		if (!ObjectUtils.isEmpty(req.getMacList()))
+			methodMapper.insertMac(req.getRawSeq(), req.getMacType(), req.getMacList());
+		
+		return result;
+	}
+
+	@Override
+	public EftDTO eftDetail(int rawSeq) {
+		return methodMapper.eftDetail(rawSeq);
+	}
+
+	@Override
+	@Transactional
+	public boolean insertEft(EftDTO req) {
+		boolean result = true;
+		
+		methodMapper.insertEft(req);
+		
+		// 측정설비
+		if (!ObjectUtils.isEmpty(req.getMacList()))
+			methodMapper.insertMac(req.getRawSeq(), req.getMacType(), req.getMacList());
+		
+		return result;
 	}
 
 }

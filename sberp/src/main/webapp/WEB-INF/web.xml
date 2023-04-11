@@ -76,6 +76,11 @@
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
     
+    <session-config>
+    	<!-- 60 = 1시간 , 600 = 10시간 -->
+        <session-timeout>60</session-timeout>
+    </session-config>
+    
 	<login-config>
 		<auth-method>BASIC</auth-method>
 	</login-config>

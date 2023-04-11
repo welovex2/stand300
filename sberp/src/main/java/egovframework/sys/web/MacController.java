@@ -32,7 +32,7 @@ public class MacController {
     @Resource(name = "propertiesService")
     protected EgovPropertyService propertyService;
     
-    @ApiOperation(value = "시험장비 리스트")
+    @ApiOperation(value = "시험장비 리스트", notes = "searchCode:10, searchWord:공통코드(TM)")
     @GetMapping(value="/list.do")
     public BasicResponse list(@ModelAttribute ComParam param) throws Exception{
     	

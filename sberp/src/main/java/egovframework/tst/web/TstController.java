@@ -101,7 +101,11 @@ public class TstController {
     }
     
     
-    @ApiOperation(value = "시험리스트", notes = "결과값은 TestDTO.Res 참고")
+    @ApiOperation(value = "시험리스트", notes = "결과값은 TestDTO.Res 참고"
+    										  + "2.검색박스는 공통코드 CS, 필요한항목만 노출시켜서 사용\n"
+    										  + " 신청구분:신규-1,기술기준변경-2,동일기자재-3,기술기준외변경-4\n"
+    										  + " 시험부(TT), 미배정-9999\n"
+    										  + " 시험상태(TS)")
     @GetMapping(value="/list.do")
     public BasicResponse sbkList(@ModelAttribute ComParam param) throws Exception{
     	

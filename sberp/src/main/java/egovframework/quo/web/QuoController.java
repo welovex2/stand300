@@ -58,7 +58,7 @@ public class QuoController {
     @Resource(name = "propertiesService")
     protected EgovPropertyService propertyService;
     
-    @ApiOperation(value = "견적서리스트", notes = "결과값은 QuoDTO.Res 참고")
+    @ApiOperation(value = "견적서리스트", notes = "1. 결과값은 QuoDTO.Res 참고\n2.검색박스는 공통코드 CS, 필요한항목만 노출시켜서 사용\\n고객유형(PT)")
     @GetMapping(value="/list.do")
     public BasicResponse quoList(@ModelAttribute ComParam param) throws Exception{
     	

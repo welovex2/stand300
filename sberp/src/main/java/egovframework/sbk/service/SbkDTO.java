@@ -6,7 +6,7 @@ import javax.persistence.Column;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import egovframework.tst.service.TestItem;
+import egovframework.tst.service.TestItemDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -75,10 +75,14 @@ public class SbkDTO{
 		@ApiModelProperty(value="견적서번호", example = " ")
 		@Column
 		private String quoId;
+
+		@ApiModelProperty(value="상담서번호", example = " ")
+		@Column
+		private String cnsSeq;
 		
 		@ApiModelProperty(value="시험항목리스트", example = "[]")
 		@Column
-		private List<TestItem> items;
+		private List<TestItemDTO> items;
 		
 		@ApiModelProperty(value="회사 고유번호", example = "1")
 		@Column
@@ -155,5 +159,7 @@ public class SbkDTO{
 		@ApiModelProperty(value="VAT포함 총합계 ", example = "3300000")
 		@Column
 		private String TotalVat;
+
 	}
+	
 }

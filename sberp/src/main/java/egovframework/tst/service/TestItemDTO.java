@@ -11,28 +11,56 @@ import lombok.Setter;
 @ApiModel(description = "시험항목 및 비용")
 public class TestItemDTO extends TestItem {
 	
-	@ApiModelProperty(value="인증종류1", example = "", required = true)
+	@ApiModelProperty(value="인증종류1", example = "")
 	@Column
 	private String crtfc1;
 
-	@ApiModelProperty(value="인증종류2", example = "", required = true)
+	@ApiModelProperty(value="인증종류2", example = "")
 	@Column
 	private String crtfc2;
 	
-	@ApiModelProperty(value="시험종류코드", example = "", required = true)
+	@ApiModelProperty(value="시험종류코드", example = "")
 	@Column
 	private String testTypeCode;
 	
-	@ApiModelProperty(value="시험항목", example = "", required = true)
+	@ApiModelProperty(value="시험항목", example = "")
 	@Column
 	private String testCate;
 	
-	@ApiModelProperty(value="시험부서", example = "", required = true)
+	@ApiModelProperty(value="시험부서", example = "")
 	@Column
 	private String testType;
 	
-	@ApiModelProperty(value="전송타입", example = "", required = true)
+	@ApiModelProperty(value="전송타입", example = "")
 	@Column
 	private String sendType;
+	
+	@ApiModelProperty(value="인증종류1 ", example = "방송통신 기")
+	@Column
+	private String crtfc1Name;
+	
+	@ApiModelProperty(value="인증종류2 ", example = "적합인증(방")
+	@Column
+	private String crtfc2Name;
+	
+	@ApiModelProperty(value="시험규격 ", example = "603 (전기")
+	@Column
+	private String testStndr;
+	
+	@ApiModelProperty(value="서명상태 ", example = "서명요청완료")
+	@Column
+	private String signState;
+	
+	@ApiModelProperty(value="로데이터여부 ", example = "미완료")
+	@Column
+	private String rawYn;
+	
+	@ApiModelProperty(value="시험번호 ", example = "5")
+	@Column
+	private int testSeq;
+	
+	@ApiModelProperty(value="시험상태 ", example = "EMC")
+	@Column
+	private String testState;
 	
 }

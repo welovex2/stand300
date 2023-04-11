@@ -39,7 +39,12 @@ public class SlsController {
 	@Resource(name = "SlsService")
 	private SlsService slsService;
 	
-    @ApiOperation(value = "매출리스트", notes = "결과값은 SlsDTO.Res 참고")
+    @ApiOperation(value = "매출리스트", notes = "1. 결과값은 SlsDTO.Res 참고\n"
+    										+ "2.검색박스는 공통코드 CS, 필요한항목만 노출시켜서 사용\n"
+    										+ " 고객유형(PT)\n"
+    										+ " 납부상태:미납-0, 납부-1"
+    										+ " 계산서발행여부:미발행-0, 발행-1"
+    										+ " 수정요청(MM)")
     @GetMapping(value="/list.do")
     public BasicResponse slsList(@ModelAttribute ComParam param) throws Exception{
     	
@@ -123,7 +128,11 @@ public class SlsController {
     	return res;
     }
     
-    @ApiOperation(value = "매출리스트(시험부별)", notes = "결과값은 SlsDTO.Res 참고")
+    @ApiOperation(value = "매출리스트(시험부별)", notes = "1. 결과값은 SlsDTO.Res 참고\n"
+														+ "2.검색박스는 공통코드 CS, 필요한항목만 노출시켜서 사용\n"
+														+ " 고객유형(PT)\n"
+														+ " 납부상태:미납-0, 납부-1"
+														+ " 시험부(TT)")
     @GetMapping(value="/byTestlist.do")
     public BasicResponse slsByTestList(@ModelAttribute ComParam param) throws Exception{
     	

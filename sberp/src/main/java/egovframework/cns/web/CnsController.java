@@ -56,8 +56,7 @@ public class CnsController {
     @GetMapping(value="/list.do")
     public BasicResponse cnsList(@ModelAttribute ComParam param) throws Exception{
     	
-//    	LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
-    	LoginVO user = new LoginVO();
+    	LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
     	boolean result = true;
     	String msg = "";
     	

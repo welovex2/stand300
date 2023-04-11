@@ -6,7 +6,6 @@ import egovframework.cmm.service.ComParam;
 import egovframework.cmm.service.HisDTO;
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
 import egovframework.sbk.service.SbkDTO.Req;
-import egovframework.tst.service.TestItem;
 import egovframework.tst.service.TestItemDTO;
 import egovframework.tst.service.TestItemRej;
 
@@ -25,7 +24,7 @@ public interface SbkMapper {
 	
 	boolean insertJob(Req sbk);
 	
-	List<TestItem> selectTestItemList(Req sbk);
+	List<TestItemDTO> selectTestItemList(Req sbk);
 
 	boolean update(Req sbk);
 

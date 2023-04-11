@@ -73,12 +73,53 @@
 			
 			inner join TEST_CATE_TB B
 			on A.TOP_DEPTH_SEQ = B.test_cate_seq	
-		            
+		    
+		    left join TEST_STATE_TB
+            on TEST_STATE_TB.TEST_STATE_SEQ = (
+								select TEST_STATE_SEQ
+                                from TEST_STATE_TB sub
+                                where sub.TEST_SEQ = TEST_TB.TEST_SEQ
+                                order by TEST_STATE_SEQ desc
+                                limit 1
+            )
+              
 		where 1=1
 		and TEST_ITEM_TB.state != 'D'
-		<if test="startDate != null and endDate != null">
-        	and date_format(TEST_TB.ins_dt, '%Y%m%d') between date_format(#{startDate}, '%Y%m%d') and date_format(#{endDate}, '%Y%m%d')
-        </if>
+		<if test="searchVO != null">
+	        <foreach collection="searchVO" item="item" separator="">
+	        	<choose>
+					<!-- 6	제품명 -->
+					<when test="item.searchCode == 6">and IFNULL(JOB_TB.PRDCT_NAME, '') like concat('%',#{item.searchWord},'%')</when>
+					<!-- 7	고지부담당자 -->
+					<when test="item.searchCode == 7">and FN_MEM_NAME(SBK_TB.ins_mem_id) like concat('%',#{item.searchWord},'%')</when>
+					<!-- 8	기술책임자 -->
+					<when test="item.searchCode == 8">and IFNULL(FN_MEM_NAME(TEST_ITEM_TB.rev_id), '') like concat('%',#{item.searchWord},'%')</when>
+					<!-- 9	시험담당자 -->
+					<when test="item.searchCode == 9">and IFNULL(FN_MEM_NAME(TEST_MNGR_TB.TEST_MNG_ID), '') like concat('%',#{item.searchWord},'%')</when>
+					<!-- 18	시험배정일 -->
+					<when test="item.searchCode == 18">and date_format(TEST_TB.ins_dt, '%Y%m%d') between date_format(#{item.startDate}, '%Y%m%d') and date_format(#{item.endDate}, '%Y%m%d')</when>
+					<!-- 20	예상완료일 -->
+					<when test="item.searchCode == 20">and date_format(SBK_TB.est_cmp_dt, '%Y%m%d') between date_format(#{item.startDate}, '%Y%m%d') and date_format(#{item.endDate}, '%Y%m%d')</when>
+					<!-- 22	신청구분 -->
+					<when test="item.searchCode == 22">
+						<choose>
+							<when test="item.searchWord == 1">and SG_NEW_YN=1</when>
+							<when test="item.searchWord == 2">and SG_GB_YN=1</when>
+							<when test="item.searchWord == 3">and SG_DG_YN=1</when>
+							<when test="item.searchWord == 4">and SG_ETC_YN=1</when>
+						</choose>
+					</when>
+					<!-- 23	시험부 -->
+					<when test="item.searchCode == 23">and if(TEST_TB.TEST_SEQ is null, '9999', TEST_STNDR_TB.TEST_TYPE_CODE) = #{item.searchWord}</when>
+					<!-- 26	로데이터 -->
+					<when test="item.searchCode == 26"></when>
+					<!-- 27	모델명 -->
+					<when test="item.searchCode == 27">and IFNULL(TEST_ITEM_TB.model, '') like concat('%',#{item.searchWord},'%')</when>
+					<!-- 31	시험상태 -->
+					<when test="item.searchCode == 31">and TEST_STATE_TB.STATE_CODE = #{item.searchWord}</when> 
+	        	</choose>
+			</foreach>
+		</if>
         
 	</select>
 		
@@ -150,9 +191,41 @@
             
 		where 1=1
 		and TEST_ITEM_TB.state != 'D'
-		<if test="startDate != null and endDate != null">
-        	and date_format(TEST_TB.ins_dt, '%Y%m%d') between date_format(#{startDate}, '%Y%m%d') and date_format(#{endDate}, '%Y%m%d')
-        </if>
+		<if test="searchVO != null">
+	        <foreach collection="searchVO" item="item" separator="">
+	        	<choose>
+					<!-- 6	제품명 -->
+					<when test="item.searchCode == 6">and IFNULL(JOB_TB.PRDCT_NAME, '') like concat('%',#{item.searchWord},'%')</when>
+					<!-- 7	고지부담당자 -->
+					<when test="item.searchCode == 7">and FN_MEM_NAME(SBK_TB.ins_mem_id) like concat('%',#{item.searchWord},'%')</when>
+					<!-- 8	기술책임자 -->
+					<when test="item.searchCode == 8">and IFNULL(FN_MEM_NAME(TEST_ITEM_TB.rev_id), '') like concat('%',#{item.searchWord},'%')</when>
+					<!-- 9	시험담당자 -->
+					<when test="item.searchCode == 9">and IFNULL(FN_MEM_NAME(TEST_MNGR_TB.TEST_MNG_ID), '') like concat('%',#{item.searchWord},'%')</when>
+					<!-- 18	시험배정일 -->
+					<when test="item.searchCode == 18">and date_format(TEST_TB.ins_dt, '%Y%m%d') between date_format(#{item.startDate}, '%Y%m%d') and date_format(#{item.endDate}, '%Y%m%d')</when>
+					<!-- 20	예상완료일 -->
+					<when test="item.searchCode == 20">and date_format(SBK_TB.est_cmp_dt, '%Y%m%d') between date_format(#{item.startDate}, '%Y%m%d') and date_format(#{item.endDate}, '%Y%m%d')</when>
+					<!-- 22	신청구분 -->
+					<when test="item.searchCode == 22">
+						<choose>
+							<when test="item.searchWord == 1">and SG_NEW_YN=1</when>
+							<when test="item.searchWord == 2">and SG_GB_YN=1</when>
+							<when test="item.searchWord == 3">and SG_DG_YN=1</when>
+							<when test="item.searchWord == 4">and SG_ETC_YN=1</when>
+						</choose>
+					</when>
+					<!-- 23	시험부 -->
+					<when test="item.searchCode == 23">and if(TEST_TB.TEST_SEQ is null, '9999', TEST_STNDR_TB.TEST_TYPE_CODE) = #{item.searchWord}</when>
+					<!-- 26	로데이터 -->
+					<when test="item.searchCode == 26"></when>
+					<!-- 27	모델명 -->
+					<when test="item.searchCode == 27">and IFNULL(TEST_ITEM_TB.model, '') like concat('%',#{item.searchWord},'%')</when>
+					<!-- 31	시험상태 -->
+					<when test="item.searchCode == 31">and TEST_STATE_TB.STATE_CODE = #{item.searchWord}</when> 
+	        	</choose>
+			</foreach>
+		</if>
         order by no desc
         LIMIT #{pageUnit} OFFSET #{firstIndex};
         
