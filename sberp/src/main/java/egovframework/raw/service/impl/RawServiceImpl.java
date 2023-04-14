@@ -13,13 +13,17 @@ import egovframework.raw.dto.EftDTO;
 import egovframework.raw.dto.EsdDTO;
 import egovframework.raw.dto.ReDTO;
 import egovframework.raw.dto.RsDTO;
+import egovframework.raw.dto.SurgeDTO;
 import egovframework.raw.service.MethodEsdSub;
 import egovframework.raw.service.MethodMapper;
 import egovframework.raw.service.RawAsstn;
 import egovframework.raw.service.RawCable;
 import egovframework.raw.service.RawData;
+import egovframework.raw.service.RawMac;
 import egovframework.raw.service.RawMapper;
+import egovframework.raw.service.RawMet;
 import egovframework.raw.service.RawService;
+import egovframework.raw.service.RawSpec;
 import egovframework.raw.service.RawSys;
 import egovframework.raw.service.RawTchn;
 
@@ -37,7 +41,16 @@ public class RawServiceImpl implements RawService {
 	public boolean insert(RawData req) {
 		boolean result = true;
 		
+		req.setSbkId(rawMapper.getSbkId(req.getTestSeq()));
 		rawMapper.insert(req);
+
+		// 4-2. method (시험방법), 고정리스트
+		rawMapper.insertMethod(req.getRawSeq(), req.getMethodList());
+		
+		// 기술제원
+		List<RawSpec> pIItems = req.getRawSpecList().stream().filter(t->"I".equals(t.getState())).collect(Collectors.toList());
+		if (!ObjectUtils.isEmpty(pIItems))
+			rawMapper.insertSpec(req.getRawSeq(), pIItems);
 		
 		// 기술적 요구항목
 		List<RawTchn> tIItems = req.getRawTchnList().stream().filter(t->"I".equals(t.getState())).collect(Collectors.toList());
@@ -68,6 +81,22 @@ public class RawServiceImpl implements RawService {
 		boolean result = true;
 		
 		rawMapper.update(req);
+
+		// 4-2. method (시험방법), 고정리스트
+		rawMapper.insertMethod(req.getRawSeq(), req.getMethodList());
+				
+		// 기술제원
+		List<RawSpec> pIItems = req.getRawSpecList().stream().filter(t->"I".equals(t.getState())).collect(Collectors.toList());
+		if (!ObjectUtils.isEmpty(pIItems))
+			rawMapper.insertSpec(req.getRawSeq(), pIItems);
+		
+		List<RawSpec> pUItems = req.getRawSpecList().stream().filter(t->"U".equals(t.getState())).collect(Collectors.toList());
+		if (!ObjectUtils.isEmpty(pUItems))
+			rawMapper.updateSpec(req.getRawSeq(), pUItems);
+		
+		List<RawSpec> pDItems = req.getRawSpecList().stream().filter(t->"D".equals(t.getState())).collect(Collectors.toList());
+		if (!ObjectUtils.isEmpty(pDItems))
+			rawMapper.deleteSpec(req.getRawSeq(), pDItems);
 		
 		// 기술적 요구항목
 		List<RawTchn> tIItems = req.getRawTchnList().stream().filter(t->"I".equals(t.getState())).collect(Collectors.toList());
@@ -129,6 +158,10 @@ public class RawServiceImpl implements RawService {
 	public boolean insertCe(CeDTO req) {
 		boolean result = true;
 		
+		// 기본로데이터가 없을때 로데이터 먼저 등록
+		if(req.getRawSeq() == 0)
+			req.setRawSeq(beforeRawInsert(req.getTestSeq(), req.getInsMemId()));
+		
 		methodMapper.insertCe(req);
 		
 		// 측정설비
@@ -152,6 +185,10 @@ public class RawServiceImpl implements RawService {
 	public boolean insertRe(ReDTO req) {
 		boolean result = true;
 		
+		// 기본로데이터가 없을때 로데이터 먼저 등록
+		if(req.getRawSeq() == 0)
+			req.setRawSeq(beforeRawInsert(req.getTestSeq(), req.getInsMemId()));
+		
 		methodMapper.insertRe(req);
 		
 		// 측정설비
@@ -165,6 +202,10 @@ public class RawServiceImpl implements RawService {
 	@Transactional
 	public boolean insertEsd(EsdDTO req) {
 		boolean result = true;
+		
+		// 기본로데이터가 없을때 로데이터 먼저 등록
+		if(req.getRawSeq() == 0)
+			req.setRawSeq(beforeRawInsert(req.getTestSeq(), req.getInsMemId()));
 		
 		methodMapper.insertEsd(req);
 		
@@ -195,7 +236,7 @@ public class RawServiceImpl implements RawService {
 
 	@Override
 	public RawData detail(int testSeq) {
-		return rawMapper.detail(testSeq);
+		return rawMapper.detail(testSeq); 
 	}
 
 	@Override
@@ -207,6 +248,10 @@ public class RawServiceImpl implements RawService {
 	@Transactional
 	public boolean insertRs(RsDTO req) {
 		boolean result = true;
+		
+		// 기본로데이터가 없을때 로데이터 먼저 등록
+		if(req.getRawSeq() == 0)
+			req.setRawSeq(beforeRawInsert(req.getTestSeq(), req.getInsMemId()));
 		
 		methodMapper.insertRs(req);
 		
@@ -227,6 +272,10 @@ public class RawServiceImpl implements RawService {
 	public boolean insertEft(EftDTO req) {
 		boolean result = true;
 		
+		// 기본로데이터가 없을때 로데이터 먼저 등록
+		if(req.getRawSeq() == 0)
+			req.setRawSeq(beforeRawInsert(req.getTestSeq(), req.getInsMemId()));
+		
 		methodMapper.insertEft(req);
 		
 		// 측정설비
@@ -234,6 +283,82 @@ public class RawServiceImpl implements RawService {
 			methodMapper.insertMac(req.getRawSeq(), req.getMacType(), req.getMacList());
 		
 		return result;
+	}
+
+	public int beforeRawInsert(int testSeq, String insMemId) {
+		
+		RawData req = new RawData();
+		req.setTestSeq(testSeq);
+		req.setInsMemId(insMemId);
+		req.setUdtMemId(insMemId);
+		req.setSbkId(rawMapper.getSbkId(testSeq));
+		rawMapper.insert(req);
+		
+		return req.getRawSeq();
+	}
+
+	@Override
+	public List<RawTchn> tchnList(int rawSeq) {
+		return rawMapper.tchnList(rawSeq);
+	}
+
+	@Override
+	public List<RawSpec> specList(int rawSeq) {
+		return rawMapper.specList(rawSeq);
+	}
+
+	@Override
+	public List<RawAsstn> asstnList(int rawSeq) {
+		return rawMapper.asstnList(rawSeq);
+	}
+
+	@Override
+	public List<RawSys> sysList(int rawSeq) {
+		return rawMapper.sysList(rawSeq);
+	}
+
+	@Override
+	public List<RawCable> cableList(int rawSeq) {
+		return rawMapper.cableList(rawSeq);
+	}
+
+	@Override
+	public List<RawMet> methodList(int rawSeq) {
+		return rawMapper.methodList(rawSeq);
+	}
+
+	@Override
+	public List<RawMac> macList(String machineType, int rawSeq) {
+		return methodMapper.macList(machineType, rawSeq);
+	}
+	
+	@Override
+	public List<MethodEsdSub> esdSubList(int esdSeq) {
+		return methodMapper.esdSubList(esdSeq);
+	}
+
+	@Override
+	public SurgeDTO surgeDetail(int rawSeq) {
+		return methodMapper.surgeDetail(rawSeq);
+	}
+
+	@Override
+	public boolean insertSurge(SurgeDTO req) {
+		
+		boolean result = true;
+		
+		// 기본로데이터가 없을때 로데이터 먼저 등록
+		if(req.getRawSeq() == 0)
+			req.setRawSeq(beforeRawInsert(req.getTestSeq(), req.getInsMemId()));
+		
+		methodMapper.insertSurge(req);
+		
+		// 측정설비
+		if (!ObjectUtils.isEmpty(req.getMacList()))
+			methodMapper.insertMac(req.getRawSeq(), req.getMacType(), req.getMacList());
+		
+		return result;
+		
 	}
 
 }

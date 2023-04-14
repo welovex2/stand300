@@ -17,13 +17,11 @@ public class MethodRe {
 	
 	@ApiModelProperty(value="RE_SEQ ", example = "")
 	@Column
-	@NotNull
 	private int reSeq;
 
 
 	@ApiModelProperty(value="RAW_SEQ ", example = "")
 	@Column
-	@NotNull
 	private int rawSeq;
 
 

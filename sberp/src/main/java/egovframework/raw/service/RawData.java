@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.Column;
-import javax.validation.constraints.NotNull;
 
+import egovframework.raw.dto.SetupDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -18,24 +18,19 @@ public class RawData {
 	
 	@ApiModelProperty(value="시험번호+RD+001 ", example = "")
 	@Column
-	@NotNull
 	private int rawSeq;
 
 	@ApiModelProperty(value="신청서번호 ", example = "")
 	@Column
-	@NotNull
 	private String sbkId;
 
 	@ApiModelProperty(value="신청서별 로데이터 번호 ", example = "")
 	@Column
-	@NotNull
 	private int sbkNo;
 	
 	@ApiModelProperty(value="시험번호 ", example = "")
 	@Column
-	@NotNull
 	private int testSeq;
-	
 
 
 	@ApiModelProperty(value="신청인 ", example = "드림에스앤아이")
@@ -167,346 +162,10 @@ public class RawData {
 	@Column
 	private int classEtcYn;
 
-
-	@ApiModelProperty(value="METHOD_CE ", example = "1")
+	@ApiModelProperty(value="4-2. method (시험방법)", example = "")
 	@Column
-	private int methodCeYn;
-
-
-	@ApiModelProperty(value="METHOD_RE(Below 1㎓) ", example = "1")
-	@Column
-	private int methodRebYn;
-
-
-	@ApiModelProperty(value="METHOD_RE(Above 1㎓) ", example = "1")
-	@Column
-	private int methodReaYn;
-
-
-	@ApiModelProperty(value="METHOD_DP ", example = "0")
-	@Column
-	private int methodDpYn;
-
-
-	@ApiModelProperty(value="METHOD_CLICK ", example = "0")
-	@Column
-	private int methodClickYn;
-
-
-	@ApiModelProperty(value="METHOD_HAR ", example = "0")
-	@Column
-	private int methodHarYn;
-
-
-	@ApiModelProperty(value="METHOD_FLICKER ", example = "0")
-	@Column
-	private int methodFlickerYn;
-
-
-	@ApiModelProperty(value="METHOD_ETC1 ", example = "METHOD_ETC1")
-	@Column
-	private String methodEtc1;
-
-
-	@ApiModelProperty(value="METHOD_ETC1 ", example = "0")
-	@Column
-	private int methodEtc1Yn;
-
-
-	@ApiModelProperty(value="METHOD_ETC2 ", example = "METHOD_ETC2")
-	@Column
-	private String methodEtc2;
-
-
-	@ApiModelProperty(value="METHOD_ETC2 ", example = "0")
-	@Column
-	private int methodEtc2Yn;
-
-
-	@ApiModelProperty(value="시험규격_ETC1 ", example = "KS C 9832:2019")
-	@Column
-	private String testStndrEtc1;
-
-
-	@ApiModelProperty(value="시험규격_ETC2 ", example = "KS C 9832:2019")
-	@Column
-	private String testStndrEtc2;
-
-
-	@ApiModelProperty(value="시험규격_ETC3 ", example = "KS C 9832:2019")
-	@Column
-	private String testStndrEtc3;
-
-
-	@ApiModelProperty(value="시험규격_ETC4 ", example = "시험규격_ETC4")
-	@Column
-	private String testStndrEtc4;
-
-
-	@ApiModelProperty(value="시험규격_ETC5 ", example = "시험규격_ETC5")
-	@Column
-	private String testStndrEtc5;
-
-
-	@ApiModelProperty(value="시험규격_ETC6 ", example = "시험규격_ETC6")
-	@Column
-	private String testStndrEtc6;
-
-
-	@ApiModelProperty(value="시험규격_ETC7 ", example = "시험규격_ETC7")
-	@Column
-	private String testStndrEtc7;
-
-
-	@ApiModelProperty(value="시험규격_ETC8 ", example = "시험규격_ETC8")
-	@Column
-	private String testStndrEtc8;
-
-
-	@ApiModelProperty(value="시험규격_ETC9 ", example = "시험규격_ETC9")
-	@Column
-	private String testStndrEtc9;
-
-
-	@ApiModelProperty(value="TEST_STNDR_ETC1_YN ", example = "1")
-	@Column
-	private int testStndrEtc1Yn;
-
-
-	@ApiModelProperty(value="TEST_STNDR_ETC2_YN ", example = "1")
-	@Column
-	private int testStndrEtc2Yn;
-
-
-	@ApiModelProperty(value="TEST_STNDR_ETC3_YN ", example = "1")
-	@Column
-	private int testStndrEtc3Yn;
-
-
-	@ApiModelProperty(value="TEST_STNDR_ETC4_YN ", example = "0")
-	@Column
-	private int testStndrEtc4Yn;
-
-
-	@ApiModelProperty(value="TEST_STNDR_ETC5_YN ", example = "0")
-	@Column
-	private int testStndrEtc5Yn;
-
-
-	@ApiModelProperty(value="TEST_STNDR_ETC6_YN ", example = "0")
-	@Column
-	private int testStndrEtc6Yn;
-
-
-	@ApiModelProperty(value="TEST_STNDR_ETC7_YN ", example = "0")
-	@Column
-	private int testStndrEtc7Yn;
-
-
-	@ApiModelProperty(value="TEST_STNDR_ETC8_YN ", example = "0")
-	@Column
-	private int testStndrEtc8Yn;
-
-
-	@ApiModelProperty(value="TEST_STNDR_ETC9_YN ", example = "0")
-	@Column
-	private int testStndrEtc9Yn;
-
-
-	@ApiModelProperty(value="시험항목_ESD ", example = "1")
-	@Column
-	private int testItemEsdYn;
-
-
-	@ApiModelProperty(value="시험항목_RS ", example = "1")
-	@Column
-	private int testItemRsYn;
-
-
-	@ApiModelProperty(value="시험항목_EFT ", example = "1")
-	@Column
-	private int testItemEftYn;
-
-
-	@ApiModelProperty(value="시험항목_SUR ", example = "1")
-	@Column
-	private int testItemSurYn;
-
-
-	@ApiModelProperty(value="시험항목_CS ", example = "1")
-	@Column
-	private int testItemCsYn;
-
-
-	@ApiModelProperty(value="시험항목_M-Field ", example = "0")
-	@Column
-	private int testItemMfdYn;
-
-
-	@ApiModelProperty(value="시험항목_VDP ", example = "1")
-	@Column
-	private int testItemVdpYn;
-
-
-	@ApiModelProperty(value="시험항목_CTI ", example = "0")
-	@Column
-	private int testItemCtiYn;
-
-
-	@ApiModelProperty(value="시험항목_ETC ", example = "시험항목_ETC")
-	@Column
-	private String testItemEtc;
-
-
-	@ApiModelProperty(value="시험항목_ETC ", example = "0")
-	@Column
-	private int testItemEtcYn;
-
-
-	@ApiModelProperty(value="시험규격_KSC1 ", example = "1")
-	@Column
-	private int testStndr2Ksc1Yn;
-
-
-	@ApiModelProperty(value="시험규격_KSC2 ", example = "1")
-	@Column
-	private int testStndr2Ksc2Yn;
-
-
-	@ApiModelProperty(value="시험규격_KSC3 ", example = "1")
-	@Column
-	private int testStndr2Ksc3Yn;
-
-
-	@ApiModelProperty(value="시험규격_KSC4 ", example = "1")
-	@Column
-	private int testStndr2Ksc4Yn;
-
-
-	@ApiModelProperty(value="시험규격_KSC5 ", example = "1")
-	@Column
-	private int testStndr2Ksc5Yn;
-
-
-	@ApiModelProperty(value="시험규격_KSC6 ", example = "0")
-	@Column
-	private int testStndr2Ksc6Yn;
-
-
-	@ApiModelProperty(value="시험규격_KSC7 ", example = "1")
-	@Column
-	private int testStndr2Ksc7Yn;
-
-
-	@ApiModelProperty(value="시험규격_KSR ", example = "0")
-	@Column
-	private int testStndr2KsrYn;
-
-
-	@ApiModelProperty(value="시험규격_KS_ETC ", example = "시험규격_KS_ETC")
-	@Column
-	private String testStndr2Etc;
-
-
-	@ApiModelProperty(value="시험규격_KS_ETC ", example = "0")
-	@Column
-	private int testStndr2EtcYn;
-
-
-	@ApiModelProperty(value="시험규격_KS_ETC1 ", example = "시험규격_KS_ETC1")
-	@Column
-	private String testStndr2KsEtc1;
-
-
-	@ApiModelProperty(value="시험규격_KS_ETC2 ", example = "시험규격_KS_ETC2")
-	@Column
-	private String testStndr2KsEtc2;
-
-
-	@ApiModelProperty(value="시험규격_KS_ETC3 ", example = "시험규격_KS_ETC3")
-	@Column
-	private String testStndr2KsEtc3;
-
-
-	@ApiModelProperty(value="시험규격_KS_ETC4 ", example = "시험규격_KS_ETC4")
-	@Column
-	private String testStndr2KsEtc4;
-
-
-	@ApiModelProperty(value="시험규격_KS_ETC5 ", example = "시험규격_KS_ETC5")
-	@Column
-	private String testStndr2KsEtc5;
-
-
-	@ApiModelProperty(value="시험규격_KS_ETC6 ", example = "시험규격_KS_ETC6")
-	@Column
-	private String testStndr2KsEtc6;
-
-
-	@ApiModelProperty(value="시험규격_KS_ETC7 ", example = "시험규격_KS_ETC7")
-	@Column
-	private String testStndr2KsEtc7;
-
-
-	@ApiModelProperty(value="시험규격_KS_ETC8 ", example = "시험규격_KS_ETC8")
-	@Column
-	private String testStndr2KsEtc8;
-
-
-	@ApiModelProperty(value="시험규격_KS_ETC9 ", example = "시험규격_KS_ETC9")
-	@Column
-	private String testStndr2KsEtc9;
-
-
-	@ApiModelProperty(value="시험규격_KS_ETC1 ", example = "0")
-	@Column
-	private int testStndr2KsEtc1Yn;
-
-
-	@ApiModelProperty(value="시험규격_KS_ETC2 ", example = "0")
-	@Column
-	private int testStndr2KsEtc2Yn;
-
-
-	@ApiModelProperty(value="시험규격_KS_ETC3 ", example = "0")
-	@Column
-	private int testStndr2KsEtc3Yn;
-
-
-	@ApiModelProperty(value="시험규격_KS_ETC4 ", example = "0")
-	@Column
-	private int testStndr2KsEtc4Yn;
-
-
-	@ApiModelProperty(value="시험규격_KS_ETC5 ", example = "0")
-	@Column
-	private int testStndr2KsEtc5Yn;
-
-
-	@ApiModelProperty(value="시험규격_KS_ETC6 ", example = "0")
-	@Column
-	private int testStndr2KsEtc6Yn;
-
-
-	@ApiModelProperty(value="시험규격_KS_ETC7 ", example = "0")
-	@Column
-	private int testStndr2KsEtc7Yn;
-
-
-	@ApiModelProperty(value="시험규격_KS_ETC8 ", example = "0")
-	@Column
-	private int testStndr2KsEtc8Yn;
-
-
-	@ApiModelProperty(value="시험규격_KS_ETC9 ", example = "0")
-	@Column
-	private int testStndr2KsEtc9Yn;
-
-
-	@ApiModelProperty(value="특이사항 ", example = "- B급 기기의 방송수신기 튜너포트 자동전압 전도성 방해 시험: 피시험기기는 방송수신기 튜너포트가 없으므로 시험을 제외함")
-	@Column
-	private String memo;
-
+	private List<RawMet> methodList;
+	
 
 	@ApiModelProperty(value="제품설명 ", example = "감시를 위해 배치되는 디지털 비디오 카메라")
 	@Column
@@ -522,6 +181,9 @@ public class RawData {
 	@Column
 	private String clockFrqnc;
 
+	@ApiModelProperty(value="클럭수파수 ", example = "RC")
+	@Column
+	private String clockFrqncCode;
 
 	@ApiModelProperty(value="정격전원 ", example = "-DC 12 V (직류전원장치)")
 	@Column
@@ -657,6 +319,9 @@ public class RawData {
 	@Column
 	private String state;
 
+	@ApiModelProperty(value="Technical specifications (기술제원) ", example = "")
+	@Column
+	private List<RawSpec> rawSpecList;
 	
 	@ApiModelProperty(value="Technical Requirements (기술적 요구항목) ", example = "")
 	@Column
@@ -673,4 +338,12 @@ public class RawData {
 	@ApiModelProperty(value="Type of Cable Used (접속 케이블) ", example = "")
 	@Column
 	private List<RawCable> rawCableList;
+	
+	@ApiModelProperty(value="EUT Modifications (보완사항)", example = "")
+	@Column
+	private List<String> modFileList;
+	
+	@ApiModelProperty(value="Test Set-up Configuraiotn for EUT", example = "")
+	@Column
+	private List<SetupDTO> setupList;
 }

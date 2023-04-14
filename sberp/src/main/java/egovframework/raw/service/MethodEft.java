@@ -17,13 +17,11 @@ public class MethodEft {
 	
 	@ApiModelProperty(value="EFT_SEQ ", example = "")
 	@Column
-	@NotNull
 	private int eftSeq;
 
 
 	@ApiModelProperty(value="RAW_SEQ ", example = "")
 	@Column
-	@NotNull
 	private int rawSeq;
 
 
@@ -102,17 +100,17 @@ public class MethodEft {
 	private String brmtPlus;
 
 
-	@ApiModelProperty(value="교류전원 ", example = "")
+	@ApiModelProperty(value="교류전원 단자 ", example = "")
 	@Column
 	private String acPower;
 
 
-	@ApiModelProperty(value="직류전원 ", example = "")
+	@ApiModelProperty(value="직류전원 단자 ", example = "")
 	@Column
 	private String dcPower;
 
 
-	@ApiModelProperty(value="통신단자 ", example = "")
+	@ApiModelProperty(value="신호선및통신단자 ", example = "")
 	@Column
 	private String commTml;
 
@@ -197,7 +195,7 @@ public class MethodEft {
 	private String signUrl;
 
 
-	@ApiModelProperty(value="시험결과_CODE ", example = "")
+	@ApiModelProperty(value="시험결과_CODE ", example = "1")
 	@Column
 	private String resultCode;
 
@@ -256,7 +254,57 @@ public class MethodEft {
 	@Column
 	private String powerEtc2;
 
+	
+	@ApiModelProperty(value="교류전원_ETC3 ", example = "")
+	@Column
+	private String powerEtc3;
+	
+	
+	@ApiModelProperty(value="교류전원_ETC4 ", example = "")
+	@Column
+	private String powerEtc4;
+	
+	
+	@ApiModelProperty(value="교류전원_ETC5 ", example = "")
+	@Column
+	private String powerEtc5;
+	
+	
+	@ApiModelProperty(value="교류전원_ETC6 ", example = "")
+	@Column
+	private String powerEtc6;
+	
+	
+	@ApiModelProperty(value="교류전원_ETC1 ", example = "")
+	@Column
+	private int powerEtc1Yn;
 
+
+	@ApiModelProperty(value="교류전원_ETC2 ", example = "")
+	@Column
+	private int powerEtc2Yn;
+
+	
+	@ApiModelProperty(value="교류전원_ETC3 ", example = "")
+	@Column
+	private int powerEtc3Yn;
+	
+	
+	@ApiModelProperty(value="교류전원_ETC4 ", example = "")
+	@Column
+	private int powerEtc4Yn;
+	
+	
+	@ApiModelProperty(value="교류전원_ETC5 ", example = "")
+	@Column
+	private int powerEtc5Yn;
+	
+	
+	@ApiModelProperty(value="교류전원_ETC6 ", example = "")
+	@Column
+	private int powerEtc6Yn;
+	
+	
 	@ApiModelProperty(value="직류전원_P_YN ", example = "")
 	@Column
 	private int dcPowerPYn;
@@ -302,47 +350,47 @@ public class MethodEft {
 	private int sgnlEtc3Yn;
 
 
-	@ApiModelProperty(value="교류전원_L_CODE ", example = "")
+	@ApiModelProperty(value="교류전원_L_CODE ", example = "A")
 	@Column
 	private String powerLCode;
 
 
-	@ApiModelProperty(value="교류전원_LN_CODE ", example = "")
+	@ApiModelProperty(value="교류전원_LN_CODE ", example = "A")
 	@Column
 	private String powerLnCode;
 
 
-	@ApiModelProperty(value="교류전원_LNPE_CODE ", example = "")
+	@ApiModelProperty(value="교류전원_LNPE_CODE ", example = "A")
 	@Column
 	private String powerLnpeCode;
 
 
-	@ApiModelProperty(value="교류전원_ETC1_CODE ", example = "")
+	@ApiModelProperty(value="교류전원_ETC1_CODE ", example = "A")
 	@Column
 	private String powerEtc1Code;
 
 
-	@ApiModelProperty(value="교류전원_ETC2_CODE ", example = "")
+	@ApiModelProperty(value="교류전원_ETC2_CODE ", example = "A")
 	@Column
 	private String powerEtc2Code;
 
 
-	@ApiModelProperty(value="직류전원_P_YN_CODE ", example = "")
+	@ApiModelProperty(value="직류전원_P_YN_CODE ", example = "A")
 	@Column
 	private String dcPowerPCode;
 
 
-	@ApiModelProperty(value="신호선_ETC1_CODE ", example = "")
+	@ApiModelProperty(value="신호선_ETC1_CODE ", example = "A")
 	@Column
 	private String sgnEtc1Code;
 
 
-	@ApiModelProperty(value="신호선_ETC2_CODE ", example = "")
+	@ApiModelProperty(value="신호선_ETC2_CODE ", example = "A")
 	@Column
 	private String sgnEtc2Code;
 
 
-	@ApiModelProperty(value="신호선_ETC3_CODE ", example = "")
+	@ApiModelProperty(value="신호선_ETC3_CODE ", example = "A")
 	@Column
 	private String sgnEtc3Code;
 

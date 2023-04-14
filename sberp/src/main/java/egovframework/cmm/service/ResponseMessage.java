@@ -17,11 +17,12 @@ public class ResponseMessage {
     
     public static final String NO_DATA = "데이터가 없습니다";
     
+    public static final String CHECK_DATA = "필수입력값을 확인하세요";
     public static final String DUPLICATE_SLS = "이미등록된 매출데이터가 있습니다";
     public static final String DUPLICATE_QUO = "이미등록된 견적서가 있습니다";
     public static final String DUPLICATE_SBK = "이미등록된 신청서가 있습니다";
     public static final String DUPLICATE_CNS = "이미등록된 상담서가 있습니다";
     public static final String DUPLICATE_TEST = "이미등록된 시험이 있습니다";
     public static final String DUPLICATE_RAW = "이미등록된 로데이터가 있습니다";
-    
+    public static final String DUPLICATE_RAW_BASIC = "이미등록된 로데이터 기본정보가 있습니다";
 }

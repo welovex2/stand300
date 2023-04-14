@@ -16,4 +16,5 @@ public class SetupDTO {
 	@Null
 	private MultipartFile image;
 	private String title;
+	private String imageUrl;
 }

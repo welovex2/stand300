@@ -14,6 +14,10 @@ import lombok.ToString;
 @Getter @Setter @ToString(callSuper = true)
 public class RsDTO extends MethodRs {
 
+	@ApiModelProperty(value="시험고유번호", example = "15", hidden = true)
+	@Column
+	int testSeq;
+	
 	@ApiModelProperty(value="측정설비 종류(공통코드 : TM)", example = "CE", hidden = true)
 	@Column
 	String macType;

@@ -18,15 +18,13 @@ import lombok.ToString;
 @ApiModel(description = "로데이터 > CE")
 @Getter @Setter @ToString
 public class MethodCe {
-	@ApiModelProperty(value="CE_SEQ ", example = "")
+	@ApiModelProperty(value="CE_SEQ ", example = "", hidden = true)
 	@Column
-	@NotNull
 	private int ceSeq;
 
 
 	@ApiModelProperty(value="로데이터 SEQ ", example = "")
 	@Column
-	@NotNull
 	private int rawSeq;
 
 

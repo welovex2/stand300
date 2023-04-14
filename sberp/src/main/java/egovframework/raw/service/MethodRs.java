@@ -17,13 +17,11 @@ public class MethodRs {
 	
 	@ApiModelProperty(value="RS_SEQ ", example = "")
 	@Column
-	@NotNull
 	private int rsSeq;
 
 
 	@ApiModelProperty(value="RAW_SEQ ", example = "")
 	@Column
-	@NotNull
 	private int rawSeq;
 
 
@@ -52,22 +50,22 @@ public class MethodRs {
 	private int varYYn;
 
 
-	@ApiModelProperty(value="ROOM1_YN ", example = "")
+	@ApiModelProperty(value="RS 반무반사실 #1_YN ", example = "")
 	@Column
 	private int room1Yn;
 
 
-	@ApiModelProperty(value="시험장소2_YN ", example = "")
+	@ApiModelProperty(value="RS 반무반사실 #2_YN ", example = "")
 	@Column
 	private int room2Yn;
 
 
-	@ApiModelProperty(value="시험장소2_YN ", example = "")
+	@ApiModelProperty(value="시험장소_TEXT ", example = "")
 	@Column
 	private String roomEtc;
 
 
-	@ApiModelProperty(value="시험장소2_YN ", example = "")
+	@ApiModelProperty(value="시험장소_YN ", example = "")
 	@Column
 	private int roomEtcYn;
 
@@ -127,7 +125,7 @@ public class MethodRs {
 	private int antn3mYn;
 
 
-	@ApiModelProperty(value="스위프15_YN ", example = "")
+	@ApiModelProperty(value="스위프1.5 x 10-3 decades/s_YN ", example = "")
 	@Column
 	private int swep15Yn;
 
@@ -257,42 +255,42 @@ public class MethodRs {
 	private String resultCode;
 
 
-	@ApiModelProperty(value="수평_전면_CODE ", example = "")
+	@ApiModelProperty(value="수평_전면_CODE ", example = "A")
 	@Column
 	private String hFCode;
 
 
-	@ApiModelProperty(value="수평_후면_CODE ", example = "")
+	@ApiModelProperty(value="수평_후면_CODE ", example = "B")
 	@Column
 	private String hBCode;
 
 
-	@ApiModelProperty(value="수평_우측_CODE ", example = "")
+	@ApiModelProperty(value="수평_우측_CODE ", example = "C")
 	@Column
 	private String hRCode;
 
 
-	@ApiModelProperty(value="수평_좌측_CODE ", example = "")
+	@ApiModelProperty(value="수평_좌측_CODE ", example = "A")
 	@Column
 	private String hLCode;
 
 
-	@ApiModelProperty(value="수직_전면_CODE ", example = "")
+	@ApiModelProperty(value="수직_전면_CODE ", example = "B")
 	@Column
 	private String vFCode;
 
 
-	@ApiModelProperty(value="수직_후면_CODE ", example = "")
+	@ApiModelProperty(value="수직_후면_CODE ", example = "C")
 	@Column
 	private String vBCode;
 
 
-	@ApiModelProperty(value="수직_우측_CODE ", example = "")
+	@ApiModelProperty(value="수직_우측_CODE ", example = "A")
 	@Column
 	private String vRCode;
 
 
-	@ApiModelProperty(value="수직_좌측_CODE ", example = "")
+	@ApiModelProperty(value="수직_좌측_CODE ", example = "B")
 	@Column
 	private String vLCode;
 
@@ -317,12 +315,12 @@ public class MethodRs {
 	private int audioFearYn;
 
 
-	@ApiModelProperty(value="오디오1_CODE ", example = "")
+	@ApiModelProperty(value="오디오1_CODE ", example = "A")
 	@Column
 	private String audio1Code;
 
 
-	@ApiModelProperty(value="오디오2_CODE ", example = "")
+	@ApiModelProperty(value="오디오2_CODE ", example = "A")
 	@Column
 	private String audio2Code;
 
@@ -347,12 +345,12 @@ public class MethodRs {
 	private int spkrFearYn;
 
 
-	@ApiModelProperty(value="스피커1_CODE ", example = "")
+	@ApiModelProperty(value="스피커1_CODE ", example = "A")
 	@Column
 	private String spkr1Code;
 
 
-	@ApiModelProperty(value="스피커2_CODE ", example = "")
+	@ApiModelProperty(value="스피커2_CODE ", example = "A")
 	@Column
 	private String spkr2Code;
 
@@ -367,12 +365,12 @@ public class MethodRs {
 	private int comm1AcstYn;
 
 
-	@ApiModelProperty(value="통신단말1_CODE1 ", example = "")
+	@ApiModelProperty(value="통신단말1_CODE1 ", example = "A")
 	@Column
 	private String comm1Code1;
 
 
-	@ApiModelProperty(value="통신단말1_CODE2 ", example = "")
+	@ApiModelProperty(value="통신단말1_CODE2 ", example = "B")
 	@Column
 	private String comm1Code2;
 
@@ -387,12 +385,12 @@ public class MethodRs {
 	private int comm2AcstYn;
 
 
-	@ApiModelProperty(value="통신단말2_CODE1 ", example = "")
+	@ApiModelProperty(value="통신단말2_CODE1 ", example = "B")
 	@Column
 	private String comm2Code1;
 
 
-	@ApiModelProperty(value="통신단말2_CODE2 ", example = "")
+	@ApiModelProperty(value="통신단말2_CODE2 ", example = "C")
 	@Column
 	private String comm2Code2;
 

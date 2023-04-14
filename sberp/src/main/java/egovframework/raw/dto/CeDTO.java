@@ -14,6 +14,10 @@ import lombok.ToString;
 @Getter @Setter @ToString(callSuper = true)
 public class CeDTO extends MethodCe {
 
+	@ApiModelProperty(value="시험고유번호", example = "15", hidden = true)
+	@Column
+	int testSeq;
+	
 	@ApiModelProperty(value="측정설비 종류(공통코드 : TM)", example = "CE")
 	@Column
 	String macType;
@@ -22,5 +26,7 @@ public class CeDTO extends MethodCe {
 	@Column
 	List<RawMac> macList;
 	
-	
+	@ApiModelProperty(value="시험결과 별도첨부 리스트", example = "")
+	@Column
+	List<String> resultList;
 }

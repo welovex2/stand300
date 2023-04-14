@@ -140,6 +140,7 @@
 			B.name crtfc1Name,
 		    A.name crtfc2Name,
 		    fn_code_name(TEST_STNDR_TB.TEST_TYPE_CODE,'TT') TEST_TYPE,
+		    TEST_STNDR_TB.TEST_STNDR_SEQ,
 		    TEST_STNDR_TB.TEST_STNDR,
 		    TEST_ITEM_TB.model,
 		    ifnull(FN_MEM_NAME(TEST_ITEM_TB.rev_id), '-') RevName,
@@ -147,6 +148,7 @@
 			ifnull(FN_POS_NAME(TEST_MNGR_TB.TEST_MNG_ID), '') TestMngPos,
 			ifnull(TEST_MNGR_TB.TEST_MNG_ID, '') TEST_MNG_ID,
 		    FN_MEM_NAME(SBK_TB.ins_mem_id) memName,
+		    ifnull(RAW_TB.raw_Seq, '') raw_Seq,
 		    '-' rawState
 		    
 		from TEST_ITEM_TB
@@ -189,6 +191,8 @@
                                 limit 1
             )
             
+            left join RAW_TB
+            on TEST_TB.test_seq = RAW_TB.test_seq
 		where 1=1
 		and TEST_ITEM_TB.state != 'D'
 		<if test="searchVO != null">

@@ -7,8 +7,10 @@ import org.apache.ibatis.annotations.Param;
 import egovframework.raw.dto.CeDTO;
 import egovframework.raw.dto.EftDTO;
 import egovframework.raw.dto.EsdDTO;
+import egovframework.raw.dto.RawSearchDTO;
 import egovframework.raw.dto.ReDTO;
 import egovframework.raw.dto.RsDTO;
+import egovframework.raw.dto.SurgeDTO;
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
 
 @Mapper("MethodMapper")
@@ -45,5 +47,13 @@ public interface MethodMapper {
 	EftDTO eftDetail(int rawSeq);
 
 	boolean insertEft(EftDTO req);
+
+	public List<RawMac> macList(@Param("machineType") String machineType, @Param("rawSeq") int rawSeq);
+
+	public List<MethodEsdSub> esdSubList(int esdSeq);
+
+	public SurgeDTO surgeDetail(int rawSeq);
+
+	public boolean insertSurge(SurgeDTO req);
 
 }

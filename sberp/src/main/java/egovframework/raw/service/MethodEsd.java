@@ -18,13 +18,11 @@ public class MethodEsd {
 	
 	@ApiModelProperty(value="ESD_SEQ ", example = "")
 	@Column
-	@NotNull
 	private int esdSeq;
 
 
 	@ApiModelProperty(value="RAW_SEQ ", example = "")
 	@Column
-	@NotNull
 	private int rawSeq;
 
 
@@ -118,7 +116,7 @@ public class MethodEsd {
 	private int dcConYn;
 
 
-	@ApiModelProperty(value="방전임피던스_YN ", example = "")
+	@ApiModelProperty(value="방전임피던스_YN (330W / 150pF ± 10%)", example = "")
 	@Column
 	private int dcImpYn;
 
@@ -313,12 +311,12 @@ public class MethodEsd {
 	private int indrcHYn;
 
 
-	@ApiModelProperty(value="INDRC_H_RESULT_CODE ", example = "")
+	@ApiModelProperty(value="간접_수평결합면_결과_CODE ", example = "")
 	@Column
 	private String indrcHResultCode;
 
 
-	@ApiModelProperty(value="간접_접촉방전1_MEMO ", example = "")
+	@ApiModelProperty(value="간접_수평결합면_MEMO ", example = "")
 	@Column
 	private String indrcHMemo;
 
@@ -328,12 +326,12 @@ public class MethodEsd {
 	private int indrcVYn;
 
 
-	@ApiModelProperty(value="간접_접촉반전2_결과_CODE ", example = "")
+	@ApiModelProperty(value="간접_수직결합면_결과_CODE ", example = "")
 	@Column
 	private String indrcVResultCode;
 
 
-	@ApiModelProperty(value="간접_접촉방전2_MEMO ", example = "")
+	@ApiModelProperty(value="간접_수직결합면_MEMO ", example = "")
 	@Column
 	private String indrcVMemo;
 

@@ -2,7 +2,17 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="egovframework.raw.service.RawMapper">
 
-
+	<select id="getSbkId" parameterType="int" resultType="String">
+		select FN_GET_SEQSTRING('SB',JOB_TB.sbk_ym,'G',JOB_TB.sbk_seq) sbkId 
+		from TEST_TB
+			inner join TEST_ITEM_TB
+		    on TEST_TB.TEST_ITEM_SEQ = TEST_ITEM_TB.TEST_ITEM_SEQ
+		    inner join JOB_TB
+		    on TEST_ITEM_TB.QUO_YM = JOB_TB.QUO_YM
+		    and TEST_ITEM_TB.QUO_SEQ = JOB_TB.QUO_SEQ
+		where TEST_SEQ = #{testSeq}		
+	</select>
+	
 	<insert id="insert" parameterType="rawData">
 		<selectKey resultType="int" keyProperty="rawSeq" order="BEFORE">
 	        SELECT ifnull(MAX(raw_seq)+1,1) rawSeq FROM RAW_TB
@@ -19,10 +29,10 @@
 			MNFCT_SERIAL,
 			MNFCT_CMPNY,
 			MNFCT_CNTRY,
-			RCPT_DT,
+			<if test="rcptDt != null and rcptDt != ''">RCPT_DT,</if>
 			REPORT_NO,
-			TEST_S_DT,
-			TEST_E_DT,
+			<if test="testSDt != null and testSDt != ''">TEST_S_DT,</if>
+			<if test="testEDt != null and testEDt != ''">TEST_E_DT,</if>
 			TEST_BY,
 			TEST_SIGN_URL,
 			REV_BY,
@@ -39,77 +49,10 @@
 			CLASS_B_YN,
 			CLASS_ETC,
 			CLASS_ETC_YN,
-			METHOD_CE_YN,
-			METHOD_REB_YN,
-			METHOD_REA_YN,
-			METHOD_DP_YN,
-			METHOD_CLICK_YN,
-			METHOD_HAR_YN,
-			METHOD_FLICKER_YN,
-			METHOD_ETC1,
-			METHOD_ETC1_YN,
-			METHOD_ETC2,
-			METHOD_ETC2_YN,
-			TEST_STNDR_ETC1,
-			TEST_STNDR_ETC2,
-			TEST_STNDR_ETC3,
-			TEST_STNDR_ETC4,
-			TEST_STNDR_ETC5,
-			TEST_STNDR_ETC6,
-			TEST_STNDR_ETC7,
-			TEST_STNDR_ETC8,
-			TEST_STNDR_ETC9,
-			TEST_STNDR_ETC1_YN,
-			TEST_STNDR_ETC2_YN,
-			TEST_STNDR_ETC3_YN,
-			TEST_STNDR_ETC4_YN,
-			TEST_STNDR_ETC5_YN,
-			TEST_STNDR_ETC6_YN,
-			TEST_STNDR_ETC7_YN,
-			TEST_STNDR_ETC8_YN,
-			TEST_STNDR_ETC9_YN,
-			TEST_ITEM_ESD_YN,
-			TEST_ITEM_RS_YN,
-			TEST_ITEM_EFT_YN,
-			TEST_ITEM_SUR_YN,
-			TEST_ITEM_CS_YN,
-			TEST_ITEM_MFD_YN,
-			TEST_ITEM_VDP_YN,
-			TEST_ITEM_CTI_YN,
-			TEST_ITEM_ETC,
-			TEST_ITEM_ETC_YN,
-			TEST_STNDR2_KSC1_YN,
-			TEST_STNDR2_KSC2_YN,
-			TEST_STNDR2_KSC3_YN,
-			TEST_STNDR2_KSC4_YN,
-			TEST_STNDR2_KSC5_YN,
-			TEST_STNDR2_KSC6_YN,
-			TEST_STNDR2_KSC7_YN,
-			TEST_STNDR2_KSR_YN,
-			TEST_STNDR2_ETC,
-			TEST_STNDR2_ETC_YN,
-			TEST_STNDR2_KS_ETC1,
-			TEST_STNDR2_KS_ETC2,
-			TEST_STNDR2_KS_ETC3,
-			TEST_STNDR2_KS_ETC4,
-			TEST_STNDR2_KS_ETC5,
-			TEST_STNDR2_KS_ETC6,
-			TEST_STNDR2_KS_ETC7,
-			TEST_STNDR2_KS_ETC8,
-			TEST_STNDR2_KS_ETC9,
-			TEST_STNDR2_KS_ETC1_YN,
-			TEST_STNDR2_KS_ETC2_YN,
-			TEST_STNDR2_KS_ETC3_YN,
-			TEST_STNDR2_KS_ETC4_YN,
-			TEST_STNDR2_KS_ETC5_YN,
-			TEST_STNDR2_KS_ETC6_YN,
-			TEST_STNDR2_KS_ETC7_YN,
-			TEST_STNDR2_KS_ETC8_YN,
-			TEST_STNDR2_KS_ETC9_YN,
-			MEMO,
 			PRD_EXPLN,
 			PRD_USES,
 			CLOCK_FRQNC,
+			CLOCK_FRQNC_CODE,
 			RATED_POWER,
 			TEST_POWER,
 			USER_PORT,
@@ -147,10 +90,10 @@
 			#{mnfctSerial},
 			#{mnfctCmpny},
 			#{mnfctCntry},
-			#{rcptDt},
+			<if test="rcptDt != null and rcptDt != ''">#{rcptDt},</if>
 			#{reportNo},
-			#{testSDt},
-			#{testEDt},
+			<if test="testSDt != null and testSDt != ''">#{testSDt},</if>
+			<if test="testEDt != null and testEDt != ''">#{testEDt},</if>
 			#{testBy},
 			#{testSignUrl},
 			#{revBy},
@@ -167,77 +110,10 @@
 			#{classBYn},
 			#{classEtc},
 			#{classEtcYn},
-			#{methodCeYn},
-			#{methodRebYn},
-			#{methodReaYn},
-			#{methodDpYn},
-			#{methodClickYn},
-			#{methodHarYn},
-			#{methodFlickerYn},
-			#{methodEtc1},
-			#{methodEtc1Yn},
-			#{methodEtc2},
-			#{methodEtc2Yn},
-			#{testStndrEtc1},
-			#{testStndrEtc2},
-			#{testStndrEtc3},
-			#{testStndrEtc4},
-			#{testStndrEtc5},
-			#{testStndrEtc6},
-			#{testStndrEtc7},
-			#{testStndrEtc8},
-			#{testStndrEtc9},
-			#{testStndrEtc1Yn},
-			#{testStndrEtc2Yn},
-			#{testStndrEtc3Yn},
-			#{testStndrEtc4Yn},
-			#{testStndrEtc5Yn},
-			#{testStndrEtc6Yn},
-			#{testStndrEtc7Yn},
-			#{testStndrEtc8Yn},
-			#{testStndrEtc9Yn},
-			#{testItemEsdYn},
-			#{testItemRsYn},
-			#{testItemEftYn},
-			#{testItemSurYn},
-			#{testItemCsYn},
-			#{testItemMfdYn},
-			#{testItemVdpYn},
-			#{testItemCtiYn},
-			#{testItemEtc},
-			#{testItemEtcYn},
-			#{testStndr2Ksc1Yn},
-			#{testStndr2Ksc2Yn},
-			#{testStndr2Ksc3Yn},
-			#{testStndr2Ksc4Yn},
-			#{testStndr2Ksc5Yn},
-			#{testStndr2Ksc6Yn},
-			#{testStndr2Ksc7Yn},
-			#{testStndr2KsrYn},
-			#{testStndr2Etc},
-			#{testStndr2EtcYn},
-			#{testStndr2KsEtc1},
-			#{testStndr2KsEtc2},
-			#{testStndr2KsEtc3},
-			#{testStndr2KsEtc4},
-			#{testStndr2KsEtc5},
-			#{testStndr2KsEtc6},
-			#{testStndr2KsEtc7},
-			#{testStndr2KsEtc8},
-			#{testStndr2KsEtc9},
-			#{testStndr2KsEtc1Yn},
-			#{testStndr2KsEtc2Yn},
-			#{testStndr2KsEtc3Yn},
-			#{testStndr2KsEtc4Yn},
-			#{testStndr2KsEtc5Yn},
-			#{testStndr2KsEtc6Yn},
-			#{testStndr2KsEtc7Yn},
-			#{testStndr2KsEtc8Yn},
-			#{testStndr2KsEtc9Yn},
-			#{memo},
 			#{prdExpln},
 			#{prdUses},
 			#{clockFrqnc},
+			#{clockFrqncCode},
 			#{ratedPower},
 			#{testPower},
 			#{userPort},
@@ -264,7 +140,44 @@
 			#{udtMemId}
 		);
 	</insert>
-	
+
+	<insert id="insertSpec">
+		INSERT INTO RAW_SPEC_TB
+		(
+			RAW_SEQ,
+			ITEM,
+			MEMO
+		)
+		VALUES
+		<foreach collection="rawSpecList" item="item" separator=",">
+		(
+			#{rawSeq},
+			#{item.item},
+			#{item.memo}
+		)
+		</foreach>
+	</insert>
+
+	<update id="updateSpec">
+		<foreach collection="rawSpecList" item="item" separator=";">
+			UPDATE RAW_SPEC_TB
+			SET
+				ITEM = #{item.item},
+				MEMO = #{item.memo},
+				STATE = #{item.state}
+			WHERE SPEC_SEQ = #{item.specSeq}
+		</foreach>
+	</update>
+
+	<update id="deleteSpec">
+		<foreach collection="rawSpecList" item="item" separator=";">
+			UPDATE RAW_SPEC_TB
+			SET
+				STATE = #{item.state}
+			WHERE SPEC_SEQ = #{item.specSeq}
+		</foreach>
+	</update>
+		
 	<insert id="insertTchn">
 		INSERT INTO RAW_TCHN_TB
 		(
@@ -458,10 +371,10 @@
 			MNFCT_SERIAL = #{mnfctSerial},
 			MNFCT_CMPNY = #{mnfctCmpny},
 			MNFCT_CNTRY = #{mnfctCntry},
-			RCPT_DT = #{rcptDt},
+			<if test="rcptDt != null and rcptDt != ''">RCPT_DT = #{rcptDt},</if>
 			REPORT_NO = #{reportNo},
-			TEST_S_DT = #{testSDt},
-			TEST_E_DT = #{testEDt},
+			<if test="testSDt != null and testSDt != ''">TEST_S_DT = #{testSDt},</if>
+			<if test="testEDt != null and testEDt != ''">TEST_E_DT = #{testEDt},</if>
 			TEST_BY = #{testBy},
 			<if test="testSignUrl != null and testSignUrl != ''">TEST_SIGN_URL = #{testSignUrl},</if>
 			REV_BY = #{revBy},
@@ -478,68 +391,10 @@
 			CLASS_B_YN = #{classBYn},
 			CLASS_ETC = #{classEtc},
 			CLASS_ETC_YN = #{classEtcYn},
-			METHOD_CE_YN = #{methodCeYn},
-			METHOD_REB_YN = #{methodRebYn},
-			METHOD_REA_YN = #{methodReaYn},
-			METHOD_DP_YN = #{methodDpYn},
-			METHOD_CLICK_YN = #{methodClickYn},
-			METHOD_HAR_YN = #{methodHarYn},
-			METHOD_FLICKER_YN = #{methodFlickerYn},
-			METHOD_ETC1 = #{methodEtc1},
-			METHOD_ETC1_YN = #{methodEtc1Yn},
-			METHOD_ETC2 = #{methodEtc2},
-			METHOD_ETC2_YN = #{methodEtc2Yn},
-			TEST_STNDR_ETC1 = #{testStndrEtc1},
-			TEST_STNDR_ETC2 = #{testStndrEtc2},
-			TEST_STNDR_ETC3 = #{testStndrEtc3},
-			TEST_STNDR_ETC4 = #{testStndrEtc4},
-			TEST_STNDR_ETC5 = #{testStndrEtc5},
-			TEST_STNDR_ETC6 = #{testStndrEtc6},
-			TEST_STNDR_ETC7 = #{testStndrEtc7},
-			TEST_STNDR_ETC8 = #{testStndrEtc8},
-			TEST_STNDR_ETC9_YN = #{testStndrEtc9Yn},
-		    TEST_ITEM_ESD_YN = #{testItemEsdYn},
-		    TEST_ITEM_RS_YN = #{testItemRsYn},
-		    TEST_ITEM_EFT_YN = #{testItemEftYn},
-		    TEST_ITEM_SUR_YN = #{testItemSurYn},
-		    TEST_ITEM_CS_YN = #{testItemCsYn},
-		    TEST_ITEM_MFD_YN = #{testItemMfdYn},
-		    TEST_ITEM_VDP_YN = #{testItemVdpYn},
-		    TEST_ITEM_CTI_YN = #{testItemCtiYn},
-		    TEST_ITEM_ETC = #{testItemEtc},
-		    TEST_ITEM_ETC_YN = #{testItemEtcYn},
-		    TEST_STNDR2_KSC1_YN = #{testStndr2Ksc1Yn},
-		    TEST_STNDR2_KSC2_YN = #{testStndr2Ksc2Yn},
-		    TEST_STNDR2_KSC3_YN = #{testStndr2Ksc3Yn},
-		    TEST_STNDR2_KSC4_YN = #{testStndr2Ksc4Yn},
-		    TEST_STNDR2_KSC5_YN = #{testStndr2Ksc5Yn},
-		    TEST_STNDR2_KSC6_YN = #{testStndr2Ksc6Yn},
-		    TEST_STNDR2_KSC7_YN = #{testStndr2Ksc7Yn},
-		    TEST_STNDR2_KSR_YN = #{testStndr2KsrYn},
-		    TEST_STNDR2_ETC = #{testStndr2Etc},
-		    TEST_STNDR2_ETC_YN = #{testStndr2EtcYn},
-		    TEST_STNDR2_KS_ETC1 = #{testStndr2KsEtc1},
-		    TEST_STNDR2_KS_ETC2 = #{testStndr2KsEtc2},
-		    TEST_STNDR2_KS_ETC3 = #{testStndr2KsEtc3},
-		    TEST_STNDR2_KS_ETC4 = #{testStndr2KsEtc4},
-		    TEST_STNDR2_KS_ETC5 = #{testStndr2KsEtc5},
-		    TEST_STNDR2_KS_ETC6 = #{testStndr2KsEtc6},
-		    TEST_STNDR2_KS_ETC7 = #{testStndr2KsEtc7},
-		    TEST_STNDR2_KS_ETC8 = #{testStndr2KsEtc8},
-		    TEST_STNDR2_KS_ETC9 = #{testStndr2KsEtc9},
-		    TEST_STNDR2_KS_ETC1_YN = #{testStndr2KsEtc1Yn},
-		    TEST_STNDR2_KS_ETC2_YN = #{testStndr2KsEtc2Yn},
-		    TEST_STNDR2_KS_ETC3_YN = #{testStndr2KsEtc3Yn},
-		    TEST_STNDR2_KS_ETC4_YN = #{testStndr2KsEtc4Yn},
-			TEST_STNDR2_KS_ETC5_YN = #{testStndr2KsEtc5Yn},
-			TEST_STNDR2_KS_ETC6_YN = #{testStndr2KsEtc6Yn},
-			TEST_STNDR2_KS_ETC7_YN = #{testStndr2KsEtc7Yn},
-			TEST_STNDR2_KS_ETC8_YN = #{testStndr2KsEtc8Yn},
-			TEST_STNDR2_KS_ETC9_YN = #{testStndr2KsEtc9Yn},
-			MEMO = #{memo},
 			PRD_EXPLN = #{prdExpln},
 			PRD_USES = #{prdUses},
 			CLOCK_FRQNC = #{clockFrqnc},
+			CLOCK_FRQNC_CODE = #{clockFrqncCode},
 			RATED_POWER = #{ratedPower},
 			TEST_POWER = #{testPower},
 			USER_PORT = #{userPort},
@@ -583,9 +438,9 @@
 		    TEST_S_DT,
 		    TEST_E_DT,
 		    TEST_BY,
-		    TEST_SIGN_URL,
+		    <![CDATA[concat('/file/getImage.do?atchFileId=',TEST_SIGN_URL,'&fileSn=0') TEST_SIGN_URL, ]]>
 		    REV_BY,
-		    REV_SIGN_URL,
+		    <![CDATA[concat('/file/getImage.do?atchFileId=',REV_SIGN_URL,'&fileSn=0') REV_SIGN_URL, ]]>
 		    TBR_KC_EMC_YN,
 		    TBR_KC_RF_EMC_YN,
 		    TBR_EMCD_YN,
@@ -598,77 +453,10 @@
 		    CLASS_B_YN,
 		    CLASS_ETC,
 		    CLASS_ETC_YN,
-		    METHOD_CE_YN,
-		    METHOD_REB_YN,
-		    METHOD_REA_YN,
-		    METHOD_DP_YN,
-		    METHOD_CLICK_YN,
-		    METHOD_HAR_YN,
-		    METHOD_FLICKER_YN,
-		    METHOD_ETC1,
-		    METHOD_ETC1_YN,
-		    METHOD_ETC2,
-		    METHOD_ETC2_YN,
-		    TEST_STNDR_ETC1,
-		    TEST_STNDR_ETC2,
-		    TEST_STNDR_ETC3,
-		    TEST_STNDR_ETC4,
-		    TEST_STNDR_ETC5,
-		    TEST_STNDR_ETC6,
-		    TEST_STNDR_ETC7,
-		    TEST_STNDR_ETC8,
-		    TEST_STNDR_ETC9,
-		    TEST_STNDR_ETC1_YN,
-		    TEST_STNDR_ETC2_YN,
-		    TEST_STNDR_ETC3_YN,
-		    TEST_STNDR_ETC4_YN,
-		    TEST_STNDR_ETC5_YN,
-		    TEST_STNDR_ETC6_YN,
-		    TEST_STNDR_ETC7_YN,
-		    TEST_STNDR_ETC8_YN,
-		    TEST_STNDR_ETC9_YN,
-		    TEST_ITEM_ESD_YN,
-		    TEST_ITEM_RS_YN,
-		    TEST_ITEM_EFT_YN,
-		    TEST_ITEM_SUR_YN,
-		    TEST_ITEM_CS_YN,
-		    TEST_ITEM_MFD_YN,
-		    TEST_ITEM_VDP_YN,
-		    TEST_ITEM_CTI_YN,
-		    TEST_ITEM_ETC,
-		    TEST_ITEM_ETC_YN,
-		    TEST_STNDR2_KSC1_YN,
-		    TEST_STNDR2_KSC2_YN,
-		    TEST_STNDR2_KSC3_YN,
-		    TEST_STNDR2_KSC4_YN,
-		    TEST_STNDR2_KSC5_YN,
-		    TEST_STNDR2_KSC6_YN,
-		    TEST_STNDR2_KSC7_YN,
-		    TEST_STNDR2_KSR_YN,
-		    TEST_STNDR2_ETC,
-		    TEST_STNDR2_ETC_YN,
-		    TEST_STNDR2_KS_ETC1,
-		    TEST_STNDR2_KS_ETC2,
-		    TEST_STNDR2_KS_ETC3,
-		    TEST_STNDR2_KS_ETC4,
-		    TEST_STNDR2_KS_ETC5,
-		    TEST_STNDR2_KS_ETC6,
-		    TEST_STNDR2_KS_ETC7,
-		    TEST_STNDR2_KS_ETC8,
-		    TEST_STNDR2_KS_ETC9,
-		    TEST_STNDR2_KS_ETC1_YN,
-		    TEST_STNDR2_KS_ETC2_YN,
-		    TEST_STNDR2_KS_ETC3_YN,
-		    TEST_STNDR2_KS_ETC4_YN,
-		    TEST_STNDR2_KS_ETC5_YN,
-		    TEST_STNDR2_KS_ETC6_YN,
-		    TEST_STNDR2_KS_ETC7_YN,
-		    TEST_STNDR2_KS_ETC8_YN,
-		    TEST_STNDR2_KS_ETC9_YN,
-		    MEMO,
 		    PRD_EXPLN,
 		    PRD_USES,
 		    CLOCK_FRQNC,
+		    CLOCK_FRQNC_CODE,
 		    RATED_POWER,
 		    TEST_POWER,
 		    USER_PORT,
@@ -690,15 +478,115 @@
 		    TEST_ETC_YN,
 		    OPR_CND,
 		    SETUP_URL,
-		    STD_MEMO,
-		    INS_MEM_ID,
-		    INS_DT,
-		    UDT_MEM_ID,
-		    UDT_DT,
-		    STATE
+		    STD_MEMO
 		FROM RAW_TB
-		WHERE TEST_SEQ = #{testSeq}
+		WHERE 1=1
+		AND TEST_SEQ = #{testSeq}
 	</select>
+	
+	<select id="tchnList" parameterType="int" resultType="egovMap">
+		SELECT TCHN_SEQ,
+		    TYPE,
+		    CHECK_YN,
+		    TEXT,
+		    STATE
+		FROM RAW_TCHN_TB
+		WHERE 1=1
+		AND STATE != 'D'
+		AND RAW_SEQ = #{rawSeq}
+	</select>
+
+	<select id="specList" parameterType="int" resultType="egovMap">
+		SELECT SPEC_SEQ,
+		    ITEM,
+		    MEMO,
+		    STATE
+		FROM RAW_SPEC_TB
+		WHERE 1=1
+		AND STATE != 'D'
+		AND RAW_SEQ = #{rawSeq}
+	</select>
+	
+	<select id="asstnList" parameterType="int" resultType="egovMap">
+		SELECT ASSTN_SEQ,
+		    EQPMN,
+		    MODEL,
+		    SERIAL_NO,
+		    MNFCT_CMPNY,
+		    MEMO,
+		    STATE
+		FROM RAW_ASSTN_TB
+		WHERE 1=1
+		AND STATE != 'D'
+		AND RAW_SEQ = #{rawSeq}
+	</select>
+	
+	<select id="sysList" parameterType="int" resultType="egovMap">
+		SELECT SYS_SEQ,
+		    ITEM,
+		    MODEL,
+		    SERIAL_NO,
+		    MNFCT_CMPNY,
+		    MEMO,
+		    STATE
+		FROM RAW_SYS_TB
+		WHERE 1=1
+		AND STATE != 'D'
+		AND RAW_SEQ = #{rawSeq}
+	</select>
+	
+	<select id="cableList" parameterType="int" resultType="egovMap">
+		SELECT CABLE_SEQ,
+		    DF_NAME,
+		    DF_MODE,
+		    DF_PORT,
+		    DT_NAME,
+		    DT_PORT,
+		    CS_M,
+		    CS_YN,
+		    STATE
+		FROM RAW_CABLE_TB
+		WHERE 1=1
+		AND STATE != 'D'
+		AND RAW_SEQ = #{rawSeq}
+	</select>
+	
+	<insert id="insertMethod">
+		<foreach collection="methodList" item="item" separator=";">
+		INSERT INTO RAW_MET_TB
+		(
+			MET_SEQ,
+			RAW_SEQ,
+			CHECK_YN,
+			TYPE,
+			MEMO
+		)
+		VALUES
+		(
+			#{item.metSeq},
+			#{rawSeq},
+			#{item.checkYn},
+			#{item.type},
+			#{item.memo}
+		)
+		ON DUPLICATE KEY UPDATE
+			CHECK_YN = #{item.checkYn},
+			TYPE = #{item.type},
+			MEMO = #{item.memo}
+		</foreach>
+	</insert>
+	
+	<select id="methodList" parameterType="int" resultType="egovMap">
+		SELECT MET_SEQ,
+		    CHECK_YN,
+		    TYPE,
+		    MEMO
+		FROM RAW_MET_TB
+		WHERE 1=1
+		AND RAW_SEQ = #{rawSeq}
+		ORDER BY MET_SEQ
+	</select>
+	
 </mapper>
 
 

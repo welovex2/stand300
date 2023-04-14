@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import egovframework.quo.service.QuoDTO;
+import egovframework.raw.dto.RawDTO;
 import egovframework.sbk.service.SbkDTO;
 import egovframework.sls.service.BillDTO;
 import egovframework.sls.service.PayDTO;
@@ -46,6 +47,12 @@ public class SwaggerModel {
 	@GetMapping(value="/TestDTO.Res")
 	public TestDTO.Res tstList() throws Exception{
 		TestDTO.Res result = new TestDTO.Res();
+		return result; 
+	}
+	
+	@GetMapping(value="/RawDTO")
+	public RawDTO rawList() throws Exception{
+		RawDTO result = new RawDTO();
 		return result; 
 	}
 	
