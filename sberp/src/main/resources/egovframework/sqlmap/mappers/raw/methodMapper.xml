@@ -12,6 +12,7 @@
 			RAW_SEQ,
 			VLT_AC_YN,
 			VLT_ETC,
+			VLT_ETC_YN,
 			VAR_N_YN,
 			VAR_Y_YN,
 			ROOM1_YN,
@@ -39,6 +40,7 @@
 			#{rawSeq},
 			#{vltAcYn},
 			#{vltEtc},
+			#{vltEtcYn},
 			#{varNYn},
 			#{varYYn},
 			#{room1Yn},
@@ -63,6 +65,7 @@
 		ON DUPLICATE KEY UPDATE
 			VLT_AC_YN = #{vltAcYn},
 			VLT_ETC = #{vltEtc},
+			VLT_ETC_YN = #{vltEtcYn},
 			VAR_N_YN = #{varNYn},
 			VAR_Y_YN = #{varYYn},
 			ROOM1_YN = #{room1Yn},
@@ -117,6 +120,7 @@
 		WHERE 1=1
 		AND RAW_SEQ = #{rawSeq}
 		AND MACHINE_TYPE = #{machineType}
+		ORDER BY MACHINE_SEQ
 	</select>
 	
 	<select id="esdSubList" parameterType="int" resultType="egovMap">
@@ -139,6 +143,7 @@
 		    RAW_SEQ,
 		    VLT_AC_YN,
 		    VLT_ETC,
+		    VLT_ETC_YN,
 		    VAR_N_YN,
 		    VAR_Y_YN,
 		    ROOM1_YN,
@@ -1373,4 +1378,639 @@
 			CMNT_ETC_YN = #{cmntEtcYn},
 			UDT_MEM_ID = #{udtMemId}
 	</insert>	
+	
+	<select id="csDetail" parameterType="int" resultType="csDTO">
+		SELECT 
+			CS_SEQ, RAW_SEQ,
+		    VLT_AC_YN, VLT_ETC, VLT_ETC_YN, VAR_N_YN, VAR_Y_YN,
+		    ROOM1_YN, ROOM2_YN, ROOM_ETC, ROOM_ETC_YN,
+		    TEMP, TEMP_PLUS, HMDT, HMDT_PLUS, BRMT, BRMT_PLUS,
+		    STRN_1V_YN, STRN_3V_YN, STRN_10V_YN, STRN_ETC, STRN_ETC_YN,
+		    SWEP_15_YN, SWEP_1_YN,MDLT_80_YN, MDLT_ETC, MDLT_ETC_YN,
+		    EVLTN_A_YN, EVLTN_B_YN, EVLTN_C_YN,
+		    FRQNC_AREA, SPC_FRQNC,
+		    MSRMN_YEAR, MSRMN_MON, MSRMN_DAY, MSRMN_HOUR, MSRMN_MIN,
+		    SIGN, <![CDATA[concat('/file/getImage.do?atchFileId=',SIGN_URL,'&fileSn=0') SIGN_URL,]]>
+		    RESULT_CODE,
+		    APPL_POWER_YN, APPL_IN_YN, APPL_OUT_YN, APPL_DB_POWER_YN,
+		    APPL1_M2_YN, APPL1_M3_YN, APPL1_EM_YN, APPL1_ETC, APPL1_ETC_YN,
+		    APPL2_M2_YN, APPL2_M3_YN, APPL2_EM_YN, APPL2_ETC, APPL2_ETC_YN,
+		    APPL3_M2_YN, APPL3_M3_YN, APPL3_EM_YN, APPL3_ETC, APPL3_ETC_YN,
+		    APPL1_CODE, APPL2_CODE, APPL3_CODE,
+		    APPL1_MEMO, APPL2_MEMO, APPL3_MEMO,
+		    PORT1, PORT2,
+		    PORT1_ACRDT_M2_YN, PORT1_ACRDT_M3_YN, PORT1_ACRDT_EM_YN, PORT1_ACRDT_ETC, PORT1_ACRDT_ETC_YN, PORT1_ACRDT_CODE, PORT1_ACRDT_MEMO,
+		    PORT2_ACRDT_M2_YN, PORT2_ACRDT_M3_YN, PORT2_ACRDT_EM_YN, PORT2_ACRDT_ETC, PORT2_ACRDT_ETC_YN, PORT2_ACRDT_CODE, PORT2_ACRDT_MEMO,
+		    AUDIO_ELCT_YN, AUDIO_ACST_YN, AUDIO_NEAR_YN, AUDIO_FEAR_YN, AUDIO_M2_YN, AUDIO_M3_YN, AUDIO_EM_YN, AUDIO_ETC, AUDIO_ETC_YN, AUDIO_CODE, AUDIO_MEMO,
+		    SPKR_ELCT_YN, SPKR_ACST_YN, SPKR_NEAR_YN, SPKR_FEAR_YN, SPKR_M2_YN, SPKR_M3_YN, SPKR_EM_YN, SPKR_ETC, SPKR_ETC_YN, SPKR_CODE, SPKR_MEMO,
+		    COMM1_NOISE_YN, COMM1_ACST_YN, COMM1_M2_YN, COMM1_M3_YN, COMM1_EM_YN, COMM1_ETC, COMM1_ETC_YN, COMM1_CODE, COMM1_MEMO,
+		    COMM2_NOISE_YN, COMM2_ACST_YN, COMM2_M2_YN, COMM2_M3_YN, COMM2_EM_YN, COMM2_ETC, COMM2_ETC_YN, COMM2_CODE, COMM2_MEMO,
+		    CMNT_A_YN, CMNT_ETC, CMNT_ETC_YN
+		FROM METHOD_CS_TB
+		WHERE 1=1
+		AND RAW_SEQ = #{rawSeq}
+	</select>
+	<insert id="insertCs" parameterType="csDTO">
+		<selectKey resultType="int" keyProperty="csSeq" order="BEFORE">
+	        SELECT ifnull(MAX(CS_SEQ)+1,1) csSeq FROM METHOD_CS_TB
+	    </selectKey>
+		INSERT INTO METHOD_CS_TB
+		(
+			CS_SEQ, RAW_SEQ,
+		    VLT_AC_YN, VLT_ETC, VLT_ETC_YN, VAR_N_YN, VAR_Y_YN,
+		    ROOM1_YN, ROOM2_YN, ROOM_ETC, ROOM_ETC_YN,
+		    TEMP, TEMP_PLUS, HMDT, HMDT_PLUS, BRMT, BRMT_PLUS,
+		    STRN_1V_YN, STRN_3V_YN, STRN_10V_YN, STRN_ETC, STRN_ETC_YN,
+		    SWEP_15_YN, SWEP_1_YN,MDLT_80_YN, MDLT_ETC, MDLT_ETC_YN,
+		    EVLTN_A_YN, EVLTN_B_YN, EVLTN_C_YN,
+		    FRQNC_AREA, SPC_FRQNC,
+		    MSRMN_YEAR, MSRMN_MON, MSRMN_DAY, MSRMN_HOUR, MSRMN_MIN,
+		    SIGN, SIGN_URL,
+		    RESULT_CODE,
+		    APPL_POWER_YN, APPL_IN_YN, APPL_OUT_YN, APPL_DB_POWER_YN,
+		    APPL1_M2_YN, APPL1_M3_YN, APPL1_EM_YN, APPL1_ETC, APPL1_ETC_YN,
+		    APPL2_M2_YN, APPL2_M3_YN, APPL2_EM_YN, APPL2_ETC, APPL2_ETC_YN,
+		    APPL3_M2_YN, APPL3_M3_YN, APPL3_EM_YN, APPL3_ETC, APPL3_ETC_YN,
+		    APPL1_CODE, APPL2_CODE, APPL3_CODE,
+		    APPL1_MEMO, APPL2_MEMO, APPL3_MEMO,
+		    PORT1, PORT2,
+		    PORT1_ACRDT_M2_YN, PORT1_ACRDT_M3_YN, PORT1_ACRDT_EM_YN, PORT1_ACRDT_ETC, PORT1_ACRDT_ETC_YN, PORT1_ACRDT_CODE, PORT1_ACRDT_MEMO,
+		    PORT2_ACRDT_M2_YN, PORT2_ACRDT_M3_YN, PORT2_ACRDT_EM_YN, PORT2_ACRDT_ETC, PORT2_ACRDT_ETC_YN, PORT2_ACRDT_CODE, PORT2_ACRDT_MEMO,
+		    AUDIO_ELCT_YN, AUDIO_ACST_YN, AUDIO_NEAR_YN, AUDIO_FEAR_YN, AUDIO_M2_YN, AUDIO_M3_YN, AUDIO_EM_YN, AUDIO_ETC, AUDIO_ETC_YN, AUDIO_CODE, AUDIO_MEMO,
+		    SPKR_ELCT_YN, SPKR_ACST_YN, SPKR_NEAR_YN, SPKR_FEAR_YN, SPKR_M2_YN, SPKR_M3_YN, SPKR_EM_YN, SPKR_ETC, SPKR_ETC_YN, SPKR_CODE, SPKR_MEMO,
+		    COMM1_NOISE_YN, COMM1_ACST_YN, COMM1_M2_YN, COMM1_M3_YN, COMM1_EM_YN, COMM1_ETC, COMM1_ETC_YN, COMM1_CODE, COMM1_MEMO,
+		    COMM2_NOISE_YN, COMM2_ACST_YN, COMM2_M2_YN, COMM2_M3_YN, COMM2_EM_YN, COMM2_ETC, COMM2_ETC_YN, COMM2_CODE, COMM2_MEMO,
+		    CMNT_A_YN, CMNT_ETC, CMNT_ETC_YN,
+		    INS_MEM_ID, UDT_MEM_ID
+		)
+		VALUES 
+		(
+			#{csSeq}, #{rawSeq},
+			#{vltAcYn}, #{vltEtc}, #{vltEtcYn}, #{varNYn}, #{varYYn},
+			#{room1Yn}, #{room2Yn}, #{roomEtc}, #{roomEtcYn},
+			#{temp}, #{tempPlus}, #{hmdt}, #{hmdtPlus}, #{brmt}, #{brmtPlus},
+			#{strn1vYn}, #{strn3vYn}, #{strn10vYn}, #{strnEtc}, #{strnEtcYn},
+			#{swep15Yn}, #{swep1Yn},#{mdlt80Yn}, #{mdltEtc}, #{mdltEtcYn},
+			#{evltnAYn}, #{evltnBYn}, #{evltnCYn},
+			#{frqncArea}, #{spcFrqnc},
+			#{msrmnYear}, #{msrmnMon}, #{msrmnDay}, #{msrmnHour}, #{msrmnMin},
+			#{sign}, #{signUrl},
+			#{resultCode},
+			#{applPowerYn}, #{applInYn}, #{applOutYn}, #{applDbPowerYn},
+			#{appl1M2Yn}, #{appl1M3Yn}, #{appl1EmYn}, #{appl1Etc}, #{appl1EtcYn},
+			#{appl2M2Yn}, #{appl2M3Yn}, #{appl2EmYn}, #{appl2Etc}, #{appl2EtcYn},
+			#{appl3M2Yn}, #{appl3M3Yn}, #{appl3EmYn}, #{appl3Etc}, #{appl3EtcYn},
+			#{appl1Code}, #{appl2Code}, #{appl3Code},
+			#{appl1Memo}, #{appl2Memo}, #{appl3Memo},
+			#{port1}, #{port2},
+			#{port1AcrdtM2Yn}, #{port1AcrdtM3Yn}, #{port1AcrdtEmYn}, #{port1AcrdtEtc}, #{port1AcrdtEtcYn}, #{port1AcrdtCode}, #{port1AcrdtMemo},
+			#{port2AcrdtM2Yn}, #{port2AcrdtM3Yn}, #{port2AcrdtEmYn}, #{port2AcrdtEtc}, #{port2AcrdtEtcYn}, #{port2AcrdtCode}, #{port2AcrdtMemo},
+			#{audioElctYn}, #{audioAcstYn}, #{audioNearYn}, #{audioFearYn}, #{audioM2Yn}, #{audioM3Yn}, #{audioEmYn}, #{audioEtc}, #{audioEtcYn}, #{audioCode}, #{audioMemo},
+			#{spkrElctYn}, #{spkrAcstYn}, #{spkrNearYn}, #{spkrFearYn}, #{spkrM2Yn}, #{spkrM3Yn}, #{spkrEmYn}, #{spkrEtc}, #{spkrEtcYn}, #{spkrCode}, #{spkrMemo},
+			#{comm1NoiseYn}, #{comm1AcstYn}, #{comm1M2Yn}, #{comm1M3Yn}, #{comm1EmYn}, #{comm1Etc}, #{comm1EtcYn}, #{comm1Code}, #{comm1Memo},
+			#{comm2NoiseYn}, #{comm2AcstYn}, #{comm2M2Yn}, #{comm2M3Yn}, #{comm2EmYn}, #{comm2Etc}, #{comm2EtcYn}, #{comm2Code}, #{comm2Memo},
+			#{cmntAYn}, #{cmntEtc}, #{cmntEtcYn},
+			#{insMemId}, #{udtMemId}
+		)
+		ON DUPLICATE KEY UPDATE
+			VLT_AC_YN = #{vltAcYn},
+			VLT_ETC = #{vltEtc},
+			VLT_ETC_YN = #{vltEtcYn},
+			VAR_N_YN = #{varNYn},
+			VAR_Y_YN = #{varYYn},
+			ROOM1_YN = #{room1Yn},
+			ROOM2_YN = #{room2Yn},
+			ROOM_ETC = #{roomEtc},
+			ROOM_ETC_YN = #{roomEtcYn},
+			TEMP = #{temp},
+			TEMP_PLUS = #{tempPlus},
+			HMDT = #{hmdt},
+			HMDT_PLUS = #{hmdtPlus},
+			BRMT = #{brmt},
+			BRMT_PLUS = #{brmtPlus},
+			STRN_1V_YN = #{strn1vYn},
+			STRN_3V_YN = #{strn3vYn},
+			STRN_10V_YN = #{strn10vYn},
+			STRN_ETC = #{strnEtc},
+			STRN_ETC_YN = #{strnEtcYn},
+			SWEP_15_YN = #{swep15Yn},
+			SWEP_1_YN = #{swep1Yn},
+			MDLT_80_YN = #{mdlt80Yn},
+			MDLT_ETC = #{mdltEtc},
+			MDLT_ETC_YN = #{mdltEtcYn},
+			EVLTN_A_YN = #{evltnAYn},
+			EVLTN_B_YN = #{evltnBYn},
+			EVLTN_C_YN = #{evltnCYn},
+			FRQNC_AREA = #{frqncArea},
+			SPC_FRQNC = #{spcFrqnc},
+			MSRMN_YEAR = #{msrmnYear},
+			MSRMN_MON = #{msrmnMon},
+			MSRMN_DAY = #{msrmnDay},
+			MSRMN_HOUR = #{msrmnHour},
+			MSRMN_MIN = #{msrmnMin},
+			SIGN = #{sign},
+			<if test="signUrl != null and signUrl != ''">SIGN_URL = #{signUrl},</if>
+			RESULT_CODE = #{resultCode},
+			APPL_POWER_YN = #{applPowerYn},
+			APPL_IN_YN = #{applInYn},
+			APPL_OUT_YN = #{applOutYn},
+			APPL_DB_POWER_YN = #{applDbPowerYn},
+			APPL1_M2_YN = #{appl1M2Yn},
+			APPL1_M3_YN = #{appl1M3Yn},
+			APPL1_EM_YN = #{appl1EmYn},
+			APPL1_ETC = #{appl1Etc},
+			APPL1_ETC_YN = #{appl1EtcYn},
+			APPL2_M2_YN = #{appl2M2Yn},
+			APPL2_M3_YN = #{appl2M3Yn},
+			APPL2_EM_YN = #{appl2EmYn},
+			APPL2_ETC = #{appl2Etc},
+			APPL2_ETC_YN = #{appl2EtcYn},		
+			APPL3_M2_YN = #{appl3M2Yn},
+			APPL3_M3_YN = #{appl3M3Yn},
+			APPL3_EM_YN = #{appl3EmYn},
+			APPL3_ETC = #{appl3Etc},
+			APPL3_ETC_YN = #{appl3EtcYn},
+			APPL1_CODE = #{appl1Code},
+			APPL2_CODE = #{appl2Code},
+			APPL3_CODE = #{appl3Code},
+			APPL1_MEMO = #{appl1Memo},
+			APPL2_MEMO = #{appl2Memo},
+			APPL3_MEMO = #{appl3Memo},
+			PORT1 = #{port1},
+			PORT2 = #{port2},
+			PORT1_ACRDT_M2_YN = #{port1AcrdtM2Yn},
+			PORT1_ACRDT_M3_YN = #{port1AcrdtM3Yn},
+			PORT1_ACRDT_EM_YN = #{port1AcrdtEmYn},
+			PORT1_ACRDT_ETC = #{port1AcrdtEtc},
+			PORT1_ACRDT_ETC_YN = #{port1AcrdtEtcYn},
+			PORT1_ACRDT_CODE = #{port1AcrdtCode},
+			PORT1_ACRDT_MEMO = #{port1AcrdtMemo},
+			PORT2_ACRDT_M2_YN = #{port2AcrdtM2Yn},
+			PORT2_ACRDT_M3_YN = #{port2AcrdtM3Yn},
+			PORT2_ACRDT_EM_YN = #{port2AcrdtEmYn},
+			PORT2_ACRDT_ETC = #{port2AcrdtEtc},
+			PORT2_ACRDT_ETC_YN = #{port2AcrdtEtcYn},
+			PORT2_ACRDT_CODE = #{port2AcrdtCode},
+			PORT2_ACRDT_MEMO = #{port2AcrdtMemo},
+			AUDIO_ELCT_YN = #{audioElctYn},
+			AUDIO_ACST_YN = #{audioAcstYn},
+			AUDIO_NEAR_YN = #{audioNearYn},
+			AUDIO_FEAR_YN = #{audioFearYn},
+			AUDIO_M2_YN = #{audioM2Yn},
+			AUDIO_M3_YN = #{audioM3Yn},
+			AUDIO_EM_YN = #{audioEmYn},
+			AUDIO_ETC = #{audioEtc},
+			AUDIO_ETC_YN = #{audioEtcYn},
+			AUDIO_CODE = #{audioCode},
+			AUDIO_MEMO = #{audioMemo},
+			SPKR_ELCT_YN = #{spkrElctYn},
+			SPKR_ACST_YN = #{spkrAcstYn},
+			SPKR_NEAR_YN = #{spkrNearYn},
+			SPKR_FEAR_YN = #{spkrFearYn},
+			SPKR_M2_YN = #{spkrM2Yn},
+			SPKR_M3_YN = #{spkrM3Yn},
+			SPKR_EM_YN = #{spkrEmYn},
+			SPKR_ETC = #{spkrEtc},
+			SPKR_ETC_YN = #{spkrEtcYn},
+			SPKR_CODE = #{spkrCode},
+			SPKR_MEMO = #{spkrMemo},
+			COMM1_NOISE_YN = #{comm1NoiseYn},
+			COMM1_ACST_YN = #{comm1AcstYn},
+			COMM1_M2_YN = #{comm1M2Yn},
+			COMM1_M3_YN = #{comm1M3Yn},
+			COMM1_EM_YN = #{comm1EmYn},
+			COMM1_ETC = #{comm1Etc},
+			COMM1_ETC_YN = #{comm1EtcYn},
+			COMM1_CODE = #{comm1Code},
+			COMM1_MEMO = #{comm1Memo},
+			COMM2_NOISE_YN = #{comm2NoiseYn},
+			COMM2_ACST_YN = #{comm2AcstYn},
+			COMM2_M2_YN = #{comm2M2Yn},
+			COMM2_M3_YN = #{comm2M3Yn},
+			COMM2_EM_YN = #{comm2EmYn},
+			COMM2_ETC = #{comm2Etc},
+			COMM2_ETC_YN = #{comm2EtcYn},
+			COMM2_CODE = #{comm2Code},
+			COMM2_MEMO = #{comm2Memo},
+			CMNT_A_YN = #{cmntAYn},
+			CMNT_ETC = #{cmntEtc},
+			CMNT_ETC_YN = #{cmntEtcYn},
+			UDT_MEM_ID = #{udtMemId}
+	</insert>	
+	
+	<select id="mfDetail" parameterType="int" resultType="mfDTO">
+		SELECT 
+			MF_SEQ, RAW_SEQ,
+		    VLT_AC_YN, VLT_ETC, VLT_ETC_YN, VAR_N_YN, VAR_Y_YN,
+		    ROOM1_YN, ROOM2_YN, ROOM_ETC, ROOM_ETC_YN,
+		    TEMP, TEMP_PLUS, HMDT, HMDT_PLUS, BRMT, BRMT_PLUS,
+		    MGNT_A_YN, MGNT_3_YN, MGNT_30_YN, FRQNC_50_YN, FRQNC_60_YN,
+		    AXIS_X_YN, AXIS_Y_YN, AXIS_Z_YN, ACRDT,
+		    MSRMN_YEAR, MSRMN_MON, MSRMN_DAY, MSRMN_HOUR, MSRMN_MIN,
+		    SIGN, <![CDATA[concat('/file/getImage.do?atchFileId=',SIGN_URL,'&fileSn=0') SIGN_URL,]]>
+		    RESULT_CODE,
+		    X_STNDR, X_CODE, X_MEMO,
+		    Y_STND, Y_CODE, Y_MEMO,
+		    Z_STND, Z_CODE, Z_MEMO,
+		    CMNT_A_YN, CMNT_ETC, CMNT_ETC_YN,
+		    INS_MEM_ID, UDT_MEM_ID
+		FROM METHOD_MF_TB
+		WHERE 1=1
+		AND RAW_SEQ = #{rawSeq}
+	</select>
+	<insert id="insertMf" parameterType="mfDTO">
+		<selectKey resultType="int" keyProperty="mfSeq" order="BEFORE">
+	        SELECT ifnull(MAX(MF_SEQ)+1,1) mfSeq FROM METHOD_MF_TB
+	    </selectKey>
+	    INSERT INTO METHOD_MF_TB
+		(
+			MF_SEQ, RAW_SEQ,
+		    VLT_AC_YN, VLT_ETC, VLT_ETC_YN, VAR_N_YN, VAR_Y_YN,
+		    ROOM1_YN, ROOM2_YN, ROOM_ETC, ROOM_ETC_YN,
+		    TEMP, TEMP_PLUS, HMDT, HMDT_PLUS, BRMT, BRMT_PLUS,
+		    MGNT_A_YN, MGNT_3_YN, MGNT_30_YN, FRQNC_50_YN, FRQNC_60_YN,
+		    AXIS_X_YN, AXIS_Y_YN, AXIS_Z_YN, ACRDT,
+		    MSRMN_YEAR, MSRMN_MON, MSRMN_DAY, MSRMN_HOUR, MSRMN_MIN,
+		    SIGN, SIGN_URL,
+		    RESULT_CODE,
+		    X_STNDR, X_CODE, X_MEMO,
+		    Y_STND, Y_CODE, Y_MEMO,
+		    Z_STND, Z_CODE, Z_MEMO,
+		    CMNT_A_YN, CMNT_ETC, CMNT_ETC_YN,
+		    INS_MEM_ID, UDT_MEM_ID
+		)
+		VALUES 
+		(
+		    #{mfSeq},
+	        #{rawSeq},
+	        #{vltAcYn},
+	        #{vltEtc},
+	        #{vltEtcYn},
+	        #{varNYn},
+	        #{varYYn},
+	        #{room1Yn},
+	        #{room2Yn},
+	        #{roomEtc},
+	        #{roomEtcYn},
+	        #{temp},
+	        #{tempPlus},
+	        #{hmdt},
+	        #{hmdtPlus},
+	        #{brmt},
+	        #{brmtPlus},
+	        #{mgntAYn},
+	        #{mgnt3Yn},
+	        #{mgnt30Yn},
+	        #{frqnc50Yn},
+	        #{frqnc60Yn},
+	        #{axisXYn},
+	        #{axisYYn},
+	        #{axisZYn},
+	        #{acrdt},
+	        #{msrmnYear},
+	        #{msrmnMon},
+	        #{msrmnDay},
+	        #{msrmnHour},
+	        #{msrmnMin},
+	        #{sign},
+	        #{signUrl},
+	        #{resultCode},
+	        #{xStndr},
+	        #{xCode},
+	        #{xMemo},
+	        #{yStnd},
+	        #{yCode},
+	        #{yMemo},
+	        #{zStnd},
+	        #{zCode},
+	        #{zMemo},
+	        #{cmntAYn},
+	        #{cmntEtc},
+	        #{cmntEtcYn},
+	        #{insMemId},
+	        #{udtMemId}
+		)
+		ON DUPLICATE KEY UPDATE
+			VLT_AC_YN = #{vltAcYn},
+			VLT_ETC = #{vltEtc},
+			VLT_ETC_YN = #{vltEtcYn},
+			VAR_N_YN = #{varNYn},
+			VAR_Y_YN = #{varYYn},
+			ROOM1_YN = #{room1Yn},
+			ROOM2_YN = #{room2Yn},
+			ROOM_ETC = #{roomEtc},
+			ROOM_ETC_YN = #{roomEtcYn},
+			TEMP = #{temp},
+			TEMP_PLUS = #{tempPlus},
+			HMDT = #{hmdt},
+			HMDT_PLUS = #{hmdtPlus},
+			BRMT = #{brmt},
+			BRMT_PLUS = #{brmtPlus},
+			MGNT_A_YN = #{mgntAYn},
+			MGNT_3_YN = #{mgnt3Yn},
+			MGNT_30_YN = #{mgnt30Yn},
+			FRQNC_50_YN = #{frqnc50Yn},
+			FRQNC_60_YN = #{frqnc60Yn},
+			AXIS_X_YN = #{axisXYn},
+			AXIS_Y_YN = #{axisYYn},
+			AXIS_Z_YN = #{axisZYn},
+			ACRDT = #{acrdt},
+			MSRMN_YEAR = #{msrmnYear},
+			MSRMN_MON = #{msrmnMon},
+			MSRMN_DAY = #{msrmnDay},
+			MSRMN_HOUR = #{msrmnHour},
+			MSRMN_MIN = #{msrmnMin},
+			SIGN = #{sign},
+			<if test="signUrl != null and signUrl != ''">SIGN_URL = #{signUrl},</if>
+			RESULT_CODE = #{resultCode},
+			X_STNDR = #{xStndr},
+			X_CODE = #{xCode},
+			X_MEMO = #{xMemo},
+			Y_STND = #{yStnd},
+			Y_CODE = #{yCode},
+			Y_MEMO = #{yMemo},
+			Z_STND = #{zStnd},
+			Z_CODE = #{zCode},
+			Z_MEMO = #{zMemo},
+			CMNT_A_YN = #{cmntAYn},
+			CMNT_ETC = #{cmntEtc},
+			CMNT_ETC_YN = #{cmntEtcYn},
+			UDT_MEM_ID = #{udtMemId}
+	</insert>
+	
+	<select id="vdipDetail" parameterType="int" resultType="vdipDTO">
+		SELECT 
+			VDIP_SEQ, RAW_SEQ,
+		    VLT_AC_YN, VLT_ETC, VLT_ETC_YN, VAR_N_YN, VAR_Y_YN,
+		    ROOM1_YN, ROOM2_YN, ROOM_ETC, ROOM_ETC_YN,
+		    TEMP, TEMP_PLUS, HMDT, HMDT_PLUS, BRMT, BRMT_PLUS,
+		    DIPS_RDC1_YN, DIPS_RDC1_TEXT, DIPS_RDC1_05_YN, DIPS_RDC1_5_YN, DIPS_RDC1_25_YN, DIPS_RDC1_30_YN, DIPS_RDC1_50_YN, DIPS_RDC1_ETC, DIPS_RDC1_ETC_YN, DIPS_RDC1_CODE,
+		    DIPS_RDC2_YN, DIPS_RDC2_TEXT, DIPS_RDC2_05_YN, DIPS_RDC2_5_YN, DIPS_RDC2_25_YN, DIPS_RDC2_30_YN, DIPS_RDC2_50_YN, DIPS_RDC2_ETC, DIPS_RDC2_ETC_YN, DIPS_RDC2_CODE,
+		    DIPS_RDC3_YN, DIPS_RDC3_TEXT, DIPS_RDC3_ETC, DIPS_RDC3_ETC_YN, DIPS_RDC3_CODE, DIPS_RDC4_YN, DIPS_RDC4_TEXT, DIPS_RDC4_ETC, DIPS_RDC4_ETC_YN, DIPS_RDC4_CODE,
+		    INTRP_RDC1_YN, INTRP_RDC1_TEXT, INTRP_RDC1_05_YN, INTRP_RDC1_250_YN, INTRP_RDC1_300_YN, INTRP_RDC1_ETC, INTRP_RDC1_ETC_YN, INTRP_RDC1_CODE, 
+		    INTRP_RDC2_YN, INTRP_RDC2_TEXT, INTRP_RDC2_ETC, INTRP_RDC2_ETC_YN, INTRP_RDC2_CODE,
+		    INTRP_RDC3_YN, INTRP_RDC3_TEXT, INTRP_RDC3_ETC, INTRP_RDC3_ETC_YN, INTRP_RDC3_CODE,
+		    INTRP_RDC4_YN, INTRP_RDC4_TEXT, INTRP_RDC4_ETC, INTRP_RDC4_ETC_YN, INTRP_RDC4_CODE,
+		    FLCTT_P10_YN, FLCTT_M10_YN, FLCTT_M15_YN,
+		    MSRMN_YEAR, MSRMN_MON, MSRMN_DAY, MSRMN_HOUR, MSRMN_MIN,
+		    SIGN, <![CDATA[concat('/file/getImage.do?atchFileId=',SIGN_URL,'&fileSn=0') SIGN_URL,]]>
+		    RESULT_CODE,
+		    TEST1, TEST1_CODE, TEST1_CMNT,
+		    TEST2, TEST2_CODE, TEST2_CMNT,
+		    TEST3, TEST3_CODE, TEST3_CMNT,
+		    MEMO_YN, MEMO
+		FROM METHOD_VDIP_TB
+		WHERE 1=1
+		AND RAW_SEQ = #{rawSeq}
+	</select>
+	<insert id="insertVdip" parameterType="vdipDTO">
+		<selectKey resultType="int" keyProperty="vdipSeq" order="BEFORE">
+	        SELECT ifnull(MAX(VDIP_SEQ)+1,1) vdipSeq FROM METHOD_VDIP_TB
+	    </selectKey>
+	    INSERT INTO METHOD_VDIP_TB
+		(
+			VDIP_SEQ, RAW_SEQ,
+		    VLT_AC_YN, VLT_ETC, VLT_ETC_YN, VAR_N_YN, VAR_Y_YN,
+		    ROOM1_YN, ROOM2_YN, ROOM_ETC, ROOM_ETC_YN,
+		    TEMP, TEMP_PLUS, HMDT, HMDT_PLUS, BRMT, BRMT_PLUS,
+		    DIPS_RDC1_YN, DIPS_RDC1_TEXT, DIPS_RDC1_05_YN, DIPS_RDC1_5_YN, DIPS_RDC1_25_YN, DIPS_RDC1_30_YN, DIPS_RDC1_50_YN, DIPS_RDC1_ETC, DIPS_RDC1_ETC_YN, DIPS_RDC1_CODE,
+		    DIPS_RDC2_YN, DIPS_RDC2_TEXT, DIPS_RDC2_05_YN, DIPS_RDC2_5_YN, DIPS_RDC2_25_YN, DIPS_RDC2_30_YN, DIPS_RDC2_50_YN, DIPS_RDC2_ETC, DIPS_RDC2_ETC_YN, DIPS_RDC2_CODE,
+		    DIPS_RDC3_YN, DIPS_RDC3_TEXT, DIPS_RDC3_ETC, DIPS_RDC3_ETC_YN, DIPS_RDC3_CODE, DIPS_RDC4_YN, DIPS_RDC4_TEXT, DIPS_RDC4_ETC, DIPS_RDC4_ETC_YN, DIPS_RDC4_CODE,
+		    INTRP_RDC1_YN, INTRP_RDC1_TEXT, INTRP_RDC1_05_YN, INTRP_RDC1_250_YN, INTRP_RDC1_300_YN, INTRP_RDC1_ETC, INTRP_RDC1_ETC_YN, INTRP_RDC1_CODE, 
+		    INTRP_RDC2_YN, INTRP_RDC2_TEXT, INTRP_RDC2_ETC, INTRP_RDC2_ETC_YN, INTRP_RDC2_CODE,
+		    INTRP_RDC3_YN, INTRP_RDC3_TEXT, INTRP_RDC3_ETC, INTRP_RDC3_ETC_YN, INTRP_RDC3_CODE,
+		    INTRP_RDC4_YN, INTRP_RDC4_TEXT, INTRP_RDC4_ETC, INTRP_RDC4_ETC_YN, INTRP_RDC4_CODE,
+		    FLCTT_P10_YN, FLCTT_M10_YN, FLCTT_M15_YN,
+		    MSRMN_YEAR, MSRMN_MON, MSRMN_DAY, MSRMN_HOUR, MSRMN_MIN,
+		    SIGN, SIGN_URL,
+		    RESULT_CODE,
+		    TEST1, TEST1_CODE, TEST1_CMNT,
+		    TEST2, TEST2_CODE, TEST2_CMNT,
+		    TEST3, TEST3_CODE, TEST3_CMNT,
+		    MEMO_YN, MEMO,
+		    INS_MEM_ID, UDT_MEM_ID
+		)
+	 	VALUES 
+	    (
+	        #{vdipSeq}, #{rawSeq},
+	        #{vltAcYn}, #{vltEtc}, #{vltEtcYn}, #{varNYn}, #{varYYn},
+	        #{room1Yn}, #{room2Yn}, #{roomEtc}, #{roomEtcYn},
+	        #{temp}, #{tempPlus}, #{hmdt}, #{hmdtPlus}, #{brmt}, #{brmtPlus},
+	        #{dipsRdc1Yn}, #{dipsRdc1Text}, #{dipsRdc105Yn}, #{dipsRdc15Yn}, #{dipsRdc125Yn}, #{dipsRdc130Yn}, #{dipsRdc150Yn}, #{dipsRdc1Etc}, #{dipsRdc1EtcYn}, #{dipsRdc1Code},
+	        #{dipsRdc2Yn}, #{dipsRdc2Text}, #{dipsRdc205Yn}, #{dipsRdc25Yn}, #{dipsRdc225Yn}, #{dipsRdc230Yn}, #{dipsRdc250Yn}, #{dipsRdc2Etc}, #{dipsRdc2EtcYn}, #{dipsRdc2Code},
+	        #{dipsRdc3Yn}, #{dipsRdc3Text}, #{dipsRdc3Etc}, #{dipsRdc3EtcYn}, #{dipsRdc3Code}, #{dipsRdc4Yn}, #{dipsRdc4Text}, #{dipsRdc4Etc}, #{dipsRdc4EtcYn}, #{dipsRdc4Code}, 
+	        #{intrpRdc1Yn}, #{intrpRdc1Text}, #{intrpRdc105Yn}, #{intrpRdc1250Yn}, #{intrpRdc1300Yn}, #{intrpRdc1Etc}, #{intrpRdc1EtcYn}, #{intrpRdc1Code}, #{intrpRdc2Yn},
+		    #{intrpRdc2Text}, #{intrpRdc2Etc}, #{intrpRdc2EtcYn}, #{intrpRdc2Code}, #{intrpRdc3Yn}, #{intrpRdc3Text}, #{intrpRdc3Etc}, #{intrpRdc3EtcYn}, #{intrpRdc3Code}, #{intrpRdc4Yn},
+		    #{intrpRdc4Text}, #{intrpRdc4Etc}, #{intrpRdc4EtcYn}, #{intrpRdc4Code},
+		    #{flcttP10Yn}, #{flcttM10Yn}, #{flcttM15Yn},
+			#{msrmnYear}, #{msrmnMon}, #{msrmnDay}, #{msrmnHour}, #{msrmnMin},
+			#{sign}, #{signUrl},
+			#{resultCode},
+			#{test1}, #{test1Code}, #{test1Cmnt},
+			#{test2}, #{test2Code}, #{test2Cmnt},
+			#{test3}, #{test3Code}, #{test3Cmnt},
+			#{memoYn},#{memo}, 
+			#{insMemId},#{udtMemId}
+	    )
+	    ON DUPLICATE KEY UPDATE
+	        VLT_AC_YN = #{vltAcYn},
+	        VLT_ETC = #{vltEtc},
+	        VLT_ETC_YN = #{vltEtcYn},
+	        VAR_N_YN = #{varNYn},
+	        VAR_Y_YN = #{varYYn},
+	        ROOM1_YN = #{room1Yn},
+	        ROOM2_YN = #{room2Yn},
+	        ROOM_ETC = #{roomEtc},
+	        ROOM_ETC_YN = #{roomEtcYn},
+	        TEMP = #{temp},
+	        TEMP_PLUS = #{tempPlus},
+	        HMDT = #{hmdt},
+	        HMDT_PLUS = #{hmdtPlus},
+	        BRMT = #{brmt},
+	        BRMT_PLUS = #{brmtPlus},
+	        DIPS_RDC1_YN = #{dipsRdc1Yn},
+	        DIPS_RDC1_TEXT = #{dipsRdc1Text},
+	        DIPS_RDC1_05_YN = #{dipsRdc105Yn},
+	        DIPS_RDC1_5_YN = #{dipsRdc15Yn},
+	        DIPS_RDC1_25_YN = #{dipsRdc125Yn},
+	        DIPS_RDC1_30_YN = #{dipsRdc130Yn},
+	        DIPS_RDC1_50_YN = #{dipsRdc150Yn},
+	        DIPS_RDC1_ETC = #{dipsRdc1Etc},
+	        DIPS_RDC1_ETC_YN = #{dipsRdc1EtcYn},
+	        DIPS_RDC1_CODE = #{dipsRdc1Code},
+	        DIPS_RDC2_YN = #{dipsRdc2Yn},
+	        DIPS_RDC2_TEXT = #{dipsRdc2Text},
+	        DIPS_RDC2_05_YN = #{dipsRdc205Yn},
+	        DIPS_RDC2_5_YN = #{dipsRdc25Yn},
+	        DIPS_RDC2_25_YN = #{dipsRdc225Yn},
+	        DIPS_RDC2_30_YN = #{dipsRdc230Yn},
+	        DIPS_RDC2_50_YN = #{dipsRdc250Yn},
+	        DIPS_RDC2_ETC = #{dipsRdc2Etc},
+	        DIPS_RDC2_ETC_YN = #{dipsRdc2EtcYn},
+	        DIPS_RDC2_CODE = #{dipsRdc2Code},
+	        DIPS_RDC3_YN = #{dipsRdc3Yn},
+	        DIPS_RDC3_TEXT = #{dipsRdc3Text},
+	        DIPS_RDC3_ETC = #{dipsRdc3Etc},
+	        DIPS_RDC3_ETC_YN = #{dipsRdc3EtcYn},
+	        DIPS_RDC3_CODE = #{dipsRdc3Code},
+			DIPS_RDC4_YN = #{dipsRdc4Yn},
+			DIPS_RDC4_TEXT = #{dipsRdc4Text},
+			DIPS_RDC4_ETC = #{dipsRdc4Etc},
+			DIPS_RDC4_ETC_YN = #{dipsRdc4EtcYn},
+			DIPS_RDC4_CODE = #{dipsRdc4Code},
+			INTRP_RDC1_YN = #{intrpRdc1Yn},
+			INTRP_RDC1_TEXT = #{intrpRdc1Text},
+			INTRP_RDC1_05_YN = #{intrpRdc105Yn},
+			INTRP_RDC1_250_YN = #{intrpRdc1250Yn},
+			INTRP_RDC1_300_YN = #{intrpRdc1300Yn},
+			INTRP_RDC1_ETC = #{intrpRdc1Etc},
+			INTRP_RDC1_ETC_YN = #{intrpRdc1EtcYn},
+			INTRP_RDC1_CODE = #{intrpRdc1Code},
+			INTRP_RDC2_YN = #{intrpRdc2Yn},
+			INTRP_RDC2_TEXT = #{intrpRdc2Text},
+			INTRP_RDC2_ETC = #{intrpRdc2Etc},
+			INTRP_RDC2_ETC_YN = #{intrpRdc2EtcYn},
+			INTRP_RDC2_CODE = #{intrpRdc2Code},
+			INTRP_RDC3_YN = #{intrpRdc3Yn},
+			INTRP_RDC3_TEXT = #{intrpRdc3Text},
+			INTRP_RDC3_ETC = #{intrpRdc3Etc},
+			INTRP_RDC3_ETC_YN = #{intrpRdc3EtcYn},
+			INTRP_RDC3_CODE = #{intrpRdc3Code},
+			INTRP_RDC4_YN = #{intrpRdc4Yn},
+			INTRP_RDC4_TEXT = #{intrpRdc4Text},
+			INTRP_RDC4_ETC = #{intrpRdc4Etc},
+			INTRP_RDC4_ETC_YN = #{intrpRdc4EtcYn},
+			INTRP_RDC4_CODE = #{intrpRdc4Code},
+			FLCTT_P10_YN = #{flcttP10Yn},
+			FLCTT_M10_YN = #{flcttM10Yn},
+			FLCTT_M15_YN = #{flcttM15Yn},
+			MSRMN_YEAR = #{msrmnYear},
+			MSRMN_MON = #{msrmnMon},
+			MSRMN_DAY = #{msrmnDay},
+			MSRMN_HOUR = #{msrmnHour},
+			MSRMN_MIN = #{msrmnMin},
+			SIGN = #{sign},
+			<if test="signUrl != null and signUrl != ''">SIGN_URL = #{signUrl},</if>
+			RESULT_CODE = #{resultCode},
+			TEST1 = #{test1},
+			TEST1_CODE = #{test1Code},
+			TEST1_CMNT = #{test1Cmnt},
+			TEST2 = #{test2},
+			TEST2_CODE = #{test2Code},
+			TEST2_CMNT = #{test2Cmnt},
+			TEST3 = #{test3},
+			TEST3_CODE = #{test3Code},
+			TEST3_CMNT = #{test3Cmnt},
+			MEMO_YN = #{memoYn}, 
+			MEMO = #{memo},
+			UDT_MEM_ID = #{udtMemId}
+	</insert>
+
+	<select id="ctiDetail" parameterType="int" resultType="ctiDTO">
+		SELECT 
+			CTI_SEQ, RAW_SEQ,
+		    VLT_DC12_YN, VLT_DC24_YN,
+		    VAR_N_YN, VAR_Y_YN,
+		    ROOM1_YN, ROOM2_YN, ROOM_ETC, ROOM_ETC_YN,
+		    TEMP, TEMP_PLUS,
+		    HMDT, HMDT_PLUS,
+		    MSRMN_YEAR, MSRMN_MON, MSRMN_DAY, MSRMN_HOUR, MSRMN_MIN,
+		    SIGN, <![CDATA[concat('/file/getImage.do?atchFileId=',SIGN_URL,'&fileSn=0') SIGN_URL,]]>
+		    RESULT_CODE
+		FROM METHOD_CTI_TB
+		WHERE 1=1
+		AND RAW_SEQ = #{rawSeq}
+	</select>
+	<insert id="insertCti" parameterType="ctiDTO">
+		<selectKey resultType="int" keyProperty="ctiSeq" order="AFTER">
+	        SELECT CTI_SEQ FROM METHOD_CTI_TB WHERE RAW_SEQ = #{rawSeq}
+	    </selectKey>
+	    INSERT INTO METHOD_CTI_TB (
+	        CTI_SEQ, RAW_SEQ,
+	        VLT_DC12_YN, VLT_DC24_YN,
+	        VAR_N_YN, VAR_Y_YN,
+	        ROOM1_YN, ROOM2_YN, ROOM_ETC, ROOM_ETC_YN,
+	        TEMP, TEMP_PLUS, HMDT, HMDT_PLUS,
+	        MSRMN_YEAR, MSRMN_MON, MSRMN_DAY, MSRMN_HOUR, MSRMN_MIN,
+	        SIGN, SIGN_URL,
+	        RESULT_CODE
+	    ) 
+	    VALUES (
+	       (SELECT ifnull(MAX(seq.CTI_SEQ)+1,1) ctiSeq FROM METHOD_CTI_TB seq), #{rawSeq},
+	        #{vltDc12Yn}, #{vltDc24Yn},
+	        #{varNYn}, #{varYYn},
+	        #{room1Yn}, #{room2Yn}, #{roomEtc}, #{roomEtcYn},
+	        #{temp}, #{tempPlus}, #{hmdt}, #{hmdtPlus},
+	        #{msrmnYear}, #{msrmnMon}, #{msrmnDay}, #{msrmnHour}, #{msrmnMin},
+	        #{sign}, #{signUrl},
+	        #{resultCode}
+	    )
+	    ON DUPLICATE KEY UPDATE
+	        VLT_DC12_YN = #{vltDc12Yn},
+	        VLT_DC24_YN = #{vltDc24Yn},
+	        VAR_N_YN = #{varNYn},
+	        VAR_Y_YN = #{varYYn},
+	        ROOM1_YN = #{room1Yn},
+	        ROOM2_YN = #{room2Yn},
+	        ROOM_ETC = #{roomEtc},
+	        ROOM_ETC_YN = #{roomEtcYn},
+	        TEMP = #{temp},
+	        TEMP_PLUS = #{tempPlus},
+	        HMDT = #{hmdt},
+	        HMDT_PLUS = #{hmdtPlus},
+	        MSRMN_YEAR = #{msrmnYear},
+	        MSRMN_MON = #{msrmnMon},
+	        MSRMN_DAY = #{msrmnDay},
+	        MSRMN_HOUR = #{msrmnHour},
+	        MSRMN_MIN = #{msrmnMin},
+	        SIGN = #{sign},
+	        <if test="signUrl != null and signUrl != ''">SIGN_URL = #{signUrl},</if>
+	        RESULT_CODE = #{resultCode}
+	</insert>
+
+	<insert id="insertCtiSub">
+		<foreach collection="ctiSubList" item="item" separator=";">
+		INSERT INTO METHOD_CTI_SUB_TB
+		(
+			CTI_SUB_SEQ,
+			CTI_SEQ,
+			DC_TYPE,
+			PULSE,
+			STANDARD,
+			RESULT_CODE,
+			TEST_MEMO
+		)
+		VALUES
+		(
+			#{item.ctiSubSeq},
+			#{ctiSeq},
+			#{item.dcType},
+			#{item.pulse},
+			#{item.standard},
+			#{item.resultCode},
+			#{item.testMemo}
+		)
+		ON DUPLICATE KEY UPDATE
+			DC_TYPE = #{item.dcType},
+			PULSE = #{item.pulse},
+			STANDARD = #{item.standard},
+			RESULT_CODE = #{item.resultCode},
+			TEST_MEMO = #{item.testMemo}
+		</foreach>
+	</insert>
+	
+	<select id="ctiSubList" parameterType="int" resultType="egovMap">
+		SELECT 
+			CTI_SUB_SEQ,
+		    CTI_SEQ,
+		    DC_TYPE,
+		    PULSE,
+		    STANDARD,
+		    RESULT_CODE,
+		    TEST_MEMO
+		FROM METHOD_CTI_SUB_TB
+		WHERE 1=1
+		AND CTI_SEQ = #{ctiSeq}
+	</select>
+	
 </mapper>

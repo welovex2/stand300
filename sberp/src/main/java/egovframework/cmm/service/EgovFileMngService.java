@@ -112,4 +112,11 @@ public interface EgovFileMngService {
      * @throws Exception
      */
     public List<FileVO> selectImageFileList(FileVO vo) throws Exception;
+
+	/**
+	 * 하나의 파일을 수정한다.
+	 *
+	 * @see egovframework.com.cmm.service.EgovFileMngService#deleteFileInf(egovframework.com.cmm.service.FileVO)
+	 */
+	void updateFileDetail(FileVO fvo) throws Exception;
 }

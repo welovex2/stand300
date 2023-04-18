@@ -11,6 +11,8 @@ public interface FileMapper {
 
 	void insertFileMaster(FileVO fvo);
 
+	void updateFileDetail(FileVO fvo);
+	
 	List<FileVO> selectFileList(FileVO fvo);
 
 	void deleteFileDetail(FileVO fvo);

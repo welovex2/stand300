@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
+import egovframework.raw.dto.InfoDTO;
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
 
 @Mapper("RawMapper")
@@ -61,4 +62,5 @@ public interface RawMapper {
 
 	public List<RawMet> methodList(int rawSeq);
 
+	public InfoDTO info(int rawSeq);
 }

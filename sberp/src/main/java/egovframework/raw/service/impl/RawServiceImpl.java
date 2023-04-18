@@ -9,11 +9,17 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import egovframework.raw.dto.CeDTO;
+import egovframework.raw.dto.CsDTO;
+import egovframework.raw.dto.CtiDTO;
 import egovframework.raw.dto.EftDTO;
 import egovframework.raw.dto.EsdDTO;
+import egovframework.raw.dto.InfoDTO;
+import egovframework.raw.dto.MfDTO;
 import egovframework.raw.dto.ReDTO;
 import egovframework.raw.dto.RsDTO;
 import egovframework.raw.dto.SurgeDTO;
+import egovframework.raw.dto.VdipDTO;
+import egovframework.raw.service.MethodCtiSub;
 import egovframework.raw.service.MethodEsdSub;
 import egovframework.raw.service.MethodMapper;
 import egovframework.raw.service.RawAsstn;
@@ -338,6 +344,11 @@ public class RawServiceImpl implements RawService {
 	}
 
 	@Override
+	public List<MethodCtiSub> ctiSubList(int ctiSeq) {
+		return methodMapper.ctiSubList(ctiSeq);
+	}
+	
+	@Override
 	public SurgeDTO surgeDetail(int rawSeq) {
 		return methodMapper.surgeDetail(rawSeq);
 	}
@@ -361,4 +372,109 @@ public class RawServiceImpl implements RawService {
 		
 	}
 
+	@Override
+	public CsDTO csDetail(int rawSeq) {
+		return methodMapper.csDetail(rawSeq);
+	}
+
+	@Override
+	public boolean insertCs(CsDTO req) {
+		
+		boolean result = true;
+		
+		// 기본로데이터가 없을때 로데이터 먼저 등록
+		if(req.getRawSeq() == 0)
+			req.setRawSeq(beforeRawInsert(req.getTestSeq(), req.getInsMemId()));
+		
+		methodMapper.insertCs(req);
+		
+		// 측정설비
+		if (!ObjectUtils.isEmpty(req.getMacList()))
+			methodMapper.insertMac(req.getRawSeq(), req.getMacType(), req.getMacList());
+		
+		return result;
+		
+	}
+	
+	@Override
+	public MfDTO mfDetail(int rawSeq) {
+		return methodMapper.mfDetail(rawSeq);
+	}
+
+	@Override
+	public boolean insertMf(MfDTO req) {
+		
+		boolean result = true;
+		
+		// 기본로데이터가 없을때 로데이터 먼저 등록
+		if(req.getRawSeq() == 0)
+			req.setRawSeq(beforeRawInsert(req.getTestSeq(), req.getInsMemId()));
+		
+		methodMapper.insertMf(req);
+		
+		// 측정설비
+		if (!ObjectUtils.isEmpty(req.getMacList()))
+			methodMapper.insertMac(req.getRawSeq(), req.getMacType(), req.getMacList());
+		
+		return result;
+		
+	}
+	
+	@Override
+	public InfoDTO info(int rawSeq) {
+		return rawMapper.info(rawSeq);
+	}
+	
+	@Override
+	public VdipDTO vdipDetail(int rawSeq) {
+		return methodMapper.vdipDetail(rawSeq);
+	}
+
+	@Override
+	public boolean insertVdip(VdipDTO req) {
+		
+		boolean result = true;
+		
+		// 기본로데이터가 없을때 로데이터 먼저 등록
+		if(req.getRawSeq() == 0)
+			req.setRawSeq(beforeRawInsert(req.getTestSeq(), req.getInsMemId()));
+		
+		methodMapper.insertVdip(req);
+		
+		// 측정설비
+		if (!ObjectUtils.isEmpty(req.getMacList()))
+			methodMapper.insertMac(req.getRawSeq(), req.getMacType(), req.getMacList());
+		
+		return result;
+		
+	}
+
+	@Override
+	public CtiDTO ctiDetail(int rawSeq) {
+		return methodMapper.ctiDetail(rawSeq);
+	}
+
+	@Override
+	public boolean insertCti(CtiDTO req) {
+		
+		boolean result = true;
+		
+		// 기본로데이터가 없을때 로데이터 먼저 등록
+		if(req.getRawSeq() == 0)
+			req.setRawSeq(beforeRawInsert(req.getTestSeq(), req.getInsMemId()));
+		
+		methodMapper.insertCti(req);
+		
+		// 측정설비
+		if (!ObjectUtils.isEmpty(req.getMacList()))
+			methodMapper.insertMac(req.getRawSeq(), req.getMacType(), req.getMacList());
+		
+		// 전원 System: DC XX V System
+		if (!ObjectUtils.isEmpty(req.getSubList()))
+			methodMapper.insertCtiSub(req.getCtiSeq(), req.getSubList());
+		
+		return result;
+		
+	}
+	
 }

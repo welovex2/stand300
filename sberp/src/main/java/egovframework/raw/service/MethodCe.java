@@ -37,7 +37,12 @@ public class MethodCe {
 	@Column
 	private String vltEtc;
 
-
+	
+	@ApiModelProperty(value="시험전압_기타 ", example = "")
+	@Column
+	private int vltEtcYn;
+	
+	
 	@ApiModelProperty(value="가변유무 무 ", example = "")
 	@Column
 	private int varNYn;
@@ -81,31 +86,35 @@ public class MethodCe {
 	
 	@ApiModelProperty(value="측정년 ", example = "2023")
 	@Column
-	@Min(value=1000, message = "측정년은 4 자리의 숫자만 입력 가능합니다.")
+	@Min(value=0, message = "측정년은 4 자리의 숫자만 입력 가능합니다.")
 	@Max(value=9999, message = "측정년은 4 자리의 숫자만 입력 가능합니다.")
 	private int msrmnYear;
 
 
 	@ApiModelProperty(value="측정월 ", example = "01")
 	@Column
+	@Min(value=0, message = "측정분은 2 자리의 숫자만 입력 가능합니다.")
 	@Max(value=12, message = "측정월은 2 자리의 숫자만 입력 가능합니다.")
 	private int msrmnMon;
 
 
 	@ApiModelProperty(value="측정일 ", example = "01")
 	@Column
+	@Min(value=0, message = "측정분은 2 자리의 숫자만 입력 가능합니다.")
 	@Max(value=31, message = "측정일은 2 자리의 숫자만 입력 가능합니다.")
 	private int msrmnDay;
 
 
 	@ApiModelProperty(value="측정시 ", example = "01")
 	@Column
+	@Min(value=0, message = "측정분은 2 자리의 숫자만 입력 가능합니다.")
 	@Max(value=24, message = "측정시는 2 자리의 숫자만 입력 가능합니다.")
 	private int msrmnHour;
 
 
 	@ApiModelProperty(value="측정분 ", example = "01")
 	@Column
+	@Min(value=0, message = "측정분은 2 자리의 숫자만 입력 가능합니다.")
 	@Max(value=60, message = "측정분은 2 자리의 숫자만 입력 가능합니다.")
 	private int msrmnMin;
 

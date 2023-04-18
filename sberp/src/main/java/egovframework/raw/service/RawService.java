@@ -3,13 +3,16 @@ package egovframework.raw.service;
 import java.util.List;
 
 import egovframework.raw.dto.CeDTO;
+import egovframework.raw.dto.CsDTO;
+import egovframework.raw.dto.CtiDTO;
 import egovframework.raw.dto.EftDTO;
 import egovframework.raw.dto.EsdDTO;
-import egovframework.raw.dto.RawDTO;
-import egovframework.raw.dto.RawSearchDTO;
+import egovframework.raw.dto.InfoDTO;
+import egovframework.raw.dto.MfDTO;
 import egovframework.raw.dto.ReDTO;
 import egovframework.raw.dto.RsDTO;
 import egovframework.raw.dto.SurgeDTO;
+import egovframework.raw.dto.VdipDTO;
 
 public interface RawService {
 
@@ -54,9 +57,28 @@ public interface RawService {
 	List<RawMac> macList(String machineType, int rawSeq);
 
 	List<MethodEsdSub> esdSubList(int esdSeq);
+	
+	List<MethodCtiSub> ctiSubList(int ctiSeq);
 
 	SurgeDTO surgeDetail(int rawSeq);
 	
 	boolean insertSurge(SurgeDTO req);
+	
+	CsDTO csDetail(int rawSeq);
+	
+	boolean insertCs(CsDTO req);
 
+	MfDTO mfDetail(int rawSeq);
+	
+	boolean insertMf(MfDTO req);
+
+	InfoDTO info(int testSeq);
+	
+	public VdipDTO vdipDetail(int rawSeq);
+
+	public boolean insertVdip(VdipDTO req);
+	
+	public CtiDTO ctiDetail(int rawSeq);
+
+	public  boolean insertCti(CtiDTO req);
 }

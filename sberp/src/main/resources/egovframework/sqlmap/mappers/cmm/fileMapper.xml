@@ -63,6 +63,15 @@
 		]]>
 	</insert>	
 	
+	<update id="updateFileDetail" parameterType="fileVO" >
+		<![CDATA[
+			UPDATE FILE_DETAIL_TB
+			SET FILE_CN = #{fileCn}
+			WHERE ATCH_FILE_ID = #{atchFileId}
+			AND FILE_SN = #{fileSn}
+		]]>
+	</update>
+	
 	<delete id="deleteFileDetail" parameterType="fileVO" >
 		<![CDATA[
 			DELETE FROM FILE_DETAIL_TB

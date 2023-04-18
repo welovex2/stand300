@@ -47,6 +47,7 @@
     	
     	<!-- 로데이터 -->
     	<typeAlias alias="rawSearchDTO" type="egovframework.raw.dto.RawSearchDTO"/>
+    	<typeAlias alias="infoDTO" type="egovframework.raw.dto.InfoDTO"/>
     	<typeAlias alias="rawData" type="egovframework.raw.service.RawData"/>
     	<typeAlias alias="rawDTO" type="egovframework.raw.dto.RawDTO"/>
     	<typeAlias alias="ceDTO" type="egovframework.raw.dto.CeDTO"/>
@@ -55,6 +56,10 @@
     	<typeAlias alias="rsDTO" type="egovframework.raw.dto.RsDTO"/>
     	<typeAlias alias="eftDTO" type="egovframework.raw.dto.EftDTO"/>
     	<typeAlias alias="surgeDTO" type="egovframework.raw.dto.SurgeDTO"/>
+    	<typeAlias alias="csDTO" type="egovframework.raw.dto.CsDTO"/>
+    	<typeAlias alias="mfDTO" type="egovframework.raw.dto.MfDTO"/>
+    	<typeAlias alias="vdipDTO" type="egovframework.raw.dto.VdipDTO"/>
+    	<typeAlias alias="ctiDTO" type="egovframework.raw.dto.CtiDTO"/>
     	
     </typeAliases>
 </configuration>

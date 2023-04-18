@@ -587,6 +587,27 @@
 		ORDER BY MET_SEQ
 	</select>
 	
+	
+	<select id="info" parameterType="int" resultType="infoDTO">
+		SELECT
+			JOB_TB.cmpy_name,
+			JOB_TB.model_name,
+			SBK_TB.MNFCT_CMPNY,
+			fn_code_name(SBK_TB.MNFCT_CNTRY_CODE, 'CN') MNFCT_CNTRY,
+			SBK_TB.MDL_IDNTF,
+			(select date_format(ins_dt,'%Y-%m-%d') from TEST_STATE_TB where TEST_SEQ = #{testSeq} and state_code = 1 order by ins_dt desc limit 1) receiptDt,
+			(select date_format(ins_dt,'%Y-%m-%d') from TEST_STATE_TB where TEST_SEQ = #{testSeq} and state_code = 2 order by ins_dt desc limit 1) testStartDt
+		FROM TEST_TB
+			inner join TEST_ITEM_TB
+		    on TEST_TB.TEST_ITEM_SEQ = TEST_ITEM_TB.TEST_ITEM_SEQ
+		    inner join JOB_TB
+		    on TEST_ITEM_TB.QUO_YM = JOB_TB.QUO_YM
+		    and TEST_ITEM_TB.QUO_SEQ = JOB_TB.QUO_SEQ
+		    inner join SBK_TB
+		    on JOB_TB.SBK_YM = SBK_TB.SBK_YM
+		    and JOB_TB.SBK_SEQ = SBK_TB.SBK_SEQ
+		where test_seq = #{testSeq}		
+	</select>
 </mapper>
 
 

@@ -124,6 +124,17 @@ public class EgovFileMngServiceImpl extends EgovAbstractServiceImpl implements E
 		}
     }
 
+    
+    /**
+     * 하나의 파일을 수정한다.
+     *
+     * @see egovframework.com.cmm.service.EgovFileMngService#deleteFileInf(egovframework.com.cmm.service.FileVO)
+     */
+    @Override
+	public void updateFileDetail(FileVO fvo) throws Exception {
+    	fileMapper.updateFileDetail(fvo);
+    }
+    
     /**
      * 하나의 파일을 삭제한다.
      *

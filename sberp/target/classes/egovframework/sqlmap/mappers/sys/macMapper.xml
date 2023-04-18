@@ -15,6 +15,15 @@
 			<if test="item.searchCode != null and item.searchCode != ''">
 				<choose>
 					<when test="item.searchWord == 'CE'">and CE_YN = 1</when>
+					<when test="item.searchWord == 'RE'">and RE_YN = 1</when>
+					<when test="item.searchWord == 'ED'">and ESD_YN = 1</when>
+					<when test="item.searchWord == 'RS'">and RS_YN = 1</when>
+					<when test="item.searchWord == 'ET'">and EFT_YN = 1</when>
+					<when test="item.searchWord == 'SG'">and SURGE_YN = 1</when>
+					<when test="item.searchWord == 'CS'">and CS_YN = 1</when>
+					<when test="item.searchWord == 'MF'">and MFLD_YN = 1</when>
+					<when test="item.searchWord == 'VD'">and VDIP_YN = 1</when>
+					<when test="item.searchWord == 'CT'">and CTI_YN = 1</when>
 				</choose>
 			</if>
 		</foreach>
@@ -28,7 +37,7 @@
 		    model,
 		    MNFCT_CMPNY,
 		    MNFCT_SERIAL,
-		    REFORM_DT,
+		    ifnull(date_format(REFORM_DT, '%Y-%m-%d'), '-') reformDtStr,
 		    REFORM_PERIOD
 		from MACHINE_TB
 		where 1=1
@@ -40,6 +49,15 @@
 			<if test="item.searchCode != null and item.searchCode != ''">
 				<choose>
 					<when test="item.searchWord == 'CE'">and CE_YN = 1</when>
+					<when test="item.searchWord == 'RE'">and RE_YN = 1</when>
+					<when test="item.searchWord == 'ED'">and ESD_YN = 1</when>
+					<when test="item.searchWord == 'RS'">and RS_YN = 1</when>
+					<when test="item.searchWord == 'ET'">and EFT_YN = 1</when>
+					<when test="item.searchWord == 'SG'">and SURGE_YN = 1</when>
+					<when test="item.searchWord == 'CS'">and CS_YN = 1</when>
+					<when test="item.searchWord == 'MF'">and MFLD_YN = 1</when>
+					<when test="item.searchWord == 'VD'">and VDIP_YN = 1</when>
+					<when test="item.searchWord == 'CT'">and CTI_YN = 1</when>
 				</choose>
 			</if>
 		</foreach>

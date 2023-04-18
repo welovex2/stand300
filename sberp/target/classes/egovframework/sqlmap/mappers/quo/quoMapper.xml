@@ -212,7 +212,8 @@
 			</if>
 			COST_TOTAL = #{CostTotal},
 			TOTAL_VAT = #{TotalVat},
-			UDT_MEM_ID = #{udtMemId}
+			UDT_MEM_ID = #{udtMemId},
+			UDT_DT = NOW()
 				
 		WHERE QUO_TB.quo_ym = substring(#{quoId},2,4)
 		AND QUO_TB.quo_seq = substring(#{quoId},8,4)

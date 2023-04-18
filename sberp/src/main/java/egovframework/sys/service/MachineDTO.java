@@ -7,4 +7,5 @@ import lombok.ToString;
 @Getter @Setter @ToString(callSuper = true)
 public class MachineDTO extends Machine {
 
+	private String reformDtStr;
 }
