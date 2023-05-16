@@ -14,6 +14,14 @@ public interface LoginMapper {
 	public LoginVO actionLogin(LoginVO vo) throws Exception;
 
 	/**
+     * 마지막 로그인 정보를 저장한다
+     * @param vo LoginVO
+     * @return LoginVO
+     * @exception Exception
+     */
+    public void updateLogin(LoginVO vo) throws Exception;
+    
+	/**
 	 * 아이디를 찾는다.
 	 * @param vo LoginVO
 	 * @return LoginVO

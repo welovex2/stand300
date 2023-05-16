@@ -5,6 +5,7 @@
 	<resultMap id="fileList" type="fileVO">
 		<result property="atchFileId" column="ATCH_FILE_ID" />
 		<result property="fileCn" column="FILE_CN" />
+		<result property="fileMemo" column="FILE_MEMO" />
 		<result property="fileExtsn" column="FILE_EXTSN" />
 		<result property="fileMg" column="FILE_SIZE" />
 		<result property="fileSn" column="FILE_SN" />
@@ -29,7 +30,7 @@
  	<select id="selectFileList" parameterType="fileVO" resultMap="fileList" >
  		<![CDATA[
 			SELECT 
-				a.ATCH_FILE_ID, b.FILE_CN, b.FILE_SN, b.FILE_STRE_COURS, b.STRE_FILE_NM,
+				a.ATCH_FILE_ID, b.FILE_CN, b.FILE_MEMO, b.FILE_SN, b.FILE_STRE_COURS, b.STRE_FILE_NM,
 				b.FILE_EXTSN, b.ORIGNL_FILE_NM, b.FILE_SIZE, a.CREAT_DT
 			FROM
 				FILE_TB a, FILE_DETAIL_TB b
@@ -56,12 +57,21 @@
 		<![CDATA[
 			INSERT INTO FILE_DETAIL_TB
 			( ATCH_FILE_ID, FILE_SN, FILE_STRE_COURS, STRE_FILE_NM, 
-			  ORIGNL_FILE_NM, FILE_EXTSN, FILE_SIZE, FILE_CN )
+			  ORIGNL_FILE_NM, FILE_EXTSN, FILE_SIZE, FILE_CN, FILE_MEMO )
 			VALUES
 			( #{atchFileId}, #{fileSn}, #{fileStreCours}, #{streFileNm}, 
-			  #{orignlFileNm}, #{fileExtsn}, #{fileMg}, #{fileCn} )			
+			  #{orignlFileNm}, #{fileExtsn}, #{fileMg}, #{fileCn}, #{fileMemo} )			
 		]]>
 	</insert>	
+	
+	<update id="updateFileDetail" parameterType="fileVO" >
+		<![CDATA[
+			UPDATE FILE_DETAIL_TB
+			SET FILE_CN = #{fileCn}
+			WHERE ATCH_FILE_ID = #{atchFileId}
+			AND FILE_SN = #{fileSn}
+		]]>
+	</update>
 	
 	<delete id="deleteFileDetail" parameterType="fileVO" >
 		<![CDATA[
@@ -103,10 +113,23 @@
 		]]>
 	</update>
 
+
+	<delete id="deletePicAll" parameterType="fileVO" >
+		DELETE FROM FILE_DETAIL_TB
+		WHERE ATCH_FILE_ID = #{atchFileId}
+		<if test="orignlFileNm != ''"> 		
+		AND ORIGNL_FILE_NM != ''
+		</if>
+		<if test="orignlFileNm == ''"> 		
+		AND ORIGNL_FILE_NM = ''
+		</if>
+	</delete>
+	
+	
  	<select id="selectFileListByFileNm" parameterType="fileVO" resultMap="fileList" >
  		<![CDATA[
 			SELECT 
-				a.ATCH_FILE_ID, b.FILE_CN, b.FILE_SN, b.FILE_STRE_COURS, b.STRE_FILE_NM,
+				a.ATCH_FILE_ID, b.FILE_CN, b.FILE_MEMO, b.FILE_SN, b.FILE_STRE_COURS, b.STRE_FILE_NM,
 				b.FILE_EXTSN, b.ORIGNL_FILE_NM, b.FILE_SIZE, a.CREAT_DT
 			FROM
 				FILE_TB a, FILE_DETAIL_TB b
@@ -149,7 +172,7 @@
   	<select id="selectImageFileList" parameterType="fileVO" resultMap="fileList" >
  		<![CDATA[
 			SELECT 
-				a.ATCH_FILE_ID, b.FILE_CN, b.FILE_SN, b.FILE_STRE_COURS, b.STRE_FILE_NM,
+				a.ATCH_FILE_ID, b.FILE_CN, b.FILE_MEMO, b.FILE_SN, b.FILE_STRE_COURS, b.STRE_FILE_NM,
 				b.FILE_EXTSN, b.ORIGNL_FILE_NM, b.FILE_SIZE, a.CREAT_DT
 			FROM
 				FILE_TB a, FILE_DETAIL_TB b
@@ -158,7 +181,7 @@
 			AND 
 				a.ATCH_FILE_ID = b.ATCH_FILE_ID
 			AND
-				UPPER(b.FILE_EXTSN) IN ('GIF','JPG','BMP','PNG')
+				UPPER(b.FILE_EXTSN) IN ('GIF','JPG','JPEG','BMP','PNG')
 			AND 
 				a.USE_AT = 'Y'				
 			ORDER BY b.FILE_SN	

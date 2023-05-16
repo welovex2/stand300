@@ -38,7 +38,9 @@
 			CMPY_MNG_SEQ,
 		    CMPY_SEQ,
 		    NAME,
-		    REGEXP_REPLACE(PHONE, '(02|.{3})(.+)(.{4})', '\\1-\\2-\\3') PHONE,
+		    FN_GET_PHONE_FORMAT(ifnull(PHONE, '')) PHONE,
+		    FN_GET_PHONE_FORMAT(ifnull(TEL, '')) TEL,
+		    FN_GET_PHONE_FORMAT(ifnull(FAX, '')) FAX,
 		    EMAIL
 		from CMPY_MNG_TB
 		where CMPY_SEQ = #{cmpySeq}
@@ -49,9 +51,44 @@
 		SELECT 
 			type_cd,
 			type_name
-		FROM sberp.COMCODE_TB
+		FROM COMCODE_TB
 		WHERE use_yn = 1
 		AND top_cd = #{code};
 	</select>
-		
+	
+	<select id="deptList" resultType="egovMap">
+		select 
+			dept_seq
+			, name
+		from DEPT_TB
+		where 1=1
+		and state != 'D'
+		and TEST_YN = 1
+		order by oder
+	</select>
+	
+	<select id="revMemList" parameterType="int" resultType="egovMap">
+		select 
+			id
+			, mem_name
+		from MEMBER_TB
+		where 1=1
+		and state != 'D'
+		and REV_YN = 1
+		and work_state = '1'
+		and dept_seq = #{deptSeq};
+	</select>
+	
+	<select id="deptMemList" parameterType="int" resultType="egovMap">
+		select 
+			id
+			, mem_name
+		from MEMBER_TB
+		where 1=1
+		and state != 'D'
+		/*and REV_YN = 1*/
+		and work_state = '1'
+		and dept_seq = #{deptSeq};
+	</select>
+	
 </mapper>

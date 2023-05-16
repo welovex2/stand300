@@ -4,7 +4,11 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
+import egovframework.cmm.service.ComParam;
+import egovframework.cmm.service.HisDTO;
+import egovframework.raw.dto.FileRawDTO;
 import egovframework.raw.dto.InfoDTO;
+import egovframework.raw.dto.ReportDTO;
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
 
 @Mapper("RawMapper")
@@ -63,4 +67,14 @@ public interface RawMapper {
 	public List<RawMet> methodList(int rawSeq);
 
 	public InfoDTO info(int rawSeq);
+	
+	public List<HisDTO> hisList(String rawSeq);
+	
+	ReportDTO report(int rawSeq);
+	
+	public boolean insertFile(FileRaw req);
+	
+	int fileRawListCnt(@Param("testSeq") int testSeq, @Param("comParam") ComParam param);
+
+	List<FileRawDTO> fileRawList(@Param("testSeq") int testSeq, @Param("comParam") ComParam param);
 }

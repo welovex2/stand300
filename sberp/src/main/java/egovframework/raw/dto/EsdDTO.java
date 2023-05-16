@@ -12,22 +12,28 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@Getter @Setter @ToString(callSuper = true)
+@Getter
+@Setter
+@ToString(callSuper = true)
 public class EsdDTO extends MethodEsd {
-	
-	@ApiModelProperty(value="시험고유번호", example = "15", hidden = true)
-	@Column
-	int testSeq;
-	
-	@ApiModelProperty(value="측정설비 종류(공통코드 : TM)", example = "CE")
-	@Column
-	String macType;
-	
-	@ApiModelProperty(value="측정설비 리스트", example = "")
-	@Column
-	List<RawMac> macList;
-	
-	@ApiModelProperty(value="시험결과 > 직접인가 ", example = "")
-	@Column
-	List<MethodEsdSub> subList;
+
+  @ApiModelProperty(value = "시험고유번호", example = "15", hidden = true)
+  @Column
+  int testSeq;
+
+  @ApiModelProperty(value = "측정설비 종류(공통코드 : TM)", example = "CE")
+  @Column
+  String macType;
+
+  @ApiModelProperty(value = "측정설비 리스트", example = "")
+  @Column
+  List<RawMac> macList;
+
+  @ApiModelProperty(value = "시험결과 > 직접인가 ", example = "")
+  @Column
+  List<MethodEsdSub> subList;
+
+  @ApiModelProperty(value = "정전기 방전 인가부위", example = "")
+  @Column
+  private List<PicDTO> imgList;
 }

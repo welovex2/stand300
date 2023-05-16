@@ -24,43 +24,55 @@
 					<when test="item.searchWord == 'MF'">and MFLD_YN = 1</when>
 					<when test="item.searchWord == 'VD'">and VDIP_YN = 1</when>
 					<when test="item.searchWord == 'CT'">and CTI_YN = 1</when>
+					<when test="item.searchWord == 'CA'">and CEA_YN = 1</when>
+					<when test="item.searchWord == 'CB'">and CEB_YN = 1</when>
 				</choose>
 			</if>
 		</foreach>
 	</select>
 
 	<select id="selectList" parameterType="comParam" resultType="egovMap">
-		select
-			ROW_NUMBER() OVER(ORDER BY MACHINE_TB.DIS_ORDR, MACHINE_SEQ) AS no,
-			MACHINE_SEQ,
-		    name,
-		    model,
-		    MNFCT_CMPNY,
-		    MNFCT_SERIAL,
-		    ifnull(date_format(REFORM_DT, '%Y-%m-%d'), '-') reformDtStr,
-		    REFORM_PERIOD
-		from MACHINE_TB
-		where 1=1
-		AND STATE != 'D'
-		<if test="startDate != null and endDate != null">
-        	and date_format(MACHINE_TB.ins_dt, '%Y%m%d') between date_format(#{startDate}, '%Y%m%d') and date_format(#{endDate}, '%Y%m%d')
-        </if>
-		<foreach collection="searchVO" item="item">
-			<if test="item.searchCode != null and item.searchCode != ''">
-				<choose>
-					<when test="item.searchWord == 'CE'">and CE_YN = 1</when>
-					<when test="item.searchWord == 'RE'">and RE_YN = 1</when>
-					<when test="item.searchWord == 'ED'">and ESD_YN = 1</when>
-					<when test="item.searchWord == 'RS'">and RS_YN = 1</when>
-					<when test="item.searchWord == 'ET'">and EFT_YN = 1</when>
-					<when test="item.searchWord == 'SG'">and SURGE_YN = 1</when>
-					<when test="item.searchWord == 'CS'">and CS_YN = 1</when>
-					<when test="item.searchWord == 'MF'">and MFLD_YN = 1</when>
-					<when test="item.searchWord == 'VD'">and VDIP_YN = 1</when>
-					<when test="item.searchWord == 'CT'">and CTI_YN = 1</when>
-				</choose>
-			</if>
-		</foreach>
+		set @rownum:=0;
+		
+		select lst.*
+		from (
+			select
+				
+				@rownum:=@rownum+1 as no,
+				#ROW_NUMBER() OVER(ORDER BY MACHINE_TB.DIS_ORDR, MACHINE_SEQ) AS no,
+				MACHINE_SEQ,
+			    name,
+			    model,
+			    MNFCT_CMPNY,
+			    MNFCT_SERIAL,
+			    ifnull(date_format(REFORM_DT, '%Y-%m-%d'), '-') reformDtStr,
+			    REFORM_PERIOD
+			from MACHINE_TB
+			where 1=1
+			AND STATE != 'D'
+			<if test="startDate != null and endDate != null">
+	        	and date_format(MACHINE_TB.ins_dt, '%Y%m%d') between date_format(#{startDate}, '%Y%m%d') and date_format(#{endDate}, '%Y%m%d')
+	        </if>
+			<foreach collection="searchVO" item="item">
+				<if test="item.searchCode != null and item.searchCode != ''">
+					<choose>
+						<when test="item.searchWord == 'CE'">and CE_YN = 1</when>
+						<when test="item.searchWord == 'RE'">and RE_YN = 1</when>
+						<when test="item.searchWord == 'ED'">and ESD_YN = 1</when>
+						<when test="item.searchWord == 'RS'">and RS_YN = 1</when>
+						<when test="item.searchWord == 'ET'">and EFT_YN = 1</when>
+						<when test="item.searchWord == 'SG'">and SURGE_YN = 1</when>
+						<when test="item.searchWord == 'CS'">and CS_YN = 1</when>
+						<when test="item.searchWord == 'MF'">and MFLD_YN = 1</when>
+						<when test="item.searchWord == 'VD'">and VDIP_YN = 1</when>
+						<when test="item.searchWord == 'CT'">and CTI_YN = 1</when>
+						<when test="item.searchWord == 'CA'">and CEA_YN = 1</when>
+						<when test="item.searchWord == 'CB'">and CEB_YN = 1</when>
+					</choose>
+				</if>
+			</foreach>
+			order by MACHINE_TB.DIS_ORDR DESC, MACHINE_SEQ DESC
+		) lst
 		order by no desc
 		LIMIT #{pageUnit} OFFSET #{firstIndex};
 	</select>

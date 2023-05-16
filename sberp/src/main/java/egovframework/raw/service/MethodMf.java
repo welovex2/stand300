@@ -146,7 +146,37 @@ public class MethodMf {
 	@Column
 	private String acrdt;
 
+	
+	@ApiModelProperty(value="Short Field (1-3 sec) ", example = "")
+	@Column
+	private int sf300Yn;
 
+
+	@ApiModelProperty(value="Short Field (1-3 sec) ", example = "")
+	@Column
+	private int sfEtcYn;
+
+
+	@ApiModelProperty(value="Short Field (1-3 sec) ", example = "")
+	@Column
+	private String sfEtc;
+
+
+	@ApiModelProperty(value="성능평가기준 A ", example = "")
+	@Column
+	private int evltnAYn;
+
+
+	@ApiModelProperty(value="성능평가기준 B ", example = "")
+	@Column
+	private int evltnBYn;
+
+
+	@ApiModelProperty(value="성능평가기준 C ", example = "")
+	@Column
+	private int evltnCYn;
+
+	
 	@ApiModelProperty(value="측정년 ", example = "")
 	@Column
 	private int msrmnYear;
@@ -189,7 +219,7 @@ public class MethodMf {
 
 	@ApiModelProperty(value="X_기준 ", example = "")
 	@Column
-	private String xStndr;
+	private String xStnd;
 
 
 	@ApiModelProperty(value="X_성능결과_CODE ", example = "")

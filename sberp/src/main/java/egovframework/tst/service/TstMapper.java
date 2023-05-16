@@ -1,11 +1,10 @@
 package egovframework.tst.service;
 
 import java.util.List;
-
 import egovframework.cmm.service.ComParam;
-import egovframework.cnf.service.TestStndr;
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
 import egovframework.sbk.service.SbkDTO;
+import egovframework.sys.service.TestStndr;
 import egovframework.tst.service.TestDTO.Req;
 import egovframework.tst.service.TestDTO.Res;
 

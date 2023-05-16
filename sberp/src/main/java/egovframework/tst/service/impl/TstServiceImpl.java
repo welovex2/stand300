@@ -1,13 +1,11 @@
 package egovframework.tst.service.impl;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import egovframework.cmm.service.ComParam;
-import egovframework.cnf.service.TestStndr;
 import egovframework.sbk.service.SbkDTO;
+import egovframework.sys.service.TestStndr;
 import egovframework.tst.service.Test;
 import egovframework.tst.service.TestCate;
 import egovframework.tst.service.TestDTO.Req;

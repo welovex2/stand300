@@ -1,11 +1,8 @@
 package egovframework.sls.service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
-
-import org.springmodules.validation.bean.conf.loader.annotation.handler.NotNull;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

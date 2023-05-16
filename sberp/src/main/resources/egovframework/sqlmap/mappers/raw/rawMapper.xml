@@ -31,6 +31,8 @@
 			MNFCT_CNTRY,
 			<if test="rcptDt != null and rcptDt != ''">RCPT_DT,</if>
 			REPORT_NO,
+			<if test="reportDt != null and reportDt != ''">REPORT_DT,</if>
+			REPORT_MEMO,
 			<if test="testSDt != null and testSDt != ''">TEST_S_DT,</if>
 			<if test="testEDt != null and testEDt != ''">TEST_E_DT,</if>
 			TEST_BY,
@@ -75,6 +77,10 @@
 			OPR_CND,
 			SETUP_URL,
 			STD_MEMO,
+			ADD_TEST_DIS,
+			ADD_TEST_CABLE,
+			ADD_TEST_DATA,
+			ADD_TEST_AUDIO,
 			INS_MEM_ID,
 			UDT_MEM_ID
 		)
@@ -92,6 +98,8 @@
 			#{mnfctCntry},
 			<if test="rcptDt != null and rcptDt != ''">#{rcptDt},</if>
 			#{reportNo},
+			<if test="reportDt != null and reportDt != ''">#{reportDt},</if>
+			#{reportMemo},
 			<if test="testSDt != null and testSDt != ''">#{testSDt},</if>
 			<if test="testEDt != null and testEDt != ''">#{testEDt},</if>
 			#{testBy},
@@ -136,6 +144,10 @@
 			#{oprCnd},
 			#{setupUrl},
 			#{stdMemo},
+			#{addTestDis},
+			#{addTestCable},
+			#{addTestData},
+			#{addTestAudio},
 			#{insMemId},
 			#{udtMemId}
 		);
@@ -373,6 +385,8 @@
 			MNFCT_CNTRY = #{mnfctCntry},
 			<if test="rcptDt != null and rcptDt != ''">RCPT_DT = #{rcptDt},</if>
 			REPORT_NO = #{reportNo},
+			<if test="reportDt != null and reportDt != ''">REPORT_DT = #{reportDt},</if>
+			REPORT_MEMO = #{reportMemo},
 			<if test="testSDt != null and testSDt != ''">TEST_S_DT = #{testSDt},</if>
 			<if test="testEDt != null and testEDt != ''">TEST_E_DT = #{testEDt},</if>
 			TEST_BY = #{testBy},
@@ -417,13 +431,19 @@
 			OPR_CND = #{oprCnd},
 			<if test="setupUrl != null and setupUrl != ''">SETUP_URL = #{setupUrl},</if>
 			STD_MEMO = #{stdMemo},
+			ADD_TEST_DIS = #{addTestDis},
+			ADD_TEST_CABLE = #{addTestCable},
+			ADD_TEST_DATA = #{addTestData},
+			ADD_TEST_AUDIO = #{addTestAudio},
 			UDT_MEM_ID = #{udtMemId},
 			UDT_DT = NOW()
 		WHERE RAW_SEQ = #{rawSeq}
 	</update>
 	
 	<select id="detail" parameterType="int" resultType="rawData">
-		SELECT RAW_SEQ,
+		SELECT 
+			RAW_SEQ,
+			concat(SBK_ID,'-',(select concat(TEST_TYPE_CODE,LPAD(TEST_TB.TEST_NO,4,0)) from TEST_TB where TEST_SEQ = #{testSeq}),'-RD') rawId,
 		    SBK_NO,
 		    SBK_ID,
 		    TEST_SEQ,
@@ -435,6 +455,8 @@
 		    MNFCT_CNTRY,
 		    RCPT_DT,
 		    REPORT_NO,
+		    REPORT_DT,
+		    REPORT_MEMO,
 		    TEST_S_DT,
 		    TEST_E_DT,
 		    TEST_BY,
@@ -478,7 +500,11 @@
 		    TEST_ETC_YN,
 		    OPR_CND,
 		    SETUP_URL,
-		    STD_MEMO
+		    STD_MEMO,
+			ADD_TEST_DIS,
+			ADD_TEST_CABLE,
+			ADD_TEST_DATA,
+			ADD_TEST_AUDIO
 		FROM RAW_TB
 		WHERE 1=1
 		AND TEST_SEQ = #{testSeq}
@@ -576,12 +602,14 @@
 		</foreach>
 	</insert>
 	
-	<select id="methodList" parameterType="int" resultType="egovMap">
+	<select id="methodList" parameterType="int" resultType="rawMet">
 		SELECT MET_SEQ,
 		    CHECK_YN,
 		    TYPE,
-		    MEMO
-		FROM RAW_MET_TB
+		    MEMO,
+		    if(MEMO = '','',concat(@num:=@num+1,'. ',MEMO)) reportMemo, 
+		    if(MEMO = '','',concat('NOTE ',@num)) as note
+		FROM RAW_MET_TB,  (select @num:=0) note
 		WHERE 1=1
 		AND RAW_SEQ = #{rawSeq}
 		ORDER BY MET_SEQ
@@ -591,11 +619,12 @@
 	<select id="info" parameterType="int" resultType="infoDTO">
 		SELECT
 			JOB_TB.cmpy_name,
-			JOB_TB.model_name,
-			SBK_TB.MNFCT_CMPNY,
-			fn_code_name(SBK_TB.MNFCT_CNTRY_CODE, 'CN') MNFCT_CNTRY,
-			SBK_TB.MDL_IDNTF,
-			(select date_format(ins_dt,'%Y-%m-%d') from TEST_STATE_TB where TEST_SEQ = #{testSeq} and state_code = 1 order by ins_dt desc limit 1) receiptDt,
+			TEST_ITEM_TB.model,
+			TEST_ITEM_TB.product,
+            SBK_TB.MNFCT_CMPNY,
+            SBK_TB.MNFCT_CNTRY_CODE,
+			fn_code_name(SBK_TB.MNFCT_CNTRY_CODE, 'SN') MNFCT_CNTRY,
+			STR_TO_DATE(concat(SBK_TB.APP_YEAR,SBK_TB.APP_MON,SBK_TB.APP_DAY), '%Y%m%d') receiptDt,
 			(select date_format(ins_dt,'%Y-%m-%d') from TEST_STATE_TB where TEST_SEQ = #{testSeq} and state_code = 2 order by ins_dt desc limit 1) testStartDt
 		FROM TEST_TB
 			inner join TEST_ITEM_TB
@@ -608,6 +637,213 @@
 		    and JOB_TB.SBK_SEQ = SBK_TB.SBK_SEQ
 		where test_seq = #{testSeq}		
 	</select>
+	
+	<select id="hisList" parameterType="String" resultType="egovMap">
+		SELECT 
+		
+			date_format(RAW_HIS_TB.ins_dt, '%Y-%m-%d %T') intDtStr,
+		    MEMBER_TB.MEM_NAME,
+		    FN_POS_NAME(RAW_HIS_TB.MEM_ID) memPos
+			
+		FROM RAW_HIS_TB
+		
+			inner join MEMBER_TB
+		    on RAW_HIS_TB.MEM_ID = MEMBER_TB.ID
+		    
+		WHERE 1=1
+		AND RAW_HIS_TB.RAW_ID = #{rawSeq}
+		
+		order by RAW_HIS_TB.INS_DT desc
+	</select>
+	
+	<select id="report" parameterType="int" resultType="reportDTO">
+		SELECT
+
+			/* 1	발급번호 */
+			REPORT_NO,
+			REPORT_DT,
+			REPORT_MEMO,
+			/* 2	접수일 */
+			date_format(RCPT_DT, '%Y년 %m월 %d일') RCPT_DT,
+			/* 3	시험기간 */
+			date_format(TEST_S_DT, '%Y년 %m월 %d일') TEST_S_DT,
+			date_format(TEST_E_DT, '%Y년 %m월 %d일') TEST_E_DT,
+			/* 4	신청인(상호명) */
+			APLCN,
+			/* 4-1	사업자등록번호 */
+			BSNS_RGNMB,
+			/* 4-2	대표자 성명 */
+			RPRSN,
+			/* 4-3	주소 */
+			ADDRESS,
+			/* 5	기자재명칭 / 모델명 */
+			EQPMN, MODEL,
+			/* 6	제조자 / 제조국가 */
+			RAW_TB.MNFCT_CMPNY, RAW_TB.MNFCT_CNTRY,
+			
+			/* 1-1. 시험기자재 (제품구분) */
+			RAW_TB.CLASS_A_YN, RAW_TB.CLASS_B_YN,
+			
+			/* 1-2. 시험기준 >> 고정 */
+			/* 1-3. 시험방법 >> 고정*/
+			/* 1-4. 인증받은 모듈 사용 유무 */
+			WHT_USE_CRT_YN,
+			CRT_NBR,
+			CRT_MEMO,
+			/* 1-5. 특기사항 */
+			STD_MEMO,
+			/* 1. 시험원 */
+			TEST_BY,
+			<![CDATA[concat('/file/getImage.do?atchFileId=',TEST_SIGN_URL,'&fileSn=0') TEST_SIGN_URL,]]>
+			REV_BY,
+			<![CDATA[concat('/file/getImage.do?atchFileId=',REV_SIGN_URL,'&fileSn=0') REV_SIGN_URL,]]>
+			
+			/* 3.2 시험항목 >> methodList */
+			/* 3.3 피시험기기의 보완내용 >> modList  */
+			MOD_URL, MOD_MEMO, MOD_CHECK1_YN, MOD_CHECK2_YN,
+			/* 4.1 제품 개요 */
+			PRD_EXPLN, PRD_USES,
+			/* 4.2 기술 제원 */
+			FN_CODE_NAME(CLOCK_FRQNC_CODE,'RC') CLOCK_FRQNC_CODE,
+			RAW_TB.CLOCK_FRQNC,
+			RATED_POWER, TEST_POWER, USER_PORT, ADMIN_PORT, PRD_FNC, WRL_FNC, CMP, ETC,
+			
+			/* 5.1 전체구성 >> AsstnList */
+			/* 5.2 시스템구성 (시험기자재가 컴퓨터 및 시스템인 경우) >> sysList */
+			/* 5.3 접속 케이블 >> cableList */
+			/* 5.4 시험기자재의 동작상태 */
+			OPR_CND,
+			/* 5.5 배치도 >> setupList */
+			SETUP_URL,
+			/* 8. 추가시험 요건 */
+			ADD_TEST_DIS,
+			ADD_TEST_CABLE,
+			ADD_TEST_DATA,
+			ADD_TEST_AUDIO,
+			SBK_ID
+		FROM RAW_TB
+			INNER JOIN SBK_TB
+		    ON RAW_TB.SBK_ID = FN_GET_SEQSTRING('SB',SBK_TB.SBK_YM,'G',SBK_TB.SBK_SEQ)
+		WHERE RAW_SEQ = #{rawSeq}
+	</select>
+	
+	<insert id="insertFile" parameterType="fileRaw">
+		INSERT INTO FILE_RAW_TB
+		(
+			TEST_SEQ,
+			FILE_TYPE,
+			TITLE,
+			ATCH_FILE_ID,
+			INS_MEM_ID,
+			UDT_MEM_ID
+		)
+		VALUES
+		(
+			#{testSeq},
+			#{fileType},
+			#{title},
+			#{atchFileId},
+			#{insMemId},
+			#{udtMemId}
+		)
+	</insert>
+
+	<select id="fileRawListCnt" resultType="int">
+	SELECT COUNT(1) FROM (	
+		select
+			count(1)
+		from FILE_RAW_TB
+			inner join FILE_DETAIL_TB
+		    ON FILE_RAW_TB.ATCH_FILE_ID = FILE_DETAIL_TB.ATCH_FILE_ID
+		where 1=1
+		and test_seq = #{testSeq}
+		<if test="comParam.searchVO != null">
+	        <foreach collection="comParam.searchVO" item="item" separator="">
+	       
+	        	<choose>
+	        		<!-- 2	작성자 -->
+					<when test="item.searchCode == 2">and IFNULL(FN_MEM_NAME(FILE_RAW_TB.INS_MEM_ID), '') like concat('%',#{item.searchWord},'%')</when>
+					<!-- 15	작성일 -->
+					<when test="item.searchCode == 15">and date_format(FILE_RAW_TB.ins_dt, '%Y%m%d') between date_format(#{item.startDate}, '%Y%m%d') and date_format(#{item.endDate}, '%Y%m%d')</when>
+					<!-- 32	첨부파일용도 -->
+					<when test="item.searchCode == 32">and file_type = #{item.searchWord}</when>
+					<!-- 33	제목 -->
+					<when test="item.searchCode == 33">and IFNULL(FILE_RAW_TB.title, '') like concat('%',#{item.searchWord},'%')</when>
+					<!-- 34	파일명 -->
+	        		<when test="item.searchCode == 34">and IFNULL(FILE_DETAIL_TB.ORIGNL_FILE_NM, '') like concat('%',#{item.searchWord},'%')</when>
+	        	</choose>
+	        	
+	        </foreach>
+        </if>
+		group by FILE_RAW_TB.file_raw_seq
+        
+    ) cnt
+	</select>
+
+	<resultMap type="fileRawDTO" id="fileRawMap">
+		<id column="file_raw_seq" property="fileRawSeq"/>
+		<result column="no" property="no"/>
+		<result column="insDtStr" property="insDtStr"/>
+		<result column="file_type" property="fileType"/>
+		<result column="title" property="title"/>
+		<result column="memName" property="memName"/>
+		<collection property="fileList" ofType="FileVO">
+			<result column="ORIGNL_FILE_NM" property="orignlFileNm"/>
+			<result column="ATCH_FILE_ID" property="atchFileId"/>
+			<result column="FILE_SN" property="fileSn"/>
+		</collection>
+	</resultMap>
+	<select id="fileRawList" resultMap="fileRawMap">
+		select
+		    if(
+		        @prev_value = file_raw_seq,
+		        @dense_rank,
+		        @dense_rank := @dense_rank + 1
+		    ) AS no,
+		    @prev_value := file_raw_seq,
+		    lst.*
+		from
+		    (
+			select
+				#DENSE_RANK() OVER(ORDER BY FILE_RAW_TB.file_raw_seq) AS no,
+				file_raw_seq,
+				test_seq testSeq,
+			    date_format(FILE_RAW_TB.ins_dt, '%Y-%m-%d') insDtStr,
+			    FN_CODE_NAME(file_type, 'RF') file_type,
+			    title,
+			    FN_MEM_NAME(FILE_RAW_TB.ins_mem_id) memName,
+			    FILE_DETAIL_TB.ORIGNL_FILE_NM,
+			    FILE_DETAIL_TB.ATCH_FILE_ID,
+			    FILE_DETAIL_TB.FILE_SN
+			from FILE_RAW_TB
+				inner join FILE_DETAIL_TB
+			    ON FILE_RAW_TB.ATCH_FILE_ID = FILE_DETAIL_TB.ATCH_FILE_ID
+			where 1=1
+			and test_seq = #{testSeq}
+			<if test="comParam.searchVO != null">
+		        <foreach collection="comParam.searchVO" item="item" separator="">
+		       
+		        	<choose>
+		        		<!-- 2	작성자 -->
+						<when test="item.searchCode == 2">and IFNULL(FN_MEM_NAME(FILE_RAW_TB.INS_MEM_ID), '') like concat('%',#{item.searchWord},'%')</when>
+						<!-- 15	작성일 -->
+						<when test="item.searchCode == 15">and date_format(FILE_RAW_TB.ins_dt, '%Y%m%d') between date_format(#{item.startDate}, '%Y%m%d') and date_format(#{item.endDate}, '%Y%m%d')</when>
+						<!-- 32	첨부파일용도 -->
+						<when test="item.searchCode == 32">and file_type = #{item.searchWord}</when>
+						<!-- 33	제목 -->
+						<when test="item.searchCode == 33">and IFNULL(FILE_RAW_TB.title, '') like concat('%',#{item.searchWord},'%')</when>
+						<!-- 34	파일명 -->
+		        		<when test="item.searchCode == 34">and IFNULL(FILE_DETAIL_TB.ORIGNL_FILE_NM, '') like concat('%',#{item.searchWord},'%')</when>
+		        	</choose>
+		        	
+		        </foreach>
+	        </if>
+			order by FILE_RAW_TB.file_raw_seq
+		) lst
+        WHERE 1=1
+        order by no desc
+	</select>
+	
 </mapper>
 
 

@@ -9,9 +9,9 @@ import egovframework.cmm.service.CmmMapper;
 import egovframework.cmm.service.CmmService;
 import egovframework.cmm.service.Comcode;
 import egovframework.cmm.service.Dept;
-import egovframework.cmm.service.Member;
 import egovframework.cnf.service.Cmpy;
 import egovframework.cnf.service.CmpyMng;
+import egovframework.cnf.service.Member;
 import egovframework.rte.fdl.cmmn.EgovAbstractServiceImpl;
 
 @Service("CmmService")

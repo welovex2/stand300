@@ -16,19 +16,19 @@ public class InfoDTO {
 	
 	@ApiModelProperty(value="기자재명칭", example = "")
 	@Column
-	private String modelName;
+	private String product;
 	
 	@ApiModelProperty(value="모델명", example = "")
 	@Column
-	private String mnfctCmpny;
+	private String model;
 	
 	@ApiModelProperty(value="제조자", example = "")
 	@Column
-	private String mnfctCntry;
+	private String mnfctCmpny;
 	
-	@ApiModelProperty(value="구성품", example = "")
+	@ApiModelProperty(value="제조국", example = "")
 	@Column
-	private String mdlIdntf;
+	private String mnfctCntry;
 	
 	@ApiModelProperty(value="입수일", example = "")
 	@Column

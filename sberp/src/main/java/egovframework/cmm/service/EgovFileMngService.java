@@ -94,7 +94,8 @@ public interface EgovFileMngService {
      * @throws Exception
      */
     public void deleteAllFileInf(FileVO fvo) throws Exception;
-
+    public void deletePicAll(FileVO fvo) throws Exception;
+    
     /**
      * 파일명 검색에 대한 목록을 조회한다.
      *

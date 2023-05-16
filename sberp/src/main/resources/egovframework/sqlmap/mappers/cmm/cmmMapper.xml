@@ -51,7 +51,7 @@
 		SELECT 
 			type_cd,
 			type_name
-		FROM sberp.COMCODE_TB
+		FROM COMCODE_TB
 		WHERE use_yn = 1
 		AND top_cd = #{code};
 	</select>

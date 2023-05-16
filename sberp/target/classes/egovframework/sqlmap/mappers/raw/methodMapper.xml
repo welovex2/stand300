@@ -172,6 +172,7 @@
 		    RAW_SEQ,
 		    VLT_AC_YN,
 		    VLT_ETC,
+		    VLT_ETC_YN,
 		    VAR_N_YN,
 		    VAR_Y_YN,
 		    HZ1_CODE,
@@ -239,6 +240,7 @@
 			RAW_SEQ,
 			VLT_AC_YN,
 			VLT_ETC,
+			VLT_ETC_YN,
 			VAR_N_YN,
 			VAR_Y_YN,
 			HZ1_CODE,
@@ -256,7 +258,9 @@
 			HZ1_ANTN_3M_YN,
 			HZ1_ANTN_4M_YN,
 			HZ1_TEMP,
+			HZ1_TEMP_PLUS,
 			HZ1_HMDT,
+			HZ1_HMDT_PLUS,
 			HZ1_MSRMN_YEAR,
 			HZ1_MSRMN_MON,
 			HZ1_MSRMN_DAY,
@@ -277,7 +281,9 @@
 			HZ2_LNGTH_10M_YN,
 			HZ2_LNGTH_30M_YN,
 			HZ2_TEMP,
+			HZ2_TEMP_PLUS,
 			HZ2_HMDT,
+			HZ2_HMDT_PLUS,
 			HZ2_MSRMN_YEAR,
 			HZ2_MSRMN_MON,
 			HZ2_MSRMN_DAY,
@@ -296,6 +302,7 @@
 			#{rawSeq},
 			#{vltAcYn},
 			#{vltEtc},
+			#{vltEtcYn},
 			#{varNYn},
 			#{varYYn},
 			#{hz1Code},
@@ -313,7 +320,9 @@
 			#{hz1Antn3mYn},
 			#{hz1Antn4mYn},
 			#{hz1Temp},
+			#{hz1TempPlus},
 			#{hz1Hmdt},
+			#{hz1HmdtPlus},
 			#{hz1MsrmnYear},
 			#{hz1MsrmnMon},
 			#{hz1MsrmnDay},
@@ -334,7 +343,9 @@
 			#{hz2Lngth10mYn},
 			#{hz2Lngth30mYn},
 			#{hz2Temp},
+			#{hz2TempPlus},
 			#{hz2Hmdt},
+			#{hz2HmdtPlus},
 			#{hz2MsrmnYear},
 			#{hz2MsrmnMon},
 			#{hz2MsrmnDay},
@@ -350,6 +361,7 @@
 		ON DUPLICATE KEY UPDATE
 			VLT_AC_YN = #{vltAcYn},
 			VLT_ETC = #{vltEtc},
+			VLT_ETC_YN = #{vltEtcYn},
 			VAR_N_YN = #{varNYn},
 			VAR_Y_YN = #{varYYn},
 			HZ1_CODE = #{hz1Code},
@@ -367,7 +379,9 @@
 			HZ1_ANTN_3M_YN = #{hz1Antn3mYn},
 			HZ1_ANTN_4M_YN = #{hz1Antn4mYn},
 			HZ1_TEMP = #{hz1Temp},
+			HZ1_TEMP_PLUS = #{hz1TempPlus},
 			HZ1_HMDT = #{hz1Hmdt},
+			HZ1_HMDT_PLUS = #{hz1HmdtPlus},
 			HZ1_MSRMN_YEAR = #{hz1MsrmnYear},
 			HZ1_MSRMN_MON = #{hz1MsrmnMon},
 			HZ1_MSRMN_DAY = #{hz1MsrmnDay},
@@ -388,7 +402,9 @@
 			HZ2_LNGTH_10M_YN = #{hz2Lngth10mYn},
 			HZ2_LNGTH_30M_YN = #{hz2Lngth30mYn},
 			HZ2_TEMP = #{hz2Temp},
+			HZ2_TEMP_PLUS = #{hz2TempPlus},
 			HZ2_HMDT = #{hz2Hmdt},
+			HZ2_HMDT_PLUS = #{hz2HmdtPlus},
 			HZ2_MSRMN_YEAR = #{hz2MsrmnYear},
 			HZ2_MSRMN_MON = #{hz2MsrmnMon},
 			HZ2_MSRMN_DAY = #{hz2MsrmnDay},
@@ -468,7 +484,8 @@
 		    INDRC_V_MEMO,
 		    CMNT_A_YN,
 		    CMNT_ETC,
-		    CMNT_ETC_YN
+		    CMNT_ETC_YN,
+		    IMG_URL
 		FROM METHOD_ESD_TB
 		WHERE 1=1
 		AND RAW_SEQ = #{rawSeq}
@@ -505,7 +522,7 @@
 			SIGN, SIGN_URL, RESULT_CODE,
 			INDRC_H_YN, INDRC_H_RESULT_CODE, INDRC_H_MEMO,
 			INDRC_V_YN, INDRC_V_RESULT_CODE, INDRC_V_MEMO,
-			CMNT_A_YN, CMNT_ETC, CMNT_ETC_YN,
+			CMNT_A_YN, CMNT_ETC, CMNT_ETC_YN,IMG_URL,
 			INS_MEM_ID, UDT_MEM_ID
 		)
 		VALUES
@@ -535,7 +552,7 @@
 			#{sign},#{signUrl},#{resultCode},
 			#{indrcHYn},#{indrcHResultCode},#{indrcHMemo},
 			#{indrcVYn},#{indrcVResultCode},#{indrcVMemo},
-			#{cmntAYn},#{cmntEtc},#{cmntEtcYn},
+			#{cmntAYn},#{cmntEtc},#{cmntEtcYn},#{imgUrl},
 			#{insMemId},#{udtMemId}
 			)
 			ON DUPLICATE KEY UPDATE
@@ -598,12 +615,13 @@
 				INDRC_H_YN = #{indrcHYn},
 				INDRC_H_RESULT_CODE = #{indrcHResultCode},
 				INDRC_H_MEMO = #{indrcHMemo},
-				INDRC_V_YN = #{cmntAYn},
+				INDRC_V_YN = #{indrcVYn},
 				INDRC_V_RESULT_CODE  =#{indrcVResultCode},
 				INDRC_V_MEMO = #{indrcVMemo},
 				CMNT_A_YN = #{cmntAYn},
 				CMNT_ETC = #{cmntEtc},
 				CMNT_ETC_YN = #{cmntEtcYn},
+				UDT_DT = NOW(),
 				UDT_MEM_ID = #{udtMemId}			
 	</insert>
 
@@ -664,8 +682,11 @@
 		    ROOM_ETC,
 		    ROOM_ETC_YN,
 		    TEMP,
+		    TEMP_PLUS,
 		    HMDT,
+		    HMDT_PLUS,
 		    BRMT,
+		    BRMT_PLUS,
 		    MDLT_AM_YN,
 		    MDLT_ETC,
 		    MDLT_ETC_YN,
@@ -733,9 +754,26 @@
 		AND RAW_SEQ = #{rawSeq}
 	</select>
 	
+	<select id="rsSubList" parameterType="int" resultType="egovMap">
+		SELECT 
+			RS_SEQ,
+			RS_SUB_SEQ,
+			APPL_TYPE,
+			NO_YN,
+			ifnull(APPL_NAME, '') APPL_NAME,
+			H_RESULT_CODE,
+			V_RESULT_CODE,
+			MEMO,
+			STATE
+		FROM METHOD_RS_SUB_TB
+		WHERE 1=1
+		AND STATE != 'D'
+		AND RS_SEQ = #{rsSeq}
+	</select>
+	
 	<insert id="insertRs" parameterType="rsDTO">
-		<selectKey resultType="int" keyProperty="rsSeq" order="BEFORE">
-	        SELECT ifnull(MAX(RS_SEQ)+1,1) rsSeq FROM METHOD_RS_TB
+		<selectKey resultType="int" keyProperty="rsSeq" order="AFTER">
+			SELECT RS_SEQ csSeq FROM METHOD_RS_TB WHERE RAW_SEQ = #{rawSeq}
 	    </selectKey>
 		INSERT INTO METHOD_RS_TB
 		(
@@ -795,26 +833,26 @@
 			V_B_CODE,
 			V_R_CODE,
 			V_L_CODE,
-			AUDIO_ELCT_YN,
-			AUDIO_ACST_YN,
-			AUDIO_NEAR_YN,
-			AUDIO_FEAR_YN,
-			AUDIO1_CODE,
-			AUDIO2_CODE,
-			SPKR_ELCT_YN,
-			SPKR_ACST_YN,
-			SPKR_NEAR_YN,
-			SPKR_FEAR_YN,
-			SPKR1_CODE,
-			SPKR2_CODE,
-			COMM1_NOISE_YN,
-			COMM1_ACST_YN,
-			COMM1_CODE1,
-			COMM1_CODE2,
-			COMM2_NOISE_YN,
-			COMM2_ACST_YN,
-			COMM2_CODE1,
-			COMM2_CODE2,
+<!-- 			AUDIO_ELCT_YN, -->
+<!-- 			AUDIO_ACST_YN, -->
+<!-- 			AUDIO_NEAR_YN, -->
+<!-- 			AUDIO_FEAR_YN, -->
+<!-- 			AUDIO1_CODE, -->
+<!-- 			AUDIO2_CODE, -->
+<!-- 			SPKR_ELCT_YN, -->
+<!-- 			SPKR_ACST_YN, -->
+<!-- 			SPKR_NEAR_YN, -->
+<!-- 			SPKR_FEAR_YN, -->
+<!-- 			SPKR1_CODE, -->
+<!-- 			SPKR2_CODE, -->
+<!-- 			COMM1_NOISE_YN, -->
+<!-- 			COMM1_ACST_YN, -->
+<!-- 			COMM1_CODE1, -->
+<!-- 			COMM1_CODE2, -->
+<!-- 			COMM2_NOISE_YN, -->
+<!-- 			COMM2_ACST_YN, -->
+<!-- 			COMM2_CODE1, -->
+<!-- 			COMM2_CODE2, -->
 			CMNT_A_YN,
 			CMNT_ETC,
 			CMNT_ETC_YN,
@@ -823,7 +861,7 @@
 		)
 		VALUES
 		(
-			#{rsSeq},	
+			(SELECT ifnull(MAX(seq.RS_SEQ)+1,1) rsSeq FROM METHOD_RS_TB seq),	
 			#{rawSeq},
 			#{vltAcYn},
 			#{vltEtc},
@@ -879,26 +917,26 @@
 			#{vBCode},
 			#{vRCode},
 			#{vLCode},
-			#{audioElctYn},
-			#{audioAcstYn},
-			#{audioNearYn},
-			#{audioFearYn},
-			#{audio1Code},
-			#{audio2Code},
-			#{spkrElctYn},
-			#{spkrAcstYn},
-			#{spkrNearYn},
-			#{spkrFearYn},
-			#{spkr1Code},
-			#{spkr2Code},
-			#{comm1NoiseYn},
-			#{comm1AcstYn},
-			#{comm1Code1},
-			#{comm1Code2},
-			#{comm2NoiseYn},
-			#{comm2AcstYn},
-			#{comm2Code1},
-			#{comm2Code2},
+<!-- 			#{audioElctYn}, -->
+<!-- 			#{audioAcstYn}, -->
+<!-- 			#{audioNearYn}, -->
+<!-- 			#{audioFearYn}, -->
+<!-- 			#{audio1Code}, -->
+<!-- 			#{audio2Code}, -->
+<!-- 			#{spkrElctYn}, -->
+<!-- 			#{spkrAcstYn}, -->
+<!-- 			#{spkrNearYn}, -->
+<!-- 			#{spkrFearYn}, -->
+<!-- 			#{spkr1Code}, -->
+<!-- 			#{spkr2Code}, -->
+<!-- 			#{comm1NoiseYn}, -->
+<!-- 			#{comm1AcstYn}, -->
+<!-- 			#{comm1Code1}, -->
+<!-- 			#{comm1Code2}, -->
+<!-- 			#{comm2NoiseYn}, -->
+<!-- 			#{comm2AcstYn}, -->
+<!-- 			#{comm2Code1}, -->
+<!-- 			#{comm2Code2}, -->
 			#{cmntAYn},
 			#{cmntEtc},
 			#{cmntEtcYn},
@@ -960,31 +998,80 @@
 		      V_B_CODE = #{vBCode},
 		      V_R_CODE = #{vRCode},
 		      V_L_CODE = #{vLCode},
-		      AUDIO_ELCT_YN = #{audioElctYn},
-		      AUDIO_ACST_YN = #{audioAcstYn},
-		      AUDIO_NEAR_YN = #{audioNearYn},
-		      AUDIO_FEAR_YN = #{audioFearYn},
-		      AUDIO1_CODE = #{audio1Code},
-			  AUDIO2_CODE = #{audio2Code},
-			  SPKR_ELCT_YN = #{spkrElctYn},
-			  SPKR_ACST_YN = #{spkrAcstYn},
-			  SPKR_NEAR_YN = #{spkrNearYn},
-			  SPKR_FEAR_YN = #{spkrFearYn},
-			  SPKR1_CODE = #{spkr1Code},
-			  SPKR2_CODE = #{spkr2Code},
-			  COMM1_NOISE_YN = #{comm1NoiseYn},
-			  COMM1_ACST_YN = #{comm1AcstYn},
-			  COMM1_CODE1 = #{comm1Code1},
-			  COMM1_CODE2 = #{comm1Code2},
-			  COMM2_NOISE_YN = #{comm2NoiseYn},
-			  COMM2_ACST_YN = #{comm2AcstYn},
-			  COMM2_CODE1 = #{comm2Code1},
-			  COMM2_CODE2 = #{comm2Code2},
+<!-- 		      AUDIO_ELCT_YN = #{audioElctYn}, -->
+<!-- 		      AUDIO_ACST_YN = #{audioAcstYn}, -->
+<!-- 		      AUDIO_NEAR_YN = #{audioNearYn}, -->
+<!-- 		      AUDIO_FEAR_YN = #{audioFearYn}, -->
+<!-- 		      AUDIO1_CODE = #{audio1Code}, -->
+<!-- 			  AUDIO2_CODE = #{audio2Code}, -->
+<!-- 			  SPKR_ELCT_YN = #{spkrElctYn}, -->
+<!-- 			  SPKR_ACST_YN = #{spkrAcstYn}, -->
+<!-- 			  SPKR_NEAR_YN = #{spkrNearYn}, -->
+<!-- 			  SPKR_FEAR_YN = #{spkrFearYn}, -->
+<!-- 			  SPKR1_CODE = #{spkr1Code}, -->
+<!-- 			  SPKR2_CODE = #{spkr2Code}, -->
+<!-- 			  COMM1_NOISE_YN = #{comm1NoiseYn}, -->
+<!-- 			  COMM1_ACST_YN = #{comm1AcstYn}, -->
+<!-- 			  COMM1_CODE1 = #{comm1Code1}, -->
+<!-- 			  COMM1_CODE2 = #{comm1Code2}, -->
+<!-- 			  COMM2_NOISE_YN = #{comm2NoiseYn}, -->
+<!-- 			  COMM2_ACST_YN = #{comm2AcstYn}, -->
+<!-- 			  COMM2_CODE1 = #{comm2Code1}, -->
+<!-- 			  COMM2_CODE2 = #{comm2Code2}, -->
 			  CMNT_A_YN = #{cmntAYn},
 			  CMNT_ETC = #{cmntEtc},
 			  CMNT_ETC_YN = #{cmntEtcYn},
 			  UDT_MEM_ID = #{udtMemId}
 	</insert>
+	
+	<insert id="insertRsSub">
+		INSERT INTO METHOD_RS_SUB_TB
+		(
+			RS_SEQ,
+			APPL_TYPE,
+			NO_YN,
+			APPL_NAME,
+			H_RESULT_CODE,
+			V_RESULT_CODE,
+			MEMO
+		)
+		VALUES
+		<foreach collection="MethodRsSubList" item="item" separator=",">
+		(
+			#{rsSeq},
+			#{item.applType},
+			#{item.noYn},
+			#{item.applName},
+			#{item.hResultCode},
+			#{item.vResultCode},
+			#{item.memo}
+		)
+		</foreach>
+	</insert>
+	
+	<update id="updateRsSub">
+		<foreach collection="MethodRsSubList" item="item" separator=";">
+		UPDATE METHOD_RS_SUB_TB
+		SET
+			APPL_TYPE = #{item.applType},
+			NO_YN = #{item.noYn},
+			APPL_NAME = #{item.applName},
+			H_RESULT_CODE = #{item.hResultCode},
+			V_RESULT_CODE = #{item.vResultCode},
+			MEMO = #{item.memo},
+			STATE = #{item.state}
+		WHERE RS_SUB_SEQ = #{item.rsSubSeq}
+		</foreach>
+	</update>
+
+	<update id="deleteRsSub">
+		<foreach collection="MethodRsSubList" item="item" separator=";">
+		UPDATE METHOD_RS_SUB_TB
+		SET
+			STATE = #{item.state}
+		WHERE RS_SUB_SEQ = #{item.rsSubSeq}
+		</foreach>
+	</update>
 	
 	<select id="eftDetail" parameterType="int" resultType="eftDTO">
 		SELECT 
@@ -1001,21 +1088,54 @@
 		    MSRMN_YEAR, MSRMN_MON, MSRMN_DAY, MSRMN_HOUR, MSRMN_MIN,
 		    SIGN, <![CDATA[concat('/file/getImage.do?atchFileId=',SIGN_URL,'&fileSn=0') SIGN_URL,]]>
 		    RESULT_CODE,
-		    POWER_L_YN, POWER_N_YN, POWER_PE_YN, POWER_ETC, POWER_ETC_YN,
-		    POWER_LN_YN, POWER_LPE_YN, POWER_NPE_YN, POWER_LNPE_YN, POWER_ETC1, POWER_ETC2,
-		    DC_POWER_P_YN, DC_POWER_N_YN, DC_POWER_PN_YN,
-		    SGNL_ETC1, SGNL_ETC1_YN, SGNL_ETC2, SGNL_ETC2_YN, SGNL_ETC3, SGNL_ETC3_YN,
-		    POWER_L_CODE, POWER_LN_CODE, POWER_LNPE_CODE, POWER_ETC1_CODE, POWER_ETC2_CODE,
-		    DC_POWER_P_CODE, SGN_ETC1_CODE, SGN_ETC2_CODE, SGN_ETC3_CODE,
+<!-- 		    POWER_L_YN, POWER_N_YN, POWER_PE_YN, POWER_ETC, POWER_ETC_YN, -->
+<!-- 		    POWER_LN_YN, POWER_LPE_YN, POWER_NPE_YN, POWER_LNPE_YN,  -->
+<!-- 		    POWER_ETC1, POWER_ETC2, POWER_ETC3, POWER_ETC4, POWER_ETC5, POWER_ETC6, -->
+<!-- 			POWER_ETC1_YN, POWER_ETC2_YN, POWER_ETC3_YN, POWER_ETC4_YN, POWER_ETC5_YN, POWER_ETC6_YN, -->
+<!-- 		    DC_POWER_P_YN, DC_POWER_N_YN, DC_POWER_PN_YN, -->
+<!-- 		    SGNL_ETC1, SGNL_ETC1_YN, SGNL_ETC2, SGNL_ETC2_YN, SGNL_ETC3, SGNL_ETC3_YN, -->
+<!-- 		    POWER_L_CODE, POWER_LN_CODE, POWER_LNPE_CODE, POWER_ETC1_CODE, POWER_ETC2_CODE, -->
+<!-- 		    DC_POWER_P_CODE, SGN_ETC1_CODE, SGN_ETC2_CODE, SGN_ETC3_CODE, -->
 		    CMNT_A_YN, CMNT_ETC, CMNT_ETC_YN
 		FROM METHOD_EFT_TB
 		WHERE 1=1
 		AND RAW_SEQ = #{rawSeq}
 	</select>
 	
+	<select id="eftSubList" parameterType="int" resultType="egovMap">
+		SELECT 
+			EFT_SUB_SEQ,
+			EFT_SEQ,
+			APPL_TYPE,
+			NO_YN,
+			POWER_L_YN,
+			POWER_N_YN,
+			POWER_PE_YN,
+			POWER_LN_YN,
+			POWER_LPE_YN,
+			POWER_NPE_YN,
+			POWER_LNPE_YN,
+			POWER_ETC,
+			POWER_ETC_YN,
+			DC_POWER_P_YN,
+			DC_POWER_N_YN,
+			DC_POWER_PN_YN,
+			DC_POWER_ETC,
+			DC_POWER_ETC_YN,
+			SGNL_NAME,
+			PLUS_RESULT_CODE,
+			MINUS_RESULT_CODE,
+			MEMO,
+			STATE
+		FROM METHOD_EFT_SUB_TB
+		WHERE 1=1
+		AND STATE != 'D'
+		AND EFT_SEQ = #{eftSeq}
+	</select>
+	
 	<insert id="insertEft" parameterType="eftDTO">
-		<selectKey resultType="int" keyProperty="eftSeq" order="BEFORE">
-	        SELECT ifnull(MAX(EFT_SEQ)+1,1) EftSeq FROM METHOD_EFT_TB
+		<selectKey resultType="int" keyProperty="eftSeq" order="AFTER">
+	        SELECT EFT_SEQ eftSeq FROM METHOD_EFT_TB WHERE RAW_SEQ = #{rawSeq}
 	    </selectKey>
 		INSERT INTO METHOD_EFT_TB
 		(
@@ -1031,24 +1151,21 @@
 			MSRMN_YEAR, MSRMN_MON, MSRMN_DAY, MSRMN_HOUR, MSRMN_MIN,
 			SIGN, SIGN_URL,
 			RESULT_CODE,
-			POWER_L_YN, POWER_N_YN, POWER_PE_YN, POWER_ETC, POWER_ETC_YN,
-			POWER_LN_YN, POWER_LPE_YN, POWER_NPE_YN, POWER_LNPE_YN, 
-			POWER_ETC1, POWER_ETC2, POWER_ETC3, POWER_ETC4, POWER_ETC5, POWER_ETC6,
-			POWER_ETC1_YN, POWER_ETC2_YN, POWER_ETC3_YN, POWER_ETC4_YN, POWER_ETC5_YN, POWER_ETC6_YN,
-			DC_POWER_P_YN, DC_POWER_N_YN, DC_POWER_PN_YN,
-			SGNL_ETC1, SGNL_ETC1_YN, SGNL_ETC2,
-			SGNL_ETC2_YN,
-			SGNL_ETC3,
-			SGNL_ETC3_YN,
-			POWER_L_CODE,
-			POWER_LN_CODE,
-			POWER_LNPE_CODE,
-			POWER_ETC1_CODE,
-			POWER_ETC2_CODE,
-			DC_POWER_P_CODE,
-			SGN_ETC1_CODE,
-			SGN_ETC2_CODE,
-			SGN_ETC3_CODE,
+<!-- 			POWER_L_YN, POWER_N_YN, POWER_PE_YN, POWER_ETC, POWER_ETC_YN, -->
+<!-- 			POWER_LN_YN, POWER_LPE_YN, POWER_NPE_YN, POWER_LNPE_YN,  -->
+<!-- 			POWER_ETC1, POWER_ETC2, POWER_ETC3, POWER_ETC4, POWER_ETC5, POWER_ETC6, -->
+<!-- 			POWER_ETC1_YN, POWER_ETC2_YN, POWER_ETC3_YN, POWER_ETC4_YN, POWER_ETC5_YN, POWER_ETC6_YN, -->
+<!-- 			DC_POWER_P_YN, DC_POWER_N_YN, DC_POWER_PN_YN, -->
+<!-- 			SGNL_ETC1, SGNL_ETC1_YN, SGNL_ETC2, SGNL_ETC2_YN, SGNL_ETC3, SGNL_ETC3_YN, -->
+<!-- 			POWER_L_CODE, -->
+<!-- 			POWER_LN_CODE, -->
+<!-- 			POWER_LNPE_CODE, -->
+<!-- 			POWER_ETC1_CODE, -->
+<!-- 			POWER_ETC2_CODE, -->
+<!-- 			DC_POWER_P_CODE, -->
+<!-- 			SGN_ETC1_CODE, -->
+<!-- 			SGN_ETC2_CODE, -->
+<!-- 			SGN_ETC3_CODE, -->
 			CMNT_A_YN,
 			CMNT_ETC,
 			CMNT_ETC_YN,
@@ -1057,7 +1174,7 @@
 		)
 		VALUES
 		(
-			#{eftSeq},
+			(SELECT ifnull(MAX(seq.EFT_SEQ)+1,1) eftSeq FROM METHOD_EFT_TB seq),
 			#{rawSeq},
 			#{vltAcYn},
 			#{vltEtc},
@@ -1094,35 +1211,35 @@
 			#{sign},
 			#{signUrl},
 			#{resultCode},
-			#{powerLYn},
-			#{powerNYn},
-			#{powerPeYn},
-			#{powerEtc},
-			#{powerEtcYn},
-			#{powerLnYn},
-			#{powerLpeYn},
-			#{powerNpeYn},
-			#{powerLnpeYn},
-			#{powerEtc1}, #{powerEtc2}, #{powerEtc3}, #{powerEtc4}, #{powerEtc5}, #{powerEtc6},
-			#{powerEtc1Yn}, #{powerEtc2Yn}, #{powerEtc3Yn}, #{powerEtc4Yn}, #{powerEtc5Yn}, #{powerEtc6Yn},
-			#{dcPowerPYn},
-			#{dcPowerNYn},
-			#{dcPowerPnYn},
-			#{sgnlEtc1},
-			#{sgnlEtc1Yn},
-			#{sgnlEtc2},
-			#{sgnlEtc2Yn},
-			#{sgnlEtc3},
-			#{sgnlEtc3Yn},
-			#{powerLCode},
-			#{powerLnCode},
-			#{powerLnpeCode},
-			#{powerEtc1Code},
-			#{powerEtc2Code},
-			#{dcPowerPCode},
-			#{sgnEtc1Code},
-			#{sgnEtc2Code},
-			#{sgnEtc3Code},
+<!-- 			#{powerLYn}, -->
+<!-- 			#{powerNYn}, -->
+<!-- 			#{powerPeYn}, -->
+<!-- 			#{powerEtc}, -->
+<!-- 			#{powerEtcYn}, -->
+<!-- 			#{powerLnYn}, -->
+<!-- 			#{powerLpeYn}, -->
+<!-- 			#{powerNpeYn}, -->
+<!-- 			#{powerLnpeYn}, -->
+<!-- 			#{powerEtc1}, #{powerEtc2}, #{powerEtc3}, #{powerEtc4}, #{powerEtc5}, #{powerEtc6}, -->
+<!-- 			#{powerEtc1Yn}, #{powerEtc2Yn}, #{powerEtc3Yn}, #{powerEtc4Yn}, #{powerEtc5Yn}, #{powerEtc6Yn}, -->
+<!-- 			#{dcPowerPYn}, -->
+<!-- 			#{dcPowerNYn}, -->
+<!-- 			#{dcPowerPnYn}, -->
+<!-- 			#{sgnlEtc1}, -->
+<!-- 			#{sgnlEtc1Yn}, -->
+<!-- 			#{sgnlEtc2}, -->
+<!-- 			#{sgnlEtc2Yn}, -->
+<!-- 			#{sgnlEtc3}, -->
+<!-- 			#{sgnlEtc3Yn}, -->
+<!-- 			#{powerLCode}, -->
+<!-- 			#{powerLnCode}, -->
+<!-- 			#{powerLnpeCode}, -->
+<!-- 			#{powerEtc1Code}, -->
+<!-- 			#{powerEtc2Code}, -->
+<!-- 			#{dcPowerPCode}, -->
+<!-- 			#{sgnEtc1Code}, -->
+<!-- 			#{sgnEtc2Code}, -->
+<!-- 			#{sgnEtc3Code}, -->
 			#{cmntAYn},
 			#{cmntEtc},
 			#{cmntEtcYn},
@@ -1165,50 +1282,141 @@
 		    SIGN = #{sign},
 		    <if test="signUrl != null and signUrl != ''">SIGN_URL = #{signUrl},</if>
 		    RESULT_CODE = #{resultCode},
-		    POWER_L_YN = #{powerLYn},
-		    POWER_N_YN = #{powerNYn},
-		    POWER_PE_YN = #{powerPeYn},
-		    POWER_ETC = #{powerEtc},
-		    POWER_ETC_YN = #{powerEtcYn},
-		    POWER_LN_YN = #{powerLnYn},
-		    POWER_LPE_YN = #{powerLpeYn},
-		    POWER_NPE_YN = #{powerNpeYn},
-		    POWER_LNPE_YN = #{powerLnpeYn},
-		    POWER_ETC1 = #{powerEtc1},
-		    POWER_ETC2 = #{powerEtc2},
-		    POWER_ETC3 = #{powerEtc3},
-		    POWER_ETC4 = #{powerEtc4},
-		    POWER_ETC5 = #{powerEtc5},
-		    POWER_ETC6 = #{powerEtc6},
-		    POWER_ETC1_YN = #{powerEtc1Yn},
-		    POWER_ETC2_YN = #{powerEtc2Yn},
-		    POWER_ETC3_YN = #{powerEtc3Yn},
-		    POWER_ETC4_YN = #{powerEtc4Yn},
-		    POWER_ETC5_YN = #{powerEtc5Yn},
-		    POWER_ETC6_YN = #{powerEtc6Yn},
-		    DC_POWER_P_YN = #{dcPowerPYn},
-		    DC_POWER_N_YN = #{dcPowerNYn},
-		    DC_POWER_PN_YN = #{dcPowerPnYn},
-		    SGNL_ETC1 = #{sgnlEtc1},
-		    SGNL_ETC1_YN = #{sgnlEtc1Yn},
-		    SGNL_ETC2 = #{sgnlEtc2},
-		    SGNL_ETC2_YN = #{sgnlEtc2Yn},
-	        SGNL_ETC3 = #{sgnlEtc3},
-	        SGNL_ETC3_YN = #{sgnlEtc3Yn},
-	        POWER_L_CODE = #{powerLCode},
-	        POWER_LN_CODE = #{powerLnCode},
-	        POWER_LNPE_CODE = #{powerLnpeCode},
-	        POWER_ETC1_CODE = #{powerEtc1Code},
-	        POWER_ETC2_CODE = #{powerEtc2Code},
-	        DC_POWER_P_CODE = #{dcPowerPCode},
-	        SGN_ETC1_CODE = #{sgnEtc1Code},
-	        SGN_ETC2_CODE = #{sgnEtc2Code},
-	        SGN_ETC3_CODE = #{sgnEtc3Code},
+<!-- 		    POWER_L_YN = #{powerLYn}, -->
+<!-- 		    POWER_N_YN = #{powerNYn}, -->
+<!-- 		    POWER_PE_YN = #{powerPeYn}, -->
+<!-- 		    POWER_ETC = #{powerEtc}, -->
+<!-- 		    POWER_ETC_YN = #{powerEtcYn}, -->
+<!-- 		    POWER_LN_YN = #{powerLnYn}, -->
+<!-- 		    POWER_LPE_YN = #{powerLpeYn}, -->
+<!-- 		    POWER_NPE_YN = #{powerNpeYn}, -->
+<!-- 		    POWER_LNPE_YN = #{powerLnpeYn}, -->
+<!-- 		    POWER_ETC1 = #{powerEtc1}, -->
+<!-- 		    POWER_ETC2 = #{powerEtc2}, -->
+<!-- 		    POWER_ETC3 = #{powerEtc3}, -->
+<!-- 		    POWER_ETC4 = #{powerEtc4}, -->
+<!-- 		    POWER_ETC5 = #{powerEtc5}, -->
+<!-- 		    POWER_ETC6 = #{powerEtc6}, -->
+<!-- 		    POWER_ETC1_YN = #{powerEtc1Yn}, -->
+<!-- 		    POWER_ETC2_YN = #{powerEtc2Yn}, -->
+<!-- 		    POWER_ETC3_YN = #{powerEtc3Yn}, -->
+<!-- 		    POWER_ETC4_YN = #{powerEtc4Yn}, -->
+<!-- 		    POWER_ETC5_YN = #{powerEtc5Yn}, -->
+<!-- 		    POWER_ETC6_YN = #{powerEtc6Yn}, -->
+<!-- 		    DC_POWER_P_YN = #{dcPowerPYn}, -->
+<!-- 		    DC_POWER_N_YN = #{dcPowerNYn}, -->
+<!-- 		    DC_POWER_PN_YN = #{dcPowerPnYn}, -->
+<!-- 		    SGNL_ETC1 = #{sgnlEtc1}, -->
+<!-- 		    SGNL_ETC1_YN = #{sgnlEtc1Yn}, -->
+<!-- 		    SGNL_ETC2 = #{sgnlEtc2}, -->
+<!-- 		    SGNL_ETC2_YN = #{sgnlEtc2Yn}, -->
+<!-- 	        SGNL_ETC3 = #{sgnlEtc3}, -->
+<!-- 	        SGNL_ETC3_YN = #{sgnlEtc3Yn}, -->
+<!-- 	        POWER_L_CODE = #{powerLCode}, -->
+<!-- 	        POWER_LN_CODE = #{powerLnCode}, -->
+<!-- 	        POWER_LNPE_CODE = #{powerLnpeCode}, -->
+<!-- 	        POWER_ETC1_CODE = #{powerEtc1Code}, -->
+<!-- 	        POWER_ETC2_CODE = #{powerEtc2Code}, -->
+<!-- 	        DC_POWER_P_CODE = #{dcPowerPCode}, -->
+<!-- 	        SGN_ETC1_CODE = #{sgnEtc1Code}, -->
+<!-- 	        SGN_ETC2_CODE = #{sgnEtc2Code}, -->
+<!-- 	        SGN_ETC3_CODE = #{sgnEtc3Code}, -->
 	        CMNT_A_YN = #{cmntAYn},
 	        CMNT_ETC = #{cmntEtc},
 	        CMNT_ETC_YN = #{cmntEtcYn},
 	        UDT_MEM_ID = #{udtMemId}
 	</insert>
+	
+	<insert id="insertEftSub">
+		INSERT INTO METHOD_EFT_SUB_TB
+		(
+			EFT_SEQ,
+			APPL_TYPE,
+			NO_YN,
+			POWER_L_YN,
+			POWER_N_YN,
+			POWER_PE_YN,
+			POWER_LN_YN,
+			POWER_LPE_YN,
+			POWER_NPE_YN,
+			POWER_LNPE_YN,
+			POWER_ETC,
+			POWER_ETC_YN,
+			DC_POWER_P_YN,
+			DC_POWER_N_YN,
+			DC_POWER_PN_YN,
+			DC_POWER_ETC,
+			DC_POWER_ETC_YN,
+			SGNL_NAME,
+			PLUS_RESULT_CODE,
+			MINUS_RESULT_CODE,
+			MEMO
+		)
+		VALUES
+		<foreach collection="MethodEftSubList" item="item" separator=",">
+		(
+			#{eftSeq},
+			#{item.applType},
+			#{item.noYn},
+			#{item.powerLYn},
+			#{item.powerNYn},
+			#{item.powerPeYn},
+			#{item.powerLnYn},
+			#{item.powerLpeYn},
+			#{item.powerNpeYn},
+			#{item.powerLnpeYn},
+			#{item.powerEtc},
+			#{item.powerEtcYn},
+			#{item.dcPowerPYn},
+			#{item.dcPowerNYn},
+			#{item.dcPowerPnYn},
+			#{item.dcPowerEtc},
+			#{item.dcPowerEtcYn},
+			#{item.sgnlName},
+			#{item.plusResultCode},
+			#{item.minusResultCode},
+			#{item.memo}
+		)
+		</foreach>
+	</insert>
+	
+	<update id="updateEftSub">
+		<foreach collection="MethodEftSubList" item="item" separator=";">
+		UPDATE METHOD_EFT_SUB_TB
+		SET
+			APPL_TYPE = #{item.applType},
+			NO_YN = #{item.noYn},
+			POWER_L_YN = #{item.powerLYn},
+			POWER_N_YN = #{item.powerNYn},
+			POWER_PE_YN = #{item.powerPeYn},
+			POWER_LN_YN = #{item.powerLnYn},
+			POWER_LPE_YN = #{item.powerLpeYn},
+			POWER_NPE_YN = #{item.powerNpeYn},
+			POWER_LNPE_YN = #{item.powerLnpeYn},
+			POWER_ETC = #{item.powerEtc},
+			POWER_ETC_YN = #{item.powerEtcYn},
+			DC_POWER_P_YN = #{item.dcPowerPYn},
+			DC_POWER_N_YN = #{item.dcPowerNYn},
+			DC_POWER_PN_YN = #{item.dcPowerPnYn},
+			DC_POWER_ETC = #{item.dcPowerEtc},
+			DC_POWER_ETC_YN = #{item.dcPowerEtcYn},
+			SGNL_NAME = #{item.sgnlName},
+			PLUS_RESULT_CODE = #{item.plusResultCode},
+			MINUS_RESULT_CODE = #{item.minusResultCode},
+			MEMO = #{item.memo},
+			STATE = #{item.state}
+		WHERE EFT_SUB_SEQ = #{item.eftSubSeq}
+		</foreach>
+	</update>
+
+	<update id="deleteEftSub">
+		<foreach collection="MethodEftSubList" item="item" separator=";">
+		UPDATE METHOD_EFT_SUB_TB
+		SET
+			STATE = #{item.state}
+		WHERE EFT_SUB_SEQ = #{item.eftSubSeq}
+		</foreach>
+	</update>
 	
 	<select id="surgeDetail" parameterType="int" resultType="surgeDTO">
 		SELECT 
@@ -1226,21 +1434,47 @@
 		    MSRMN_YEAR, MSRMN_MON, MSRMN_DAY, MSRMN_HOUR, MSRMN_MIN,
 		    SIGN, <![CDATA[concat('/file/getImage.do?atchFileId=',SIGN_URL,'&fileSn=0') SIGN_URL,]]>
 		    RESULT_CODE,
-		    POWER_LN_YN, POWER_LN_ETC, POWER_LN_ETC_YN, POWER_LPE_YN, POWER_NPE_YN,
-		    POWER_ECT1_YN, POWER_ECT2_YN, POWER_ECT3_YN, POWER_ECT4_YN, POWER_ECT5_YN, POWER_ECT6_YN,
-		    POWER_ECT1, POWER_ECT2, POWER_ECT3, POWER_ECT4, POWER_ECT5, POWER_ECT6,
-		    DC_POWER_PN_YN, DC_POWER_ETC_YN, DC_POWER_ETC, DC_POWER_TEXT,
-		    SGNL1, SGNL2,
-		    POWER_LN_CODE, POWER_LPE_CODE, POWER_ECT1_CODE, POWER_ECT2_CODE,
-		    DC_POWER_PN_CODE, DC_POWER_ETC_CODE, SGNL1_CODE, SGNL2_CODE,
+<!-- 		    POWER_LN_YN, POWER_LN_ETC, POWER_LN_ETC_YN, POWER_LPE_YN, POWER_NPE_YN, -->
+<!-- 		    POWER_ECT1_YN, POWER_ECT2_YN, POWER_ECT3_YN, POWER_ECT4_YN, POWER_ECT5_YN, POWER_ECT6_YN, -->
+<!-- 		    POWER_ECT1, POWER_ECT2, POWER_ECT3, POWER_ECT4, POWER_ECT5, POWER_ECT6, -->
+<!-- 		    DC_POWER_PN_YN, DC_POWER_ETC_YN, DC_POWER_ETC, DC_POWER_TEXT, -->
+<!-- 		    SGNL1, SGNL2, -->
+<!-- 		    POWER_LN_CODE, POWER_LPE_CODE, POWER_ECT1_CODE, POWER_ECT2_CODE, -->
+<!-- 		    DC_POWER_PN_CODE, DC_POWER_ETC_CODE, SGNL1_CODE, SGNL2_CODE, -->
 		    CMNT_A_YN, CMNT_ETC, CMNT_ETC_YN
 		FROM METHOD_SURGE_TB
 		WHERE 1=1
 		AND RAW_SEQ = #{rawSeq}
 	</select>
+	
+	<select id="surgeSubList" parameterType="int" resultType="egovMap">
+		SELECT 
+			SURGE_SUB_SEQ,
+			SURGE_SEQ,
+			APPL_TYPE,
+			NO_YN,
+			POWER_LN_YN,
+			POWER_LPE_YN,
+			POWER_NPE_YN,
+			POWER_ETC,
+			POWER_ETC_YN,
+			DC_POWER_PN_YN,
+			DC_POWER_ETC,
+			DC_POWER_ETC_YN,
+			SGNL_NAME,
+			PLUS_RESULT_CODE,
+			MINUS_RESULT_CODE,
+			MEMO,
+			STATE
+		FROM METHOD_SURGE_SUB_TB
+		WHERE 1=1
+		AND STATE != 'D'
+		AND SURGE_SEQ = #{surgeSeq}
+	</select>
+	
 	<insert id="insertSurge" parameterType="surgeDTO">
-		<selectKey resultType="int" keyProperty="surgeSeq" order="BEFORE">
-	        SELECT ifnull(MAX(SURGE_SEQ)+1,1) surgeSeq FROM METHOD_SURGE_TB
+		<selectKey resultType="int" keyProperty="surgeSeq" order="AFTER">
+	        SELECT SURGE_SEQ surgeSeq FROM METHOD_SURGE_TB WHERE RAW_SEQ = #{rawSeq}
 	    </selectKey>
 	    INSERT INTO METHOD_SURGE_TB
 		(
@@ -1258,19 +1492,19 @@
 		    MSRMN_YEAR, MSRMN_MON, MSRMN_DAY, MSRMN_HOUR, MSRMN_MIN,
 		    SIGN, SIGN_URL,
 		    RESULT_CODE,
-		    POWER_LN_YN, POWER_LN_ETC, POWER_LN_ETC_YN, POWER_LPE_YN, POWER_NPE_YN,
-		    POWER_ECT1_YN, POWER_ECT2_YN, POWER_ECT3_YN, POWER_ECT4_YN, POWER_ECT5_YN, POWER_ECT6_YN,
-		    POWER_ECT1, POWER_ECT2, POWER_ECT3, POWER_ECT4, POWER_ECT5, POWER_ECT6,
-		    DC_POWER_PN_YN, DC_POWER_ETC_YN, DC_POWER_ETC, DC_POWER_TEXT,
-		    SGNL1, SGNL2,
-		    POWER_LN_CODE, POWER_LPE_CODE, POWER_ECT1_CODE, POWER_ECT2_CODE,
-		    DC_POWER_PN_CODE, DC_POWER_ETC_CODE, SGNL1_CODE, SGNL2_CODE,
+<!-- 		    POWER_LN_YN, POWER_LN_ETC, POWER_LN_ETC_YN, POWER_LPE_YN, POWER_NPE_YN, -->
+<!-- 		    POWER_ECT1_YN, POWER_ECT2_YN, POWER_ECT3_YN, POWER_ECT4_YN, POWER_ECT5_YN, POWER_ECT6_YN, -->
+<!-- 		    POWER_ECT1, POWER_ECT2, POWER_ECT3, POWER_ECT4, POWER_ECT5, POWER_ECT6, -->
+<!-- 		    DC_POWER_PN_YN, DC_POWER_ETC_YN, DC_POWER_ETC, DC_POWER_TEXT, -->
+<!-- 		    SGNL1, SGNL2, -->
+<!-- 		    POWER_LN_CODE, POWER_LPE_CODE, POWER_ECT1_CODE, POWER_ECT2_CODE, -->
+<!-- 		    DC_POWER_PN_CODE, DC_POWER_ETC_CODE, SGNL1_CODE, SGNL2_CODE, -->
 		    CMNT_A_YN, CMNT_ETC, CMNT_ETC_YN,
 		    INS_MEM_ID, UDT_MEM_ID
 		)
 		VALUES 
 		(
-			#{surgeSeq}, #{rawSeq},
+			(SELECT ifnull(MAX(seq.SURGE_SEQ)+1,1) surgeSeq FROM METHOD_SURGE_TB seq), #{rawSeq},
 			#{vltAcYn}, #{vltEtc}, #{vltEtcYn}, #{varNYn}, #{varYYn},
 			#{room1Yn}, #{room2Yn}, #{roomEtc}, #{roomEtcYn},
 			#{temp}, #{tempPlus}, #{hmdt}, #{hmdtPlus}, #{brmt}, #{brmtPlus},
@@ -1284,14 +1518,14 @@
 			#{msrmnYear}, #{msrmnMon}, #{msrmnDay}, #{msrmnHour}, #{msrmnMin},
 			#{sign}, #{signUrl},
 			#{resultCode},
-			#{powerLnYn}, #{powerLnEtc}, #{powerLnEtcYn}, #{powerLpeYn}, #{powerNpeYn},
-			#{powerEct1Yn}, #{powerEct2Yn}, #{powerEct3Yn}, #{powerEct4Yn}, #{powerEct5Yn}, #{powerEct6Yn},
-			#{powerEct1}, #{powerEct2}, #{powerEct3}, #{powerEct4}, #{powerEct5}, #{powerEct6},
-			#{dcPowerPnYn}, #{dcPowerEtcYn}, #{dcPowerEtc}, #{dcPowerText},
-			#{sgnl1}, #{sgnl2},
-			#{powerLnCode}, #{powerLpeCode}, #{powerEct1Code}, #{powerEct2Code},
-			#{dcPowerPnCode}, #{dcPowerEtcCode},
-			#{sgnl1Code}, #{sgnl2Code},
+<!-- 			#{powerLnYn}, #{powerLnEtc}, #{powerLnEtcYn}, #{powerLpeYn}, #{powerNpeYn}, -->
+<!-- 			#{powerEct1Yn}, #{powerEct2Yn}, #{powerEct3Yn}, #{powerEct4Yn}, #{powerEct5Yn}, #{powerEct6Yn}, -->
+<!-- 			#{powerEct1}, #{powerEct2}, #{powerEct3}, #{powerEct4}, #{powerEct5}, #{powerEct6}, -->
+<!-- 			#{dcPowerPnYn}, #{dcPowerEtcYn}, #{dcPowerEtc}, #{dcPowerText}, -->
+<!-- 			#{sgnl1}, #{sgnl2}, -->
+<!-- 			#{powerLnCode}, #{powerLpeCode}, #{powerEct1Code}, #{powerEct2Code}, -->
+<!-- 			#{dcPowerPnCode}, #{dcPowerEtcCode}, -->
+<!-- 			#{sgnl1Code}, #{sgnl2Code}, -->
 			#{cmntAYn}, #{cmntEtc}, #{cmntEtcYn},
 			#{insMemId},#{udtMemId}
 		)
@@ -1342,42 +1576,115 @@
 			SIGN = #{sign},
 			<if test="signUrl != null and signUrl != ''">SIGN_URL = #{signUrl},</if>
 			RESULT_CODE = #{resultCode},
-			POWER_LN_YN = #{powerLnYn},
-			POWER_LN_ETC = #{powerLnEtc},
-			POWER_LN_ETC_YN = #{powerLnEtcYn},
-			POWER_LPE_YN = #{powerLpeYn},
-			POWER_NPE_YN = #{powerNpeYn},
-			POWER_ECT1_YN = #{powerEct1Yn},
-			POWER_ECT2_YN = #{powerEct2Yn},
-			POWER_ECT3_YN = #{powerEct3Yn},
-			POWER_ECT4_YN = #{powerEct4Yn},
-			POWER_ECT5_YN = #{powerEct5Yn},
-			POWER_ECT6_YN = #{powerEct6Yn},
-			POWER_ECT1 = #{powerEct1},
-			POWER_ECT2 = #{powerEct2},
-			POWER_ECT3 = #{powerEct3},
-			POWER_ECT4 = #{powerEct4},
-			POWER_ECT5 = #{powerEct5},
-			POWER_ECT6 = #{powerEct6},
-			DC_POWER_PN_YN = #{dcPowerPnYn},
-			DC_POWER_ETC_YN = #{dcPowerEtcYn},
-			DC_POWER_ETC = #{dcPowerEtc},
-			DC_POWER_TEXT = #{dcPowerText},
-			SGNL1 = #{sgnl1},
-			SGNL2 = #{sgnl2},
-			POWER_LN_CODE = #{powerLnCode},
-			POWER_LPE_CODE = #{powerLpeCode},
-			POWER_ECT1_CODE = #{powerEct1Code},
-			POWER_ECT2_CODE = #{powerEct2Code},
-			DC_POWER_PN_CODE = #{dcPowerPnCode},
-			DC_POWER_ETC_CODE = #{dcPowerEtcCode},
-			SGNL1_CODE = #{sgnl1Code},
-			SGNL2_CODE = #{sgnl2Code},
+<!-- 			POWER_LN_YN = #{powerLnYn}, -->
+<!-- 			POWER_LN_ETC = #{powerLnEtc}, -->
+<!-- 			POWER_LN_ETC_YN = #{powerLnEtcYn}, -->
+<!-- 			POWER_LPE_YN = #{powerLpeYn}, -->
+<!-- 			POWER_NPE_YN = #{powerNpeYn}, -->
+<!-- 			POWER_ECT1_YN = #{powerEct1Yn}, -->
+<!-- 			POWER_ECT2_YN = #{powerEct2Yn}, -->
+<!-- 			POWER_ECT3_YN = #{powerEct3Yn}, -->
+<!-- 			POWER_ECT4_YN = #{powerEct4Yn}, -->
+<!-- 			POWER_ECT5_YN = #{powerEct5Yn}, -->
+<!-- 			POWER_ECT6_YN = #{powerEct6Yn}, -->
+<!-- 			POWER_ECT1 = #{powerEct1}, -->
+<!-- 			POWER_ECT2 = #{powerEct2}, -->
+<!-- 			POWER_ECT3 = #{powerEct3}, -->
+<!-- 			POWER_ECT4 = #{powerEct4}, -->
+<!-- 			POWER_ECT5 = #{powerEct5}, -->
+<!-- 			POWER_ECT6 = #{powerEct6}, -->
+<!-- 			DC_POWER_PN_YN = #{dcPowerPnYn}, -->
+<!-- 			DC_POWER_ETC_YN = #{dcPowerEtcYn}, -->
+<!-- 			DC_POWER_ETC = #{dcPowerEtc}, -->
+<!-- 			DC_POWER_TEXT = #{dcPowerText}, -->
+<!-- 			SGNL1 = #{sgnl1}, -->
+<!-- 			SGNL2 = #{sgnl2}, -->
+<!-- 			POWER_LN_CODE = #{powerLnCode}, -->
+<!-- 			POWER_LPE_CODE = #{powerLpeCode}, -->
+<!-- 			POWER_ECT1_CODE = #{powerEct1Code}, -->
+<!-- 			POWER_ECT2_CODE = #{powerEct2Code}, -->
+<!-- 			DC_POWER_PN_CODE = #{dcPowerPnCode}, -->
+<!-- 			DC_POWER_ETC_CODE = #{dcPowerEtcCode}, -->
+<!-- 			SGNL1_CODE = #{sgnl1Code}, -->
+<!-- 			SGNL2_CODE = #{sgnl2Code}, -->
 			CMNT_A_YN = #{cmntAYn},
 			CMNT_ETC = #{cmntEtc},
 			CMNT_ETC_YN = #{cmntEtcYn},
 			UDT_MEM_ID = #{udtMemId}
 	</insert>	
+	
+	<insert id="insertSurgeSub">
+		INSERT INTO METHOD_SURGE_SUB_TB
+		(
+			SURGE_SEQ,
+			APPL_TYPE,
+			NO_YN,
+			POWER_LN_YN,
+			POWER_LPE_YN,
+			POWER_NPE_YN,
+			POWER_ETC,
+			POWER_ETC_YN,
+			DC_POWER_PN_YN,
+			DC_POWER_ETC,
+			DC_POWER_ETC_YN,
+			SGNL_NAME,
+			PLUS_RESULT_CODE,
+			MINUS_RESULT_CODE,
+			MEMO
+		)
+		VALUES
+		<foreach collection="MethodSurgeSubList" item="item" separator=",">
+		(
+			#{surgeSeq},
+			#{item.applType},
+			#{item.noYn},
+			#{item.powerLnYn},
+			#{item.powerLpeYn},
+			#{item.powerNpeYn},
+			#{item.powerEtc},
+			#{item.powerEtcYn},
+			#{item.dcPowerPnYn},
+			#{item.dcPowerEtc},
+			#{item.dcPowerEtcYn},
+			#{item.sgnlName},
+			#{item.plusResultCode},
+			#{item.minusResultCode},
+			#{item.memo}
+		)
+		</foreach>
+	</insert>
+	
+	<update id="updateSurgeSub">
+		<foreach collection="MethodSurgeSubList" item="item" separator=";">
+		UPDATE METHOD_SURGE_SUB_TB
+		SET
+			APPL_TYPE = #{item.applType},
+			NO_YN = #{item.noYn},
+			POWER_LN_YN = #{item.powerLnYn},
+			POWER_LPE_YN = #{item.powerLpeYn},
+			POWER_NPE_YN = #{item.powerNpeYn},
+			POWER_ETC = #{item.powerEtc},
+			POWER_ETC_YN = #{item.powerEtcYn},
+			DC_POWER_PN_YN = #{item.dcPowerPnYn},
+			DC_POWER_ETC = #{item.dcPowerEtc},
+			DC_POWER_ETC_YN = #{item.dcPowerEtcYn},
+			SGNL_NAME = #{item.sgnlName},
+			PLUS_RESULT_CODE = #{item.plusResultCode},
+			MINUS_RESULT_CODE = #{item.minusResultCode},
+			MEMO = #{item.memo},
+			STATE = #{item.state}
+		WHERE SURGE_SUB_SEQ = #{item.surgeSubSeq}
+		</foreach>
+	</update>
+
+	<update id="deleteSurgeSub">
+		<foreach collection="MethodSurgeSubList" item="item" separator=";">
+		UPDATE METHOD_SURGE_SUB_TB
+		SET
+			STATE = #{item.state}
+		WHERE SURGE_SUB_SEQ = #{item.surgeSubSeq}
+		</foreach>
+	</update>
 	
 	<select id="csDetail" parameterType="int" resultType="csDTO">
 		SELECT 
@@ -1392,27 +1699,49 @@
 		    MSRMN_YEAR, MSRMN_MON, MSRMN_DAY, MSRMN_HOUR, MSRMN_MIN,
 		    SIGN, <![CDATA[concat('/file/getImage.do?atchFileId=',SIGN_URL,'&fileSn=0') SIGN_URL,]]>
 		    RESULT_CODE,
-		    APPL_POWER_YN, APPL_IN_YN, APPL_OUT_YN, APPL_DB_POWER_YN,
-		    APPL1_M2_YN, APPL1_M3_YN, APPL1_EM_YN, APPL1_ETC, APPL1_ETC_YN,
-		    APPL2_M2_YN, APPL2_M3_YN, APPL2_EM_YN, APPL2_ETC, APPL2_ETC_YN,
-		    APPL3_M2_YN, APPL3_M3_YN, APPL3_EM_YN, APPL3_ETC, APPL3_ETC_YN,
-		    APPL1_CODE, APPL2_CODE, APPL3_CODE,
-		    APPL1_MEMO, APPL2_MEMO, APPL3_MEMO,
-		    PORT1, PORT2,
-		    PORT1_ACRDT_M2_YN, PORT1_ACRDT_M3_YN, PORT1_ACRDT_EM_YN, PORT1_ACRDT_ETC, PORT1_ACRDT_ETC_YN, PORT1_ACRDT_CODE, PORT1_ACRDT_MEMO,
-		    PORT2_ACRDT_M2_YN, PORT2_ACRDT_M3_YN, PORT2_ACRDT_EM_YN, PORT2_ACRDT_ETC, PORT2_ACRDT_ETC_YN, PORT2_ACRDT_CODE, PORT2_ACRDT_MEMO,
-		    AUDIO_ELCT_YN, AUDIO_ACST_YN, AUDIO_NEAR_YN, AUDIO_FEAR_YN, AUDIO_M2_YN, AUDIO_M3_YN, AUDIO_EM_YN, AUDIO_ETC, AUDIO_ETC_YN, AUDIO_CODE, AUDIO_MEMO,
-		    SPKR_ELCT_YN, SPKR_ACST_YN, SPKR_NEAR_YN, SPKR_FEAR_YN, SPKR_M2_YN, SPKR_M3_YN, SPKR_EM_YN, SPKR_ETC, SPKR_ETC_YN, SPKR_CODE, SPKR_MEMO,
-		    COMM1_NOISE_YN, COMM1_ACST_YN, COMM1_M2_YN, COMM1_M3_YN, COMM1_EM_YN, COMM1_ETC, COMM1_ETC_YN, COMM1_CODE, COMM1_MEMO,
-		    COMM2_NOISE_YN, COMM2_ACST_YN, COMM2_M2_YN, COMM2_M3_YN, COMM2_EM_YN, COMM2_ETC, COMM2_ETC_YN, COMM2_CODE, COMM2_MEMO,
+<!-- 		    APPL_POWER_YN, APPL_IN_YN, APPL_OUT_YN, APPL_DB_POWER_YN, -->
+<!-- 		    APPL1_M2_YN, APPL1_M3_YN, APPL1_EM_YN, APPL1_ETC, APPL1_ETC_YN, -->
+<!-- 		    APPL2_M2_YN, APPL2_M3_YN, APPL2_EM_YN, APPL2_ETC, APPL2_ETC_YN, -->
+<!-- 		    APPL3_M2_YN, APPL3_M3_YN, APPL3_EM_YN, APPL3_ETC, APPL3_ETC_YN, -->
+<!-- 		    APPL1_CODE, APPL2_CODE, APPL3_CODE, -->
+<!-- 		    APPL1_MEMO, APPL2_MEMO, APPL3_MEMO, -->
+<!-- 		    PORT1, PORT2, -->
+<!-- 		    PORT1_ACRDT_M2_YN, PORT1_ACRDT_M3_YN, PORT1_ACRDT_EM_YN, PORT1_ACRDT_ETC, PORT1_ACRDT_ETC_YN, PORT1_ACRDT_CODE, PORT1_ACRDT_MEMO, -->
+<!-- 		    PORT2_ACRDT_M2_YN, PORT2_ACRDT_M3_YN, PORT2_ACRDT_EM_YN, PORT2_ACRDT_ETC, PORT2_ACRDT_ETC_YN, PORT2_ACRDT_CODE, PORT2_ACRDT_MEMO, -->
+<!-- 		    AUDIO_ELCT_YN, AUDIO_ACST_YN, AUDIO_NEAR_YN, AUDIO_FEAR_YN, AUDIO_M2_YN, AUDIO_M3_YN, AUDIO_EM_YN, AUDIO_ETC, AUDIO_ETC_YN, AUDIO_CODE, AUDIO_MEMO, -->
+<!-- 		    SPKR_ELCT_YN, SPKR_ACST_YN, SPKR_NEAR_YN, SPKR_FEAR_YN, SPKR_M2_YN, SPKR_M3_YN, SPKR_EM_YN, SPKR_ETC, SPKR_ETC_YN, SPKR_CODE, SPKR_MEMO, -->
+<!-- 		    COMM1_NOISE_YN, COMM1_ACST_YN, COMM1_M2_YN, COMM1_M3_YN, COMM1_EM_YN, COMM1_ETC, COMM1_ETC_YN, COMM1_CODE, COMM1_MEMO, -->
+<!-- 		    COMM2_NOISE_YN, COMM2_ACST_YN, COMM2_M2_YN, COMM2_M3_YN, COMM2_EM_YN, COMM2_ETC, COMM2_ETC_YN, COMM2_CODE, COMM2_MEMO, -->
 		    CMNT_A_YN, CMNT_ETC, CMNT_ETC_YN
 		FROM METHOD_CS_TB
 		WHERE 1=1
 		AND RAW_SEQ = #{rawSeq}
 	</select>
+	
+	<select id="csSubList" parameterType="int" resultType="egovMap">
+		SELECT 
+			CS_SEQ,
+			CS_SUB_SEQ,
+			APPL_TYPE,
+			NO_YN,
+			ifnull(APPL_NAME, '') APPL_NAME,
+			CDN_M2_YN,
+			CDN_M3_YN,
+			EM_YN,
+			ETC_YN,
+			ETC,
+			RESULT_CODE,
+			MEMO,
+			STATE
+		FROM METHOD_CS_SUB_TB
+		WHERE 1=1
+		AND STATE != 'D'
+		AND CS_SEQ = #{csSeq}
+	</select>
+	
 	<insert id="insertCs" parameterType="csDTO">
-		<selectKey resultType="int" keyProperty="csSeq" order="BEFORE">
-	        SELECT ifnull(MAX(CS_SEQ)+1,1) csSeq FROM METHOD_CS_TB
+		<selectKey resultType="int" keyProperty="csSeq" order="AFTER">
+	        SELECT CS_SEQ csSeq FROM METHOD_CS_TB WHERE RAW_SEQ = #{rawSeq}
 	    </selectKey>
 		INSERT INTO METHOD_CS_TB
 		(
@@ -1427,25 +1756,26 @@
 		    MSRMN_YEAR, MSRMN_MON, MSRMN_DAY, MSRMN_HOUR, MSRMN_MIN,
 		    SIGN, SIGN_URL,
 		    RESULT_CODE,
-		    APPL_POWER_YN, APPL_IN_YN, APPL_OUT_YN, APPL_DB_POWER_YN,
-		    APPL1_M2_YN, APPL1_M3_YN, APPL1_EM_YN, APPL1_ETC, APPL1_ETC_YN,
-		    APPL2_M2_YN, APPL2_M3_YN, APPL2_EM_YN, APPL2_ETC, APPL2_ETC_YN,
-		    APPL3_M2_YN, APPL3_M3_YN, APPL3_EM_YN, APPL3_ETC, APPL3_ETC_YN,
-		    APPL1_CODE, APPL2_CODE, APPL3_CODE,
-		    APPL1_MEMO, APPL2_MEMO, APPL3_MEMO,
-		    PORT1, PORT2,
-		    PORT1_ACRDT_M2_YN, PORT1_ACRDT_M3_YN, PORT1_ACRDT_EM_YN, PORT1_ACRDT_ETC, PORT1_ACRDT_ETC_YN, PORT1_ACRDT_CODE, PORT1_ACRDT_MEMO,
-		    PORT2_ACRDT_M2_YN, PORT2_ACRDT_M3_YN, PORT2_ACRDT_EM_YN, PORT2_ACRDT_ETC, PORT2_ACRDT_ETC_YN, PORT2_ACRDT_CODE, PORT2_ACRDT_MEMO,
-		    AUDIO_ELCT_YN, AUDIO_ACST_YN, AUDIO_NEAR_YN, AUDIO_FEAR_YN, AUDIO_M2_YN, AUDIO_M3_YN, AUDIO_EM_YN, AUDIO_ETC, AUDIO_ETC_YN, AUDIO_CODE, AUDIO_MEMO,
-		    SPKR_ELCT_YN, SPKR_ACST_YN, SPKR_NEAR_YN, SPKR_FEAR_YN, SPKR_M2_YN, SPKR_M3_YN, SPKR_EM_YN, SPKR_ETC, SPKR_ETC_YN, SPKR_CODE, SPKR_MEMO,
-		    COMM1_NOISE_YN, COMM1_ACST_YN, COMM1_M2_YN, COMM1_M3_YN, COMM1_EM_YN, COMM1_ETC, COMM1_ETC_YN, COMM1_CODE, COMM1_MEMO,
-		    COMM2_NOISE_YN, COMM2_ACST_YN, COMM2_M2_YN, COMM2_M3_YN, COMM2_EM_YN, COMM2_ETC, COMM2_ETC_YN, COMM2_CODE, COMM2_MEMO,
+<!-- 		    APPL_POWER_YN, APPL_IN_YN, APPL_OUT_YN, APPL_DB_POWER_YN, -->
+<!-- 		    APPL1_M2_YN, APPL1_M3_YN, APPL1_EM_YN, APPL1_ETC, APPL1_ETC_YN, -->
+<!-- 		    APPL2_M2_YN, APPL2_M3_YN, APPL2_EM_YN, APPL2_ETC, APPL2_ETC_YN, -->
+<!-- 		    APPL3_M2_YN, APPL3_M3_YN, APPL3_EM_YN, APPL3_ETC, APPL3_ETC_YN, -->
+<!-- 		    APPL1_CODE, APPL2_CODE, APPL3_CODE, -->
+<!-- 		    APPL1_MEMO, APPL2_MEMO, APPL3_MEMO, -->
+<!-- 		    PORT1, PORT2, -->
+<!-- 		    PORT1_ACRDT_M2_YN, PORT1_ACRDT_M3_YN, PORT1_ACRDT_EM_YN, PORT1_ACRDT_ETC, PORT1_ACRDT_ETC_YN, PORT1_ACRDT_CODE, PORT1_ACRDT_MEMO, -->
+<!-- 		    PORT2_ACRDT_M2_YN, PORT2_ACRDT_M3_YN, PORT2_ACRDT_EM_YN, PORT2_ACRDT_ETC, PORT2_ACRDT_ETC_YN, PORT2_ACRDT_CODE, PORT2_ACRDT_MEMO, -->
+<!-- 		    AUDIO_ELCT_YN, AUDIO_ACST_YN, AUDIO_NEAR_YN, AUDIO_FEAR_YN, AUDIO_M2_YN, AUDIO_M3_YN, AUDIO_EM_YN, AUDIO_ETC, AUDIO_ETC_YN, AUDIO_CODE, AUDIO_MEMO, -->
+<!-- 		    SPKR_ELCT_YN, SPKR_ACST_YN, SPKR_NEAR_YN, SPKR_FEAR_YN, SPKR_M2_YN, SPKR_M3_YN, SPKR_EM_YN, SPKR_ETC, SPKR_ETC_YN, SPKR_CODE, SPKR_MEMO, -->
+<!-- 		    COMM1_NOISE_YN, COMM1_ACST_YN, COMM1_M2_YN, COMM1_M3_YN, COMM1_EM_YN, COMM1_ETC, COMM1_ETC_YN, COMM1_CODE, COMM1_MEMO, -->
+<!-- 		    COMM2_NOISE_YN, COMM2_ACST_YN, COMM2_M2_YN, COMM2_M3_YN, COMM2_EM_YN, COMM2_ETC, COMM2_ETC_YN, COMM2_CODE, COMM2_MEMO, -->
 		    CMNT_A_YN, CMNT_ETC, CMNT_ETC_YN,
 		    INS_MEM_ID, UDT_MEM_ID
 		)
 		VALUES 
 		(
-			#{csSeq}, #{rawSeq},
+			(SELECT ifnull(MAX(seq.CS_SEQ)+1,1) csSeq FROM METHOD_CS_TB seq),
+			#{rawSeq},
 			#{vltAcYn}, #{vltEtc}, #{vltEtcYn}, #{varNYn}, #{varYYn},
 			#{room1Yn}, #{room2Yn}, #{roomEtc}, #{roomEtcYn},
 			#{temp}, #{tempPlus}, #{hmdt}, #{hmdtPlus}, #{brmt}, #{brmtPlus},
@@ -1456,19 +1786,19 @@
 			#{msrmnYear}, #{msrmnMon}, #{msrmnDay}, #{msrmnHour}, #{msrmnMin},
 			#{sign}, #{signUrl},
 			#{resultCode},
-			#{applPowerYn}, #{applInYn}, #{applOutYn}, #{applDbPowerYn},
-			#{appl1M2Yn}, #{appl1M3Yn}, #{appl1EmYn}, #{appl1Etc}, #{appl1EtcYn},
-			#{appl2M2Yn}, #{appl2M3Yn}, #{appl2EmYn}, #{appl2Etc}, #{appl2EtcYn},
-			#{appl3M2Yn}, #{appl3M3Yn}, #{appl3EmYn}, #{appl3Etc}, #{appl3EtcYn},
-			#{appl1Code}, #{appl2Code}, #{appl3Code},
-			#{appl1Memo}, #{appl2Memo}, #{appl3Memo},
-			#{port1}, #{port2},
-			#{port1AcrdtM2Yn}, #{port1AcrdtM3Yn}, #{port1AcrdtEmYn}, #{port1AcrdtEtc}, #{port1AcrdtEtcYn}, #{port1AcrdtCode}, #{port1AcrdtMemo},
-			#{port2AcrdtM2Yn}, #{port2AcrdtM3Yn}, #{port2AcrdtEmYn}, #{port2AcrdtEtc}, #{port2AcrdtEtcYn}, #{port2AcrdtCode}, #{port2AcrdtMemo},
-			#{audioElctYn}, #{audioAcstYn}, #{audioNearYn}, #{audioFearYn}, #{audioM2Yn}, #{audioM3Yn}, #{audioEmYn}, #{audioEtc}, #{audioEtcYn}, #{audioCode}, #{audioMemo},
-			#{spkrElctYn}, #{spkrAcstYn}, #{spkrNearYn}, #{spkrFearYn}, #{spkrM2Yn}, #{spkrM3Yn}, #{spkrEmYn}, #{spkrEtc}, #{spkrEtcYn}, #{spkrCode}, #{spkrMemo},
-			#{comm1NoiseYn}, #{comm1AcstYn}, #{comm1M2Yn}, #{comm1M3Yn}, #{comm1EmYn}, #{comm1Etc}, #{comm1EtcYn}, #{comm1Code}, #{comm1Memo},
-			#{comm2NoiseYn}, #{comm2AcstYn}, #{comm2M2Yn}, #{comm2M3Yn}, #{comm2EmYn}, #{comm2Etc}, #{comm2EtcYn}, #{comm2Code}, #{comm2Memo},
+<!-- 			#{applPowerYn}, #{applInYn}, #{applOutYn}, #{applDbPowerYn}, -->
+<!-- 			#{appl1M2Yn}, #{appl1M3Yn}, #{appl1EmYn}, #{appl1Etc}, #{appl1EtcYn}, -->
+<!-- 			#{appl2M2Yn}, #{appl2M3Yn}, #{appl2EmYn}, #{appl2Etc}, #{appl2EtcYn}, -->
+<!-- 			#{appl3M2Yn}, #{appl3M3Yn}, #{appl3EmYn}, #{appl3Etc}, #{appl3EtcYn}, -->
+<!-- 			#{appl1Code}, #{appl2Code}, #{appl3Code}, -->
+<!-- 			#{appl1Memo}, #{appl2Memo}, #{appl3Memo}, -->
+<!-- 			#{port1}, #{port2}, -->
+<!-- 			#{port1AcrdtM2Yn}, #{port1AcrdtM3Yn}, #{port1AcrdtEmYn}, #{port1AcrdtEtc}, #{port1AcrdtEtcYn}, #{port1AcrdtCode}, #{port1AcrdtMemo}, -->
+<!-- 			#{port2AcrdtM2Yn}, #{port2AcrdtM3Yn}, #{port2AcrdtEmYn}, #{port2AcrdtEtc}, #{port2AcrdtEtcYn}, #{port2AcrdtCode}, #{port2AcrdtMemo}, -->
+<!-- 			#{audioElctYn}, #{audioAcstYn}, #{audioNearYn}, #{audioFearYn}, #{audioM2Yn}, #{audioM3Yn}, #{audioEmYn}, #{audioEtc}, #{audioEtcYn}, #{audioCode}, #{audioMemo}, -->
+<!-- 			#{spkrElctYn}, #{spkrAcstYn}, #{spkrNearYn}, #{spkrFearYn}, #{spkrM2Yn}, #{spkrM3Yn}, #{spkrEmYn}, #{spkrEtc}, #{spkrEtcYn}, #{spkrCode}, #{spkrMemo}, -->
+<!-- 			#{comm1NoiseYn}, #{comm1AcstYn}, #{comm1M2Yn}, #{comm1M3Yn}, #{comm1EmYn}, #{comm1Etc}, #{comm1EtcYn}, #{comm1Code}, #{comm1Memo}, -->
+<!-- 			#{comm2NoiseYn}, #{comm2AcstYn}, #{comm2M2Yn}, #{comm2M3Yn}, #{comm2EmYn}, #{comm2Etc}, #{comm2EtcYn}, #{comm2Code}, #{comm2Memo}, -->
 			#{cmntAYn}, #{cmntEtc}, #{cmntEtcYn},
 			#{insMemId}, #{udtMemId}
 		)
@@ -1511,93 +1841,154 @@
 			SIGN = #{sign},
 			<if test="signUrl != null and signUrl != ''">SIGN_URL = #{signUrl},</if>
 			RESULT_CODE = #{resultCode},
-			APPL_POWER_YN = #{applPowerYn},
-			APPL_IN_YN = #{applInYn},
-			APPL_OUT_YN = #{applOutYn},
-			APPL_DB_POWER_YN = #{applDbPowerYn},
-			APPL1_M2_YN = #{appl1M2Yn},
-			APPL1_M3_YN = #{appl1M3Yn},
-			APPL1_EM_YN = #{appl1EmYn},
-			APPL1_ETC = #{appl1Etc},
-			APPL1_ETC_YN = #{appl1EtcYn},
-			APPL2_M2_YN = #{appl2M2Yn},
-			APPL2_M3_YN = #{appl2M3Yn},
-			APPL2_EM_YN = #{appl2EmYn},
-			APPL2_ETC = #{appl2Etc},
-			APPL2_ETC_YN = #{appl2EtcYn},		
-			APPL3_M2_YN = #{appl3M2Yn},
-			APPL3_M3_YN = #{appl3M3Yn},
-			APPL3_EM_YN = #{appl3EmYn},
-			APPL3_ETC = #{appl3Etc},
-			APPL3_ETC_YN = #{appl3EtcYn},
-			APPL1_CODE = #{appl1Code},
-			APPL2_CODE = #{appl2Code},
-			APPL3_CODE = #{appl3Code},
-			APPL1_MEMO = #{appl1Memo},
-			APPL2_MEMO = #{appl2Memo},
-			APPL3_MEMO = #{appl3Memo},
-			PORT1 = #{port1},
-			PORT2 = #{port2},
-			PORT1_ACRDT_M2_YN = #{port1AcrdtM2Yn},
-			PORT1_ACRDT_M3_YN = #{port1AcrdtM3Yn},
-			PORT1_ACRDT_EM_YN = #{port1AcrdtEmYn},
-			PORT1_ACRDT_ETC = #{port1AcrdtEtc},
-			PORT1_ACRDT_ETC_YN = #{port1AcrdtEtcYn},
-			PORT1_ACRDT_CODE = #{port1AcrdtCode},
-			PORT1_ACRDT_MEMO = #{port1AcrdtMemo},
-			PORT2_ACRDT_M2_YN = #{port2AcrdtM2Yn},
-			PORT2_ACRDT_M3_YN = #{port2AcrdtM3Yn},
-			PORT2_ACRDT_EM_YN = #{port2AcrdtEmYn},
-			PORT2_ACRDT_ETC = #{port2AcrdtEtc},
-			PORT2_ACRDT_ETC_YN = #{port2AcrdtEtcYn},
-			PORT2_ACRDT_CODE = #{port2AcrdtCode},
-			PORT2_ACRDT_MEMO = #{port2AcrdtMemo},
-			AUDIO_ELCT_YN = #{audioElctYn},
-			AUDIO_ACST_YN = #{audioAcstYn},
-			AUDIO_NEAR_YN = #{audioNearYn},
-			AUDIO_FEAR_YN = #{audioFearYn},
-			AUDIO_M2_YN = #{audioM2Yn},
-			AUDIO_M3_YN = #{audioM3Yn},
-			AUDIO_EM_YN = #{audioEmYn},
-			AUDIO_ETC = #{audioEtc},
-			AUDIO_ETC_YN = #{audioEtcYn},
-			AUDIO_CODE = #{audioCode},
-			AUDIO_MEMO = #{audioMemo},
-			SPKR_ELCT_YN = #{spkrElctYn},
-			SPKR_ACST_YN = #{spkrAcstYn},
-			SPKR_NEAR_YN = #{spkrNearYn},
-			SPKR_FEAR_YN = #{spkrFearYn},
-			SPKR_M2_YN = #{spkrM2Yn},
-			SPKR_M3_YN = #{spkrM3Yn},
-			SPKR_EM_YN = #{spkrEmYn},
-			SPKR_ETC = #{spkrEtc},
-			SPKR_ETC_YN = #{spkrEtcYn},
-			SPKR_CODE = #{spkrCode},
-			SPKR_MEMO = #{spkrMemo},
-			COMM1_NOISE_YN = #{comm1NoiseYn},
-			COMM1_ACST_YN = #{comm1AcstYn},
-			COMM1_M2_YN = #{comm1M2Yn},
-			COMM1_M3_YN = #{comm1M3Yn},
-			COMM1_EM_YN = #{comm1EmYn},
-			COMM1_ETC = #{comm1Etc},
-			COMM1_ETC_YN = #{comm1EtcYn},
-			COMM1_CODE = #{comm1Code},
-			COMM1_MEMO = #{comm1Memo},
-			COMM2_NOISE_YN = #{comm2NoiseYn},
-			COMM2_ACST_YN = #{comm2AcstYn},
-			COMM2_M2_YN = #{comm2M2Yn},
-			COMM2_M3_YN = #{comm2M3Yn},
-			COMM2_EM_YN = #{comm2EmYn},
-			COMM2_ETC = #{comm2Etc},
-			COMM2_ETC_YN = #{comm2EtcYn},
-			COMM2_CODE = #{comm2Code},
-			COMM2_MEMO = #{comm2Memo},
+<!-- 			APPL_POWER_YN = #{applPowerYn}, -->
+<!-- 			APPL_IN_YN = #{applInYn}, -->
+<!-- 			APPL_OUT_YN = #{applOutYn}, -->
+<!-- 			APPL_DB_POWER_YN = #{applDbPowerYn}, -->
+<!-- 			APPL1_M2_YN = #{appl1M2Yn}, -->
+<!-- 			APPL1_M3_YN = #{appl1M3Yn}, -->
+<!-- 			APPL1_EM_YN = #{appl1EmYn}, -->
+<!-- 			APPL1_ETC = #{appl1Etc}, -->
+<!-- 			APPL1_ETC_YN = #{appl1EtcYn}, -->
+<!-- 			APPL2_M2_YN = #{appl2M2Yn}, -->
+<!-- 			APPL2_M3_YN = #{appl2M3Yn}, -->
+<!-- 			APPL2_EM_YN = #{appl2EmYn}, -->
+<!-- 			APPL2_ETC = #{appl2Etc}, -->
+<!-- 			APPL2_ETC_YN = #{appl2EtcYn},		 -->
+<!-- 			APPL3_M2_YN = #{appl3M2Yn}, -->
+<!-- 			APPL3_M3_YN = #{appl3M3Yn}, -->
+<!-- 			APPL3_EM_YN = #{appl3EmYn}, -->
+<!-- 			APPL3_ETC = #{appl3Etc}, -->
+<!-- 			APPL3_ETC_YN = #{appl3EtcYn}, -->
+<!-- 			APPL1_CODE = #{appl1Code}, -->
+<!-- 			APPL2_CODE = #{appl2Code}, -->
+<!-- 			APPL3_CODE = #{appl3Code}, -->
+<!-- 			APPL1_MEMO = #{appl1Memo}, -->
+<!-- 			APPL2_MEMO = #{appl2Memo}, -->
+<!-- 			APPL3_MEMO = #{appl3Memo}, -->
+<!-- 			PORT1 = #{port1}, -->
+<!-- 			PORT2 = #{port2}, -->
+<!-- 			PORT1_ACRDT_M2_YN = #{port1AcrdtM2Yn}, -->
+<!-- 			PORT1_ACRDT_M3_YN = #{port1AcrdtM3Yn}, -->
+<!-- 			PORT1_ACRDT_EM_YN = #{port1AcrdtEmYn}, -->
+<!-- 			PORT1_ACRDT_ETC = #{port1AcrdtEtc}, -->
+<!-- 			PORT1_ACRDT_ETC_YN = #{port1AcrdtEtcYn}, -->
+<!-- 			PORT1_ACRDT_CODE = #{port1AcrdtCode}, -->
+<!-- 			PORT1_ACRDT_MEMO = #{port1AcrdtMemo}, -->
+<!-- 			PORT2_ACRDT_M2_YN = #{port2AcrdtM2Yn}, -->
+<!-- 			PORT2_ACRDT_M3_YN = #{port2AcrdtM3Yn}, -->
+<!-- 			PORT2_ACRDT_EM_YN = #{port2AcrdtEmYn}, -->
+<!-- 			PORT2_ACRDT_ETC = #{port2AcrdtEtc}, -->
+<!-- 			PORT2_ACRDT_ETC_YN = #{port2AcrdtEtcYn}, -->
+<!-- 			PORT2_ACRDT_CODE = #{port2AcrdtCode}, -->
+<!-- 			PORT2_ACRDT_MEMO = #{port2AcrdtMemo}, -->
+<!-- 			AUDIO_ELCT_YN = #{audioElctYn}, -->
+<!-- 			AUDIO_ACST_YN = #{audioAcstYn}, -->
+<!-- 			AUDIO_NEAR_YN = #{audioNearYn}, -->
+<!-- 			AUDIO_FEAR_YN = #{audioFearYn}, -->
+<!-- 			AUDIO_M2_YN = #{audioM2Yn}, -->
+<!-- 			AUDIO_M3_YN = #{audioM3Yn}, -->
+<!-- 			AUDIO_EM_YN = #{audioEmYn}, -->
+<!-- 			AUDIO_ETC = #{audioEtc}, -->
+<!-- 			AUDIO_ETC_YN = #{audioEtcYn}, -->
+<!-- 			AUDIO_CODE = #{audioCode}, -->
+<!-- 			AUDIO_MEMO = #{audioMemo}, -->
+<!-- 			SPKR_ELCT_YN = #{spkrElctYn}, -->
+<!-- 			SPKR_ACST_YN = #{spkrAcstYn}, -->
+<!-- 			SPKR_NEAR_YN = #{spkrNearYn}, -->
+<!-- 			SPKR_FEAR_YN = #{spkrFearYn}, -->
+<!-- 			SPKR_M2_YN = #{spkrM2Yn}, -->
+<!-- 			SPKR_M3_YN = #{spkrM3Yn}, -->
+<!-- 			SPKR_EM_YN = #{spkrEmYn}, -->
+<!-- 			SPKR_ETC = #{spkrEtc}, -->
+<!-- 			SPKR_ETC_YN = #{spkrEtcYn}, -->
+<!-- 			SPKR_CODE = #{spkrCode}, -->
+<!-- 			SPKR_MEMO = #{spkrMemo}, -->
+<!-- 			COMM1_NOISE_YN = #{comm1NoiseYn}, -->
+<!-- 			COMM1_ACST_YN = #{comm1AcstYn}, -->
+<!-- 			COMM1_M2_YN = #{comm1M2Yn}, -->
+<!-- 			COMM1_M3_YN = #{comm1M3Yn}, -->
+<!-- 			COMM1_EM_YN = #{comm1EmYn}, -->
+<!-- 			COMM1_ETC = #{comm1Etc}, -->
+<!-- 			COMM1_ETC_YN = #{comm1EtcYn}, -->
+<!-- 			COMM1_CODE = #{comm1Code}, -->
+<!-- 			COMM1_MEMO = #{comm1Memo}, -->
+<!-- 			COMM2_NOISE_YN = #{comm2NoiseYn}, -->
+<!-- 			COMM2_ACST_YN = #{comm2AcstYn}, -->
+<!-- 			COMM2_M2_YN = #{comm2M2Yn}, -->
+<!-- 			COMM2_M3_YN = #{comm2M3Yn}, -->
+<!-- 			COMM2_EM_YN = #{comm2EmYn}, -->
+<!-- 			COMM2_ETC = #{comm2Etc}, -->
+<!-- 			COMM2_ETC_YN = #{comm2EtcYn}, -->
+<!-- 			COMM2_CODE = #{comm2Code}, -->
+<!-- 			COMM2_MEMO = #{comm2Memo}, -->
 			CMNT_A_YN = #{cmntAYn},
 			CMNT_ETC = #{cmntEtc},
 			CMNT_ETC_YN = #{cmntEtcYn},
 			UDT_MEM_ID = #{udtMemId}
 	</insert>	
+
+	<insert id="insertCsSub">
+		INSERT INTO METHOD_CS_SUB_TB
+		(
+			CS_SEQ,
+			APPL_TYPE,
+			NO_YN,
+			APPL_NAME,
+			CDN_M2_YN,
+			CDN_M3_YN,
+			EM_YN,
+			ETC_YN,
+			ETC,
+			RESULT_CODE,
+			MEMO
+		)
+		VALUES
+		<foreach collection="MethodCsSubList" item="item" separator=",">
+		(
+			#{csSeq},
+			#{item.applType},
+			#{item.noYn},
+			#{item.applName},
+			#{item.cdnM2Yn},
+			#{item.cdnM3Yn},
+			#{item.emYn},
+			#{item.etcYn},
+			#{item.etc},
+			#{item.resultCode},
+			#{item.memo}
+		)
+		</foreach>
+	</insert>
 	
+	<update id="updateCsSub">
+		<foreach collection="MethodCsSubList" item="item" separator=";">
+		UPDATE METHOD_CS_SUB_TB
+		SET
+			APPL_TYPE = #{item.applType},
+			NO_YN = #{item.noYn},
+			APPL_NAME = #{item.applName},
+			CDN_M2_YN = #{item.cdnM2Yn},
+			CDN_M3_YN = #{item.cdnM3Yn},
+			EM_YN = #{item.emYn},
+			ETC_YN = #{item.etcYn},
+			ETC = #{item.etc},
+			RESULT_CODE = #{item.resultCode},
+			MEMO = #{item.memo},
+			STATE = #{item.state}
+		WHERE CS_SUB_SEQ = #{item.csSubSeq}
+		</foreach>
+	</update>
+
+	<update id="deleteCsSub">
+		<foreach collection="MethodCsSubList" item="item" separator=";">
+		UPDATE METHOD_CS_SUB_TB
+		SET
+			STATE = #{item.state}
+		WHERE CS_SUB_SEQ = #{item.csSubSeq}
+		</foreach>
+	</update>
+		
 	<select id="mfDetail" parameterType="int" resultType="mfDTO">
 		SELECT 
 			MF_SEQ, RAW_SEQ,
@@ -1606,10 +1997,12 @@
 		    TEMP, TEMP_PLUS, HMDT, HMDT_PLUS, BRMT, BRMT_PLUS,
 		    MGNT_A_YN, MGNT_3_YN, MGNT_30_YN, FRQNC_50_YN, FRQNC_60_YN,
 		    AXIS_X_YN, AXIS_Y_YN, AXIS_Z_YN, ACRDT,
+			SF_300_YN, SF_ETC_YN, SF_ETC,
+    		EVLTN_A_YN, EVLTN_B_YN, EVLTN_C_YN,
 		    MSRMN_YEAR, MSRMN_MON, MSRMN_DAY, MSRMN_HOUR, MSRMN_MIN,
 		    SIGN, <![CDATA[concat('/file/getImage.do?atchFileId=',SIGN_URL,'&fileSn=0') SIGN_URL,]]>
 		    RESULT_CODE,
-		    X_STNDR, X_CODE, X_MEMO,
+		    X_STND, X_CODE, X_MEMO,
 		    Y_STND, Y_CODE, Y_MEMO,
 		    Z_STND, Z_CODE, Z_MEMO,
 		    CMNT_A_YN, CMNT_ETC, CMNT_ETC_YN,
@@ -1630,10 +2023,12 @@
 		    TEMP, TEMP_PLUS, HMDT, HMDT_PLUS, BRMT, BRMT_PLUS,
 		    MGNT_A_YN, MGNT_3_YN, MGNT_30_YN, FRQNC_50_YN, FRQNC_60_YN,
 		    AXIS_X_YN, AXIS_Y_YN, AXIS_Z_YN, ACRDT,
+		    SF_300_YN, SF_ETC_YN, SF_ETC,
+    		EVLTN_A_YN, EVLTN_B_YN, EVLTN_C_YN,
 		    MSRMN_YEAR, MSRMN_MON, MSRMN_DAY, MSRMN_HOUR, MSRMN_MIN,
 		    SIGN, SIGN_URL,
 		    RESULT_CODE,
-		    X_STNDR, X_CODE, X_MEMO,
+		    X_STND, X_CODE, X_MEMO,
 		    Y_STND, Y_CODE, Y_MEMO,
 		    Z_STND, Z_CODE, Z_MEMO,
 		    CMNT_A_YN, CMNT_ETC, CMNT_ETC_YN,
@@ -1667,6 +2062,8 @@
 	        #{axisYYn},
 	        #{axisZYn},
 	        #{acrdt},
+	        #{sf300Yn}, #{sfEtcYn}, #{sfEtc},
+    		#{evltnAYn}, #{evltnBYn}, #{evltnCYn},
 	        #{msrmnYear},
 	        #{msrmnMon},
 	        #{msrmnDay},
@@ -1675,7 +2072,7 @@
 	        #{sign},
 	        #{signUrl},
 	        #{resultCode},
-	        #{xStndr},
+	        #{xStnd},
 	        #{xCode},
 	        #{xMemo},
 	        #{yStnd},
@@ -1715,6 +2112,12 @@
 			AXIS_Y_YN = #{axisYYn},
 			AXIS_Z_YN = #{axisZYn},
 			ACRDT = #{acrdt},
+			SF_300_YN = #{sf300Yn}, 
+			SF_ETC_YN = #{sfEtcYn}, 
+			SF_ETC = #{sfEtc},
+    		EVLTN_A_YN = #{evltnAYn}, 
+    		EVLTN_B_YN = #{evltnBYn}, 
+    		EVLTN_C_YN = #{evltnCYn},
 			MSRMN_YEAR = #{msrmnYear},
 			MSRMN_MON = #{msrmnMon},
 			MSRMN_DAY = #{msrmnDay},
@@ -1723,7 +2126,7 @@
 			SIGN = #{sign},
 			<if test="signUrl != null and signUrl != ''">SIGN_URL = #{signUrl},</if>
 			RESULT_CODE = #{resultCode},
-			X_STNDR = #{xStndr},
+			X_STND = #{xStnd},
 			X_CODE = #{xCode},
 			X_MEMO = #{xMemo},
 			Y_STND = #{yStnd},
@@ -1744,14 +2147,17 @@
 		    VLT_AC_YN, VLT_ETC, VLT_ETC_YN, VAR_N_YN, VAR_Y_YN,
 		    ROOM1_YN, ROOM2_YN, ROOM_ETC, ROOM_ETC_YN,
 		    TEMP, TEMP_PLUS, HMDT, HMDT_PLUS, BRMT, BRMT_PLUS,
-		    DIPS_RDC1_YN, DIPS_RDC1_TEXT, DIPS_RDC1_05_YN, DIPS_RDC1_5_YN, DIPS_RDC1_25_YN, DIPS_RDC1_30_YN, DIPS_RDC1_50_YN, DIPS_RDC1_ETC, DIPS_RDC1_ETC_YN, DIPS_RDC1_CODE,
-		    DIPS_RDC2_YN, DIPS_RDC2_TEXT, DIPS_RDC2_05_YN, DIPS_RDC2_5_YN, DIPS_RDC2_25_YN, DIPS_RDC2_30_YN, DIPS_RDC2_50_YN, DIPS_RDC2_ETC, DIPS_RDC2_ETC_YN, DIPS_RDC2_CODE,
-		    DIPS_RDC3_YN, DIPS_RDC3_TEXT, DIPS_RDC3_ETC, DIPS_RDC3_ETC_YN, DIPS_RDC3_CODE, DIPS_RDC4_YN, DIPS_RDC4_TEXT, DIPS_RDC4_ETC, DIPS_RDC4_ETC_YN, DIPS_RDC4_CODE,
-		    INTRP_RDC1_YN, INTRP_RDC1_TEXT, INTRP_RDC1_05_YN, INTRP_RDC1_250_YN, INTRP_RDC1_300_YN, INTRP_RDC1_ETC, INTRP_RDC1_ETC_YN, INTRP_RDC1_CODE, 
-		    INTRP_RDC2_YN, INTRP_RDC2_TEXT, INTRP_RDC2_ETC, INTRP_RDC2_ETC_YN, INTRP_RDC2_CODE,
-		    INTRP_RDC3_YN, INTRP_RDC3_TEXT, INTRP_RDC3_ETC, INTRP_RDC3_ETC_YN, INTRP_RDC3_CODE,
-		    INTRP_RDC4_YN, INTRP_RDC4_TEXT, INTRP_RDC4_ETC, INTRP_RDC4_ETC_YN, INTRP_RDC4_CODE,
-		    FLCTT_P10_YN, FLCTT_M10_YN, FLCTT_M15_YN,
+<!-- 		    DIPS_RDC1_YN, DIPS_RDC1_TEXT, DIPS_RDC1_05_YN, DIPS_RDC1_5_YN, DIPS_RDC1_25_YN, DIPS_RDC1_30_YN, DIPS_RDC1_50_YN, DIPS_RDC1_ETC, DIPS_RDC1_ETC_YN, DIPS_RDC1_CODE, -->
+<!-- 		    DIPS_RDC2_YN, DIPS_RDC2_TEXT, DIPS_RDC2_05_YN, DIPS_RDC2_5_YN, DIPS_RDC2_25_YN, DIPS_RDC2_30_YN, DIPS_RDC2_50_YN, DIPS_RDC2_ETC, DIPS_RDC2_ETC_YN, DIPS_RDC2_CODE, -->
+<!-- 		    DIPS_RDC3_YN, DIPS_RDC3_TEXT, DIPS_RDC3_ETC, DIPS_RDC3_ETC_YN, DIPS_RDC3_CODE, DIPS_RDC4_YN, DIPS_RDC4_TEXT, DIPS_RDC4_ETC, DIPS_RDC4_ETC_YN, DIPS_RDC4_CODE, -->
+<!-- 		    INTRP_RDC1_YN, INTRP_RDC1_TEXT, INTRP_RDC1_05_YN, INTRP_RDC1_250_YN, INTRP_RDC1_300_YN, INTRP_RDC1_ETC, INTRP_RDC1_ETC_YN, INTRP_RDC1_CODE,  -->
+<!-- 		    INTRP_RDC2_YN, INTRP_RDC2_TEXT, INTRP_RDC2_ETC, INTRP_RDC2_ETC_YN, INTRP_RDC2_CODE, -->
+<!-- 		    INTRP_RDC3_YN, INTRP_RDC3_TEXT, INTRP_RDC3_ETC, INTRP_RDC3_ETC_YN, INTRP_RDC3_CODE, -->
+<!-- 		    INTRP_RDC4_YN, INTRP_RDC4_TEXT, INTRP_RDC4_ETC, INTRP_RDC4_ETC_YN, INTRP_RDC4_CODE, -->
+<!-- 		    FLCTT_P10_YN, FLCTT_M10_YN, FLCTT_M15_YN, -->
+			VOL1_RESULT_CODE, VOL1_CMNT_CODE, VOL1_CMNT,
+		    VOL2_RESULT_CODE, VOL2_CMNT_CODE, VOL2_CMNT,
+		    VOL3_RESULT_CODE, VOL3_CMNT_CODE, VOL3_CMNT,
 		    MSRMN_YEAR, MSRMN_MON, MSRMN_DAY, MSRMN_HOUR, MSRMN_MIN,
 		    SIGN, <![CDATA[concat('/file/getImage.do?atchFileId=',SIGN_URL,'&fileSn=0') SIGN_URL,]]>
 		    RESULT_CODE,
@@ -1773,14 +2179,17 @@
 		    VLT_AC_YN, VLT_ETC, VLT_ETC_YN, VAR_N_YN, VAR_Y_YN,
 		    ROOM1_YN, ROOM2_YN, ROOM_ETC, ROOM_ETC_YN,
 		    TEMP, TEMP_PLUS, HMDT, HMDT_PLUS, BRMT, BRMT_PLUS,
-		    DIPS_RDC1_YN, DIPS_RDC1_TEXT, DIPS_RDC1_05_YN, DIPS_RDC1_5_YN, DIPS_RDC1_25_YN, DIPS_RDC1_30_YN, DIPS_RDC1_50_YN, DIPS_RDC1_ETC, DIPS_RDC1_ETC_YN, DIPS_RDC1_CODE,
-		    DIPS_RDC2_YN, DIPS_RDC2_TEXT, DIPS_RDC2_05_YN, DIPS_RDC2_5_YN, DIPS_RDC2_25_YN, DIPS_RDC2_30_YN, DIPS_RDC2_50_YN, DIPS_RDC2_ETC, DIPS_RDC2_ETC_YN, DIPS_RDC2_CODE,
-		    DIPS_RDC3_YN, DIPS_RDC3_TEXT, DIPS_RDC3_ETC, DIPS_RDC3_ETC_YN, DIPS_RDC3_CODE, DIPS_RDC4_YN, DIPS_RDC4_TEXT, DIPS_RDC4_ETC, DIPS_RDC4_ETC_YN, DIPS_RDC4_CODE,
-		    INTRP_RDC1_YN, INTRP_RDC1_TEXT, INTRP_RDC1_05_YN, INTRP_RDC1_250_YN, INTRP_RDC1_300_YN, INTRP_RDC1_ETC, INTRP_RDC1_ETC_YN, INTRP_RDC1_CODE, 
-		    INTRP_RDC2_YN, INTRP_RDC2_TEXT, INTRP_RDC2_ETC, INTRP_RDC2_ETC_YN, INTRP_RDC2_CODE,
-		    INTRP_RDC3_YN, INTRP_RDC3_TEXT, INTRP_RDC3_ETC, INTRP_RDC3_ETC_YN, INTRP_RDC3_CODE,
-		    INTRP_RDC4_YN, INTRP_RDC4_TEXT, INTRP_RDC4_ETC, INTRP_RDC4_ETC_YN, INTRP_RDC4_CODE,
-		    FLCTT_P10_YN, FLCTT_M10_YN, FLCTT_M15_YN,
+<!-- 		    DIPS_RDC1_YN, DIPS_RDC1_TEXT, DIPS_RDC1_05_YN, DIPS_RDC1_5_YN, DIPS_RDC1_25_YN, DIPS_RDC1_30_YN, DIPS_RDC1_50_YN, DIPS_RDC1_ETC, DIPS_RDC1_ETC_YN, DIPS_RDC1_CODE, -->
+<!-- 		    DIPS_RDC2_YN, DIPS_RDC2_TEXT, DIPS_RDC2_05_YN, DIPS_RDC2_5_YN, DIPS_RDC2_25_YN, DIPS_RDC2_30_YN, DIPS_RDC2_50_YN, DIPS_RDC2_ETC, DIPS_RDC2_ETC_YN, DIPS_RDC2_CODE, -->
+<!-- 		    DIPS_RDC3_YN, DIPS_RDC3_TEXT, DIPS_RDC3_ETC, DIPS_RDC3_ETC_YN, DIPS_RDC3_CODE, DIPS_RDC4_YN, DIPS_RDC4_TEXT, DIPS_RDC4_ETC, DIPS_RDC4_ETC_YN, DIPS_RDC4_CODE, -->
+<!-- 		    INTRP_RDC1_YN, INTRP_RDC1_TEXT, INTRP_RDC1_05_YN, INTRP_RDC1_250_YN, INTRP_RDC1_300_YN, INTRP_RDC1_ETC, INTRP_RDC1_ETC_YN, INTRP_RDC1_CODE,  -->
+<!-- 		    INTRP_RDC2_YN, INTRP_RDC2_TEXT, INTRP_RDC2_ETC, INTRP_RDC2_ETC_YN, INTRP_RDC2_CODE, -->
+<!-- 		    INTRP_RDC3_YN, INTRP_RDC3_TEXT, INTRP_RDC3_ETC, INTRP_RDC3_ETC_YN, INTRP_RDC3_CODE, -->
+<!-- 		    INTRP_RDC4_YN, INTRP_RDC4_TEXT, INTRP_RDC4_ETC, INTRP_RDC4_ETC_YN, INTRP_RDC4_CODE, -->
+<!-- 		    FLCTT_P10_YN, FLCTT_M10_YN, FLCTT_M15_YN, -->
+			VOL1_RESULT_CODE, VOL1_CMNT_CODE, VOL1_CMNT,
+		    VOL2_RESULT_CODE, VOL2_CMNT_CODE, VOL2_CMNT,
+		    VOL3_RESULT_CODE, VOL3_CMNT_CODE, VOL3_CMNT,
 		    MSRMN_YEAR, MSRMN_MON, MSRMN_DAY, MSRMN_HOUR, MSRMN_MIN,
 		    SIGN, SIGN_URL,
 		    RESULT_CODE,
@@ -1796,13 +2205,16 @@
 	        #{vltAcYn}, #{vltEtc}, #{vltEtcYn}, #{varNYn}, #{varYYn},
 	        #{room1Yn}, #{room2Yn}, #{roomEtc}, #{roomEtcYn},
 	        #{temp}, #{tempPlus}, #{hmdt}, #{hmdtPlus}, #{brmt}, #{brmtPlus},
-	        #{dipsRdc1Yn}, #{dipsRdc1Text}, #{dipsRdc105Yn}, #{dipsRdc15Yn}, #{dipsRdc125Yn}, #{dipsRdc130Yn}, #{dipsRdc150Yn}, #{dipsRdc1Etc}, #{dipsRdc1EtcYn}, #{dipsRdc1Code},
-	        #{dipsRdc2Yn}, #{dipsRdc2Text}, #{dipsRdc205Yn}, #{dipsRdc25Yn}, #{dipsRdc225Yn}, #{dipsRdc230Yn}, #{dipsRdc250Yn}, #{dipsRdc2Etc}, #{dipsRdc2EtcYn}, #{dipsRdc2Code},
-	        #{dipsRdc3Yn}, #{dipsRdc3Text}, #{dipsRdc3Etc}, #{dipsRdc3EtcYn}, #{dipsRdc3Code}, #{dipsRdc4Yn}, #{dipsRdc4Text}, #{dipsRdc4Etc}, #{dipsRdc4EtcYn}, #{dipsRdc4Code}, 
-	        #{intrpRdc1Yn}, #{intrpRdc1Text}, #{intrpRdc105Yn}, #{intrpRdc1250Yn}, #{intrpRdc1300Yn}, #{intrpRdc1Etc}, #{intrpRdc1EtcYn}, #{intrpRdc1Code}, #{intrpRdc2Yn},
-		    #{intrpRdc2Text}, #{intrpRdc2Etc}, #{intrpRdc2EtcYn}, #{intrpRdc2Code}, #{intrpRdc3Yn}, #{intrpRdc3Text}, #{intrpRdc3Etc}, #{intrpRdc3EtcYn}, #{intrpRdc3Code}, #{intrpRdc4Yn},
-		    #{intrpRdc4Text}, #{intrpRdc4Etc}, #{intrpRdc4EtcYn}, #{intrpRdc4Code},
-		    #{flcttP10Yn}, #{flcttM10Yn}, #{flcttM15Yn},
+<!-- 	        #{dipsRdc1Yn}, #{dipsRdc1Text}, #{dipsRdc105Yn}, #{dipsRdc15Yn}, #{dipsRdc125Yn}, #{dipsRdc130Yn}, #{dipsRdc150Yn}, #{dipsRdc1Etc}, #{dipsRdc1EtcYn}, #{dipsRdc1Code}, -->
+<!-- 	        #{dipsRdc2Yn}, #{dipsRdc2Text}, #{dipsRdc205Yn}, #{dipsRdc25Yn}, #{dipsRdc225Yn}, #{dipsRdc230Yn}, #{dipsRdc250Yn}, #{dipsRdc2Etc}, #{dipsRdc2EtcYn}, #{dipsRdc2Code}, -->
+<!-- 	        #{dipsRdc3Yn}, #{dipsRdc3Text}, #{dipsRdc3Etc}, #{dipsRdc3EtcYn}, #{dipsRdc3Code}, #{dipsRdc4Yn}, #{dipsRdc4Text}, #{dipsRdc4Etc}, #{dipsRdc4EtcYn}, #{dipsRdc4Code},  -->
+<!-- 	        #{intrpRdc1Yn}, #{intrpRdc1Text}, #{intrpRdc105Yn}, #{intrpRdc1250Yn}, #{intrpRdc1300Yn}, #{intrpRdc1Etc}, #{intrpRdc1EtcYn}, #{intrpRdc1Code}, #{intrpRdc2Yn}, -->
+<!-- 		    #{intrpRdc2Text}, #{intrpRdc2Etc}, #{intrpRdc2EtcYn}, #{intrpRdc2Code}, #{intrpRdc3Yn}, #{intrpRdc3Text}, #{intrpRdc3Etc}, #{intrpRdc3EtcYn}, #{intrpRdc3Code}, #{intrpRdc4Yn}, -->
+<!-- 		    #{intrpRdc4Text}, #{intrpRdc4Etc}, #{intrpRdc4EtcYn}, #{intrpRdc4Code}, -->
+<!-- 		    #{flcttP10Yn}, #{flcttM10Yn}, #{flcttM15Yn}, -->
+			#{vol1ResultCode}, #{vol1CmntCode}, #{vol1Cmnt},
+			#{vol2ResultCode}, #{vol2CmntCode}, #{vol2Cmnt},
+			#{vol3ResultCode}, #{vol3CmntCode}, #{vol3Cmnt},
 			#{msrmnYear}, #{msrmnMon}, #{msrmnDay}, #{msrmnHour}, #{msrmnMin},
 			#{sign}, #{signUrl},
 			#{resultCode},
@@ -1828,62 +2240,15 @@
 	        HMDT_PLUS = #{hmdtPlus},
 	        BRMT = #{brmt},
 	        BRMT_PLUS = #{brmtPlus},
-	        DIPS_RDC1_YN = #{dipsRdc1Yn},
-	        DIPS_RDC1_TEXT = #{dipsRdc1Text},
-	        DIPS_RDC1_05_YN = #{dipsRdc105Yn},
-	        DIPS_RDC1_5_YN = #{dipsRdc15Yn},
-	        DIPS_RDC1_25_YN = #{dipsRdc125Yn},
-	        DIPS_RDC1_30_YN = #{dipsRdc130Yn},
-	        DIPS_RDC1_50_YN = #{dipsRdc150Yn},
-	        DIPS_RDC1_ETC = #{dipsRdc1Etc},
-	        DIPS_RDC1_ETC_YN = #{dipsRdc1EtcYn},
-	        DIPS_RDC1_CODE = #{dipsRdc1Code},
-	        DIPS_RDC2_YN = #{dipsRdc2Yn},
-	        DIPS_RDC2_TEXT = #{dipsRdc2Text},
-	        DIPS_RDC2_05_YN = #{dipsRdc205Yn},
-	        DIPS_RDC2_5_YN = #{dipsRdc25Yn},
-	        DIPS_RDC2_25_YN = #{dipsRdc225Yn},
-	        DIPS_RDC2_30_YN = #{dipsRdc230Yn},
-	        DIPS_RDC2_50_YN = #{dipsRdc250Yn},
-	        DIPS_RDC2_ETC = #{dipsRdc2Etc},
-	        DIPS_RDC2_ETC_YN = #{dipsRdc2EtcYn},
-	        DIPS_RDC2_CODE = #{dipsRdc2Code},
-	        DIPS_RDC3_YN = #{dipsRdc3Yn},
-	        DIPS_RDC3_TEXT = #{dipsRdc3Text},
-	        DIPS_RDC3_ETC = #{dipsRdc3Etc},
-	        DIPS_RDC3_ETC_YN = #{dipsRdc3EtcYn},
-	        DIPS_RDC3_CODE = #{dipsRdc3Code},
-			DIPS_RDC4_YN = #{dipsRdc4Yn},
-			DIPS_RDC4_TEXT = #{dipsRdc4Text},
-			DIPS_RDC4_ETC = #{dipsRdc4Etc},
-			DIPS_RDC4_ETC_YN = #{dipsRdc4EtcYn},
-			DIPS_RDC4_CODE = #{dipsRdc4Code},
-			INTRP_RDC1_YN = #{intrpRdc1Yn},
-			INTRP_RDC1_TEXT = #{intrpRdc1Text},
-			INTRP_RDC1_05_YN = #{intrpRdc105Yn},
-			INTRP_RDC1_250_YN = #{intrpRdc1250Yn},
-			INTRP_RDC1_300_YN = #{intrpRdc1300Yn},
-			INTRP_RDC1_ETC = #{intrpRdc1Etc},
-			INTRP_RDC1_ETC_YN = #{intrpRdc1EtcYn},
-			INTRP_RDC1_CODE = #{intrpRdc1Code},
-			INTRP_RDC2_YN = #{intrpRdc2Yn},
-			INTRP_RDC2_TEXT = #{intrpRdc2Text},
-			INTRP_RDC2_ETC = #{intrpRdc2Etc},
-			INTRP_RDC2_ETC_YN = #{intrpRdc2EtcYn},
-			INTRP_RDC2_CODE = #{intrpRdc2Code},
-			INTRP_RDC3_YN = #{intrpRdc3Yn},
-			INTRP_RDC3_TEXT = #{intrpRdc3Text},
-			INTRP_RDC3_ETC = #{intrpRdc3Etc},
-			INTRP_RDC3_ETC_YN = #{intrpRdc3EtcYn},
-			INTRP_RDC3_CODE = #{intrpRdc3Code},
-			INTRP_RDC4_YN = #{intrpRdc4Yn},
-			INTRP_RDC4_TEXT = #{intrpRdc4Text},
-			INTRP_RDC4_ETC = #{intrpRdc4Etc},
-			INTRP_RDC4_ETC_YN = #{intrpRdc4EtcYn},
-			INTRP_RDC4_CODE = #{intrpRdc4Code},
-			FLCTT_P10_YN = #{flcttP10Yn},
-			FLCTT_M10_YN = #{flcttM10Yn},
-			FLCTT_M15_YN = #{flcttM15Yn},
+	        VOL1_RESULT_CODE = #{vol1ResultCode}, 
+	        VOL1_CMNT_CODE = #{vol1CmntCode}, 
+	        VOL1_CMNT = #{vol1Cmnt},
+		    VOL2_RESULT_CODE = #{vol2ResultCode}, 
+		    VOL2_CMNT_CODE = #{vol2CmntCode}, 
+		    VOL2_CMNT = #{vol2Cmnt},
+		    VOL3_RESULT_CODE = #{vol3ResultCode},
+		    VOL3_CMNT_CODE = #{vol3CmntCode}, 
+		    VOL3_CMNT = #{vol3Cmnt},
 			MSRMN_YEAR = #{msrmnYear},
 			MSRMN_MON = #{msrmnMon},
 			MSRMN_DAY = #{msrmnDay},
@@ -2011,6 +2376,44 @@
 		FROM METHOD_CTI_SUB_TB
 		WHERE 1=1
 		AND CTI_SEQ = #{ctiSeq}
+	</select>
+	
+	<insert id="insertImg" parameterType="imgDTO">
+		<selectKey resultType="int" keyProperty="imgSeq" order="BEFORE">
+	        SELECT ifnull(MAX(IMG_SEQ)+1,1) FROM METHOD_IMG_TB
+	    </selectKey>
+	    INSERT INTO METHOD_IMG_TB
+	    (
+	    	IMG_SEQ,
+	    	RAW_SEQ,
+	    	PIC_ID,
+	    	PIC_YN,
+	    	ATCH_FILE_ID,
+	    	INS_MEM_ID,
+	    	UDT_MEM_ID
+	    )
+	    VALUES
+	    (
+	    	#{imgSeq},
+	    	#{rawSeq},
+	    	#{picId},
+	    	#{picYn},
+	    	#{atchFileId},
+	    	#{insMemId},
+	    	#{udtMemId}
+	    )
+	    ON DUPLICATE KEY UPDATE
+	    	PIC_YN = #{picYn},
+	    	UDT_MEM_ID = #{udtMemId},
+	    	UDT_DT = NOW()
+	</insert>
+	
+	<select id="imgDetail" parameterType="imgDTO" resultType="imgDTO">
+		SELECT RAW_SEQ, PIC_ID, ATCH_FILE_ID, PIC_YN
+		FROM METHOD_IMG_TB
+		WHERE 1=1
+		AND RAW_SEQ = #{rawSeq}
+		AND PIC_ID = #{picId}
 	</select>
 	
 </mapper>

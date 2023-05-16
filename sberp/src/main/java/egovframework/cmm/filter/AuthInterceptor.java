@@ -38,10 +38,10 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
                 return true;
             } else {
             	System.out.println(ResponseMessage.NO_LOGIN);
-//            	response.setContentType("application/json");
-//            	response.setCharacterEncoding("UTF-8");
-//            	response.getWriter().write("{\"result\":false,\"message\":\"".concat(ResponseMessage.NO_LOGIN).concat("\"}"));
-            	return true;
+            	response.setContentType("application/json");
+            	response.setCharacterEncoding("UTF-8");
+            	response.getWriter().write("{\"result\":false,\"data\":null,\"message\":\"".concat(ResponseMessage.NO_LOGIN).concat("\"}"));
+            	return false;
             }
         } catch (Exception e) {
             ModelAndView modelAndView = new ModelAndView("forward:/loginView.do");

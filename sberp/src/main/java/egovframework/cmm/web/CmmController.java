@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 import egovframework.cmm.service.CmmService;
 import egovframework.cmm.service.Comcode;
 import egovframework.cmm.service.Dept;
-import egovframework.cmm.service.Member;
 import egovframework.cnf.service.Cmpy;
 import egovframework.cnf.service.CmpyMng;
+import egovframework.cnf.service.Member;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -74,7 +74,7 @@ public class CmmController {
     
     @ApiOperation(value = "공통코드 리스트")
     @GetMapping(value="/comcode/list.do")
-    public List<Comcode> comcodeList(@ApiParam(value = "코드분류값", required = true, example = "1") @RequestParam(value="code") String code) throws Exception{
+    public List<Comcode> comcodeList(@ApiParam(value = "코드분류값", required = true, example = "00") @RequestParam(value="code") String code) throws Exception{
     	List<Comcode> list = new ArrayList<Comcode>();
     	
     	list = cmmService.comcodeList(code);

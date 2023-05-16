@@ -124,113 +124,121 @@
 	</select>
 		
 	<select id="selectList" parameterType="testReq" resultType="egovMap">
-		select
-			ROW_NUMBER() OVER(ORDER BY TEST_TB.ins_dt) AS no,
-		    TEST_TB.TEST_SEQ,
-		    FN_GET_SEQSTRING('SB',JOB_TB.sbk_ym,'G',JOB_TB.sbk_seq) sbkId,
-		    date_format(TEST_TB.ins_dt, '%Y-%m-%d') insDtStr,
-		    concat(FN_GET_SEQSTRING('SB',JOB_TB.sbk_ym,'G',JOB_TB.sbk_seq),'-',TEST_TB.test_type_code,LPAD(TEST_TB.TEST_SEQ,4,0)) testId,
-		    IFNULL(FN_CODE_NAME(TEST_STATE_TB.STATE_CODE,'TS'), '-') test_state,
-		    IFNULL(TEST_STATE_TB.STATE_CODE, '') STATE_CODE,
-		    IFNULL(date_format(SBK_TB.est_cmp_dt, '%Y-%m-%d'), '-') estCmpDt,
-		    '미반입' imPoint,
-		    '0' imSeq,
-		    TEST_ITEM_TB.product,
-			CONCAT_WS(',', IF(SG_NEW_YN=1,'신규',null),IF(SG_GB_YN=1,'기술기준 변경',null),IF(SG_DG_YN=1,'동일기자재',null),IF(SG_ETC_YN=1,'기술기준외 변경',null)) sgText,
-			B.name crtfc1Name,
-		    A.name crtfc2Name,
-		    fn_code_name(TEST_STNDR_TB.TEST_TYPE_CODE,'TT') TEST_TYPE,
-		    TEST_STNDR_TB.TEST_STNDR_SEQ,
-		    TEST_STNDR_TB.TEST_STNDR,
-		    TEST_ITEM_TB.model,
-		    ifnull(FN_MEM_NAME(TEST_ITEM_TB.rev_id), '-') RevName,
-			ifnull(FN_MEM_NAME(TEST_MNGR_TB.TEST_MNG_ID), '미배정') TestMngName,
-			ifnull(FN_POS_NAME(TEST_MNGR_TB.TEST_MNG_ID), '') TestMngPos,
-			ifnull(TEST_MNGR_TB.TEST_MNG_ID, '') TEST_MNG_ID,
-		    FN_MEM_NAME(SBK_TB.ins_mem_id) memName,
-		    ifnull(RAW_TB.raw_Seq, '') raw_Seq,
-		    '-' rawState
-		    
-		from TEST_ITEM_TB
+		set @rownum:=0;
 		
-			inner join TEST_TB
-		    on TEST_ITEM_TB.test_item_seq = TEST_TB.test_item_seq
-		    
-		    inner join JOB_TB
-		    on JOB_TB.quo_ym = TEST_ITEM_TB.quo_ym
-		    and JOB_TB.quo_seq = TEST_ITEM_TB.quo_seq
-		    
-		    inner join SBK_TB
-		    on JOB_TB.sbk_ym = SBK_TB.sbk_ym
-		    and JOB_TB.sbk_seq = SBK_TB.sbk_seq
-		    
-			inner join TEST_STNDR_TB
-			on TEST_ITEM_TB.TEST_STNDR_SEQ = TEST_STNDR_TB.TEST_STNDR_SEQ
-		            
-		    inner join TEST_CATE_TB A
-			on TEST_STNDR_TB.CRTF_TYPE_SEQ = A.test_cate_seq
+		select lst.*
+		from (
+			select
 			
-			inner join TEST_CATE_TB B
-			on A.TOP_DEPTH_SEQ = B.test_cate_seq	
+				@rownum:=@rownum+1 as no,
+				#ROW_NUMBER() OVER(ORDER BY TEST_TB.ins_dt) AS no,
+			    TEST_TB.TEST_SEQ,
+			    FN_GET_SEQSTRING('SB',JOB_TB.sbk_ym,'G',JOB_TB.sbk_seq) sbkId,
+			    date_format(TEST_TB.ins_dt, '%Y-%m-%d') insDtStr,
+			    concat(FN_GET_SEQSTRING('SB',JOB_TB.sbk_ym,'G',JOB_TB.sbk_seq),'-',TEST_TB.test_type_code,LPAD(TEST_TB.TEST_NO,4,0)) testId,
+			    IFNULL(FN_CODE_NAME(TEST_STATE_TB.STATE_CODE,'TS'), '-') test_state,
+			    IFNULL(TEST_STATE_TB.STATE_CODE, '') STATE_CODE,
+			    IFNULL(date_format(SBK_TB.est_cmp_dt, '%Y-%m-%d'), '-') estCmpDt,
+			    '미반입' imPoint,
+			    '0' imSeq,
+			    TEST_ITEM_TB.product,
+				CONCAT_WS(',', IF(SG_NEW_YN=1,'신규',null),IF(SG_GB_YN=1,'기술기준 변경',null),IF(SG_DG_YN=1,'동일기자재',null),IF(SG_ETC_YN=1,'기술기준외 변경',null)) sgText,
+				B.name crtfc1Name,
+			    A.name crtfc2Name,
+			    FN_CODE_NAME(TEST_STNDR_TB.TEST_TYPE_CODE,'TT') TEST_TYPE,
+			    TEST_STNDR_TB.TEST_STNDR_SEQ,
+			    TEST_STNDR_TB.TEST_STNDR,
+			    TEST_ITEM_TB.model,
+			    ifnull(FN_MEM_NAME(TEST_ITEM_TB.rev_id), '-') RevName,
+				ifnull(FN_MEM_NAME(TEST_MNGR_TB.TEST_MNG_ID), '미배정') TestMngName,
+				ifnull(FN_POS_NAME(TEST_MNGR_TB.TEST_MNG_ID), '') TestMngPos,
+				ifnull(TEST_MNGR_TB.TEST_MNG_ID, '') TEST_MNG_ID,
+			    FN_MEM_NAME(SBK_TB.ins_mem_id) memName,
+			    ifnull(RAW_TB.raw_Seq, '') raw_Seq,
+			    '-' rawState
+			    
+			from TEST_ITEM_TB
 			
-		    left join TEST_STATE_TB
-            on TEST_STATE_TB.TEST_STATE_SEQ = (
-								select TEST_STATE_SEQ
-                                from TEST_STATE_TB sub
-                                where sub.TEST_SEQ = TEST_TB.TEST_SEQ
-                                order by TEST_STATE_SEQ desc
-                                limit 1
-            )
-            
-		    left join TEST_MNGR_TB
-            on TEST_MNGR_TB.TEST_MNGR_SEQ = (
-								select TEST_MNGR_SEQ
-                                from TEST_MNGR_TB sub
-                                where sub.TEST_SEQ = TEST_TB.TEST_SEQ
-                                order by TEST_MNGR_SEQ desc
-                                limit 1
-            )
-            
-            left join RAW_TB
-            on TEST_TB.test_seq = RAW_TB.test_seq
-		where 1=1
-		and TEST_ITEM_TB.state != 'D'
-		<if test="searchVO != null">
-	        <foreach collection="searchVO" item="item" separator="">
-	        	<choose>
-					<!-- 6	제품명 -->
-					<when test="item.searchCode == 6">and IFNULL(JOB_TB.PRDCT_NAME, '') like concat('%',#{item.searchWord},'%')</when>
-					<!-- 7	고지부담당자 -->
-					<when test="item.searchCode == 7">and FN_MEM_NAME(SBK_TB.ins_mem_id) like concat('%',#{item.searchWord},'%')</when>
-					<!-- 8	기술책임자 -->
-					<when test="item.searchCode == 8">and IFNULL(FN_MEM_NAME(TEST_ITEM_TB.rev_id), '') like concat('%',#{item.searchWord},'%')</when>
-					<!-- 9	시험담당자 -->
-					<when test="item.searchCode == 9">and IFNULL(FN_MEM_NAME(TEST_MNGR_TB.TEST_MNG_ID), '') like concat('%',#{item.searchWord},'%')</when>
-					<!-- 18	시험배정일 -->
-					<when test="item.searchCode == 18">and date_format(TEST_TB.ins_dt, '%Y%m%d') between date_format(#{item.startDate}, '%Y%m%d') and date_format(#{item.endDate}, '%Y%m%d')</when>
-					<!-- 20	예상완료일 -->
-					<when test="item.searchCode == 20">and date_format(SBK_TB.est_cmp_dt, '%Y%m%d') between date_format(#{item.startDate}, '%Y%m%d') and date_format(#{item.endDate}, '%Y%m%d')</when>
-					<!-- 22	신청구분 -->
-					<when test="item.searchCode == 22">
-						<choose>
-							<when test="item.searchWord == 1">and SG_NEW_YN=1</when>
-							<when test="item.searchWord == 2">and SG_GB_YN=1</when>
-							<when test="item.searchWord == 3">and SG_DG_YN=1</when>
-							<when test="item.searchWord == 4">and SG_ETC_YN=1</when>
-						</choose>
-					</when>
-					<!-- 23	시험부 -->
-					<when test="item.searchCode == 23">and if(TEST_TB.TEST_SEQ is null, '9999', TEST_STNDR_TB.TEST_TYPE_CODE) = #{item.searchWord}</when>
-					<!-- 26	로데이터 -->
-					<when test="item.searchCode == 26"></when>
-					<!-- 27	모델명 -->
-					<when test="item.searchCode == 27">and IFNULL(TEST_ITEM_TB.model, '') like concat('%',#{item.searchWord},'%')</when>
-					<!-- 31	시험상태 -->
-					<when test="item.searchCode == 31">and TEST_STATE_TB.STATE_CODE = #{item.searchWord}</when> 
-	        	</choose>
-			</foreach>
-		</if>
-        order by no desc
+				inner join TEST_TB
+			    on TEST_ITEM_TB.test_item_seq = TEST_TB.test_item_seq
+			    
+			    inner join JOB_TB
+			    on JOB_TB.quo_ym = TEST_ITEM_TB.quo_ym
+			    and JOB_TB.quo_seq = TEST_ITEM_TB.quo_seq
+			    
+			    inner join SBK_TB
+			    on JOB_TB.sbk_ym = SBK_TB.sbk_ym
+			    and JOB_TB.sbk_seq = SBK_TB.sbk_seq
+			    
+				inner join TEST_STNDR_TB
+				on TEST_ITEM_TB.TEST_STNDR_SEQ = TEST_STNDR_TB.TEST_STNDR_SEQ
+			            
+			    inner join TEST_CATE_TB A
+				on TEST_STNDR_TB.CRTF_TYPE_SEQ = A.test_cate_seq
+				
+				inner join TEST_CATE_TB B
+				on A.TOP_DEPTH_SEQ = B.test_cate_seq	
+				
+			    left join TEST_STATE_TB
+	            on TEST_STATE_TB.TEST_STATE_SEQ = (
+									select TEST_STATE_SEQ
+	                                from TEST_STATE_TB sub
+	                                where sub.TEST_SEQ = TEST_TB.TEST_SEQ
+	                                order by TEST_STATE_SEQ desc
+	                                limit 1
+	            )
+	            
+			    left join TEST_MNGR_TB
+	            on TEST_MNGR_TB.TEST_MNGR_SEQ = (
+									select TEST_MNGR_SEQ
+	                                from TEST_MNGR_TB sub
+	                                where sub.TEST_SEQ = TEST_TB.TEST_SEQ
+	                                order by TEST_MNGR_SEQ desc
+	                                limit 1
+	            )
+	            
+	            left join RAW_TB
+	            on TEST_TB.test_seq = RAW_TB.test_seq
+			where 1=1
+			and TEST_ITEM_TB.state != 'D'
+			<if test="searchVO != null">
+		        <foreach collection="searchVO" item="item" separator="">
+		        	<choose>
+						<!-- 6	제품명 -->
+						<when test="item.searchCode == 6">and IFNULL(JOB_TB.PRDCT_NAME, '') like concat('%',#{item.searchWord},'%')</when>
+						<!-- 7	고지부담당자 -->
+						<when test="item.searchCode == 7">and FN_MEM_NAME(SBK_TB.ins_mem_id) like concat('%',#{item.searchWord},'%')</when>
+						<!-- 8	기술책임자 -->
+						<when test="item.searchCode == 8">and IFNULL(FN_MEM_NAME(TEST_ITEM_TB.rev_id), '') like concat('%',#{item.searchWord},'%')</when>
+						<!-- 9	시험담당자 -->
+						<when test="item.searchCode == 9">and IFNULL(FN_MEM_NAME(TEST_MNGR_TB.TEST_MNG_ID), '') like concat('%',#{item.searchWord},'%')</when>
+						<!-- 18	시험배정일 -->
+						<when test="item.searchCode == 18">and date_format(TEST_TB.ins_dt, '%Y%m%d') between date_format(#{item.startDate}, '%Y%m%d') and date_format(#{item.endDate}, '%Y%m%d')</when>
+						<!-- 20	예상완료일 -->
+						<when test="item.searchCode == 20">and date_format(SBK_TB.est_cmp_dt, '%Y%m%d') between date_format(#{item.startDate}, '%Y%m%d') and date_format(#{item.endDate}, '%Y%m%d')</when>
+						<!-- 22	신청구분 -->
+						<when test="item.searchCode == 22">
+							<choose>
+								<when test="item.searchWord == 1">and SG_NEW_YN=1</when>
+								<when test="item.searchWord == 2">and SG_GB_YN=1</when>
+								<when test="item.searchWord == 3">and SG_DG_YN=1</when>
+								<when test="item.searchWord == 4">and SG_ETC_YN=1</when>
+							</choose>
+						</when>
+						<!-- 23	시험부 -->
+						<when test="item.searchCode == 23">and if(TEST_TB.TEST_SEQ is null, '9999', TEST_STNDR_TB.TEST_TYPE_CODE) = #{item.searchWord}</when>
+						<!-- 26	로데이터 -->
+						<when test="item.searchCode == 26"></when>
+						<!-- 27	모델명 -->
+						<when test="item.searchCode == 27">and IFNULL(TEST_ITEM_TB.model, '') like concat('%',#{item.searchWord},'%')</when>
+						<!-- 31	시험상태 -->
+						<when test="item.searchCode == 31">and TEST_STATE_TB.STATE_CODE = #{item.searchWord}</when> 
+		        	</choose>
+				</foreach>
+			</if>
+	        order by TEST_TB.ins_dt
+	    ) lst
+	    order by no desc
         LIMIT #{pageUnit} OFFSET #{firstIndex};
         
 	</select>

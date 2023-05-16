@@ -27,6 +27,9 @@
     	<typeAlias alias="testItemDTO" type="egovframework.tst.service.TestItemDTO"/>
     	<typeAlias alias="quoModReq" type="egovframework.quo.service.QuoModDTO$Req"/>
     	<typeAlias alias="quoModRes" type="egovframework.quo.service.QuoModDTO$Res"/>
+    	<typeAlias alias="chqDTO" type="egovframework.chq.service.ChqDTO"/>
+    	<typeAlias alias="chqRes" type="egovframework.chq.service.ChqDTO$Res"/>
+    	<typeAlias alias="chqSub" type="egovframework.chq.service.ChqDTO$Sub"/>
     	
     	<!-- 매출 -->
     	<typeAlias alias="slsReq" type="egovframework.sls.service.SlsDTO$Req"/>
@@ -60,6 +63,15 @@
     	<typeAlias alias="mfDTO" type="egovframework.raw.dto.MfDTO"/>
     	<typeAlias alias="vdipDTO" type="egovframework.raw.dto.VdipDTO"/>
     	<typeAlias alias="ctiDTO" type="egovframework.raw.dto.CtiDTO"/>
+    	<typeAlias alias="imgDTO" type="egovframework.raw.dto.ImgDTO"/>
+    	<typeAlias alias="reportDTO" type="egovframework.raw.dto.ReportDTO"/>
+    	<typeAlias alias="rawMet" type="egovframework.raw.service.RawMet"/>
+    	<typeAlias alias="fileRaw" type="egovframework.raw.service.FileRaw"/>
+    	<typeAlias alias="fileRawDTO" type="egovframework.raw.dto.FileRawDTO"/>
+    	
+    	<!-- 환경설정 -->
+    	<typeAlias alias="cmpyDTO" type="egovframework.cnf.service.CmpyDTO"/>
+    	<typeAlias alias="member" type="egovframework.cnf.service.Member"/>
     	
     </typeAliases>
 </configuration>

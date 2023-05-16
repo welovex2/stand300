@@ -35,8 +35,7 @@ public class EgovUserDetailsHelper {
 		 * @return Object - 사용자 ValueObject
 		 */
 		public static Object getAuthenticatedUser() {
-			return (LoginVO)RequestContextHolder.getRequestAttributes().getAttribute("LoginVO", RequestAttributes.SCOPE_SESSION)==null ? 
-					new LoginVO() : (LoginVO) RequestContextHolder.getRequestAttributes().getAttribute("LoginVO", RequestAttributes.SCOPE_SESSION);
+			return (LoginVO)RequestContextHolder.getRequestAttributes().getAttribute("LoginVO", RequestAttributes.SCOPE_SESSION);
 
 		}
 
@@ -64,8 +63,7 @@ public class EgovUserDetailsHelper {
 			
 			if (EgovObjectUtil.isNull((LoginVO) RequestContextHolder.getRequestAttributes().getAttribute("LoginVO", RequestAttributes.SCOPE_SESSION))) {
 				// log.debug("## authentication object is null!!");
-				//return Boolean.FALSE;
-				return Boolean.TRUE;
+				return Boolean.FALSE;
 			}
 			return Boolean.TRUE;
 		}

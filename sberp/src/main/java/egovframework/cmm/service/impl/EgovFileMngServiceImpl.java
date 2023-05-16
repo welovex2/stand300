@@ -174,7 +174,11 @@ public class EgovFileMngServiceImpl extends EgovAbstractServiceImpl implements E
 	public void deleteAllFileInf(FileVO fvo) throws Exception {
     	fileMapper.deleteCOMTNFILE(fvo);
     }
-
+    @Override
+	public void deletePicAll(FileVO fvo) throws Exception {
+    	fileMapper.deletePicAll(fvo);
+    }
+    
     /**
      * 파일명 검색에 대한 목록을 조회한다.
      *

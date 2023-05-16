@@ -48,363 +48,339 @@ import io.swagger.annotations.ApiParam;
 @RequestMapping("/sbk")
 public class SbkController {
 
-	@Resource(name = "SbkService")
-	private SbkService sbkService;
-	
-    @Resource(name = "EgovFileMngUtil")
-    private EgovFileMngUtil fileUtil;
-    
-    @Resource(name = "EgovFileMngService")
-    private EgovFileMngService fileMngService;
-    
-    @Resource(name = "propertiesService")
-    protected EgovPropertyService propertyService;
-    
-    @ApiOperation(value = "본건 신청서 작성")
-    @PostMapping(value="/makeSbk.do")
-    public BasicResponse makeSbk(@ApiParam(value = "quoId 값만 전송") @RequestBody SbkDTO.Req req) throws Exception{
-    	
-//    	LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
-    	LoginVO user = new LoginVO();
-    	boolean result = true;
-    	String msg = "";
-    	SbkDTO.Res detail = new SbkDTO.Res();
-    	
-    	// 로그인정보
-    	req.setInsMemId(user.getId());
-    	req.setUdtMemId(user.getId());
-    	
-    	Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
-    	
-    	if (isAuthenticated) {
-	    	// 이미 연결된 신청서가 있는지 확인
-	    	if (sbkService.selectDetail(req) != null) {
-	    		result = false;
-    			msg = ResponseMessage.DUPLICATE_SBK;
-	    	} else {
-	    		
-	    		// 신청서 생성
-	    		result = sbkService.insert(req);
-	    		
-	    		// 신청서 정보 보내주기
-	        	detail = sbkService.selectDetail(req);
-	        	
-	        	if (detail == null) {
-	        		result = false;
-	        		msg = ResponseMessage.NO_DATA;
-	        	}
-	        	
-	    	}
-    		
-    	}
-    	
-    	BasicResponse res = BasicResponse.builder().result(result)
-    			.message(msg)
-    			.data(detail)
-				.build();
-    	
-        return res;   
-        
-    }
-    
-    @ApiOperation(value = "신청서리스트", notes = "1.결과값은 StbDTO.Res 참고\n"
-    											+ "2.검색박스는 공통코드 CS, 필요한항목만 노출시켜서 사용\n"
-    											+ " 고객유형(PT)\n"
-    											+ " 신청구분:신규-1,기술기준변경-2,동일기자재-3,기술기준외변경-4\n"
-    											+ " 시험배정(TT), 미배정-9999")
-    @GetMapping(value="/list.do")
-    public BasicResponse sbkList(@ModelAttribute ComParam param) throws Exception{
-    	
-//    	LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
-    	LoginVO user = new LoginVO();
-    	boolean result = true;
-    	String msg = "";
-    	List<SbkDTO.Res> list = new ArrayList<SbkDTO.Res>();
+  @Resource(name = "SbkService")
+  private SbkService sbkService;
 
-    	//페이징
-    	param.setPageUnit(10);
-    	param.setPageSize(propertyService.getInt("pageSize"));
-		
-    	PagingVO pagingVO = new PagingVO();
-		
-    	pagingVO.setCurrentPageNo(param.getPageIndex());
-    	pagingVO.setDisplayRow(param.getPageUnit());
-    	pagingVO.setDisplayPage(param.getPageSize());
-		
-    	param.setFirstIndex(pagingVO.getFirstRecordIndex());
-    	int cnt = sbkService.selectListCnt(param);
-    	
-    	pagingVO.setTotalCount(cnt);
-    	param.setTotalCount(cnt);
-		pagingVO.setTotalPage((int) Math.ceil(pagingVO.getTotalCount() / (double) pagingVO.getDisplayRow()));
-    	list = sbkService.selectList(param);
+  @Resource(name = "EgovFileMngUtil")
+  private EgovFileMngUtil fileUtil;
 
-    	if (list == null) {
-    		result = false;
-    		msg = ResponseMessage.NO_DATA;
-    	}
-    	
-    	BasicResponse res = BasicResponse.builder().result(result)
-    			.message(msg)
-				.data(list)
-				.paging(pagingVO)
-				.build();
-    	
-        return res;
-    }
-    
-    @ApiOperation(value = "신청서 저장", notes="appFile=신청인서명, agreeFile=동의서명, workFile=업무상담자 서명")
-    @PostMapping(value="/insert.do", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, 
-    		MediaType.MULTIPART_FORM_DATA_VALUE, 
-    		MediaType.MULTIPART_FORM_DATA_VALUE, 
-    		MediaType.APPLICATION_JSON_VALUE})
-    public BasicResponse insert(@RequestPart(value = "appFile", required = false) MultipartFile appFile,
-    		@RequestPart(value = "agreeFile", required = false) MultipartFile agreeFile,
-    		@RequestPart(value = "workFile", required = false) MultipartFile workFile,
-										@RequestPart(value="sbk") SbkDTO.Req sbk) throws Exception{
-//    	LoginVO user = new LoginVO();
-    	LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
-    	String msg = "";
-    	boolean result = false;
-//    	if (user == null) { return new ResponseEntity(BasicResponse.res(StatusCode.UNAUTHORIZED, ResponseMessage.NO_LOGIN), HttpStatus.OK); }
-    	
-    	// 로그인정보
-    	sbk.setInsMemId(user.getId());
-    	sbk.setUdtMemId(user.getId());
-    	
-    	System.out.println("=-===========");
-    	System.out.println(sbk.toString());
-    	System.out.println("=-===========");
-    	ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
-        Validator validator = validatorFactory.getValidator();
-        
-        Set<ConstraintViolation<SbkDTO.Req>> violations = validator.validate(sbk);
-        
-        for (ConstraintViolation<SbkDTO.Req> violation : violations) {
-        	msg = violation.getMessage();
-        	
-        	System.out.println(msg);
-        	BasicResponse res = BasicResponse.builder().result(false)
-        			.message(msg)
-    				.build();
-        	
-        	return res;
+  @Resource(name = "EgovFileMngService")
+  private EgovFileMngService fileMngService;
+
+  @Resource(name = "propertiesService")
+  protected EgovPropertyService propertyService;
+
+  @ApiOperation(value = "본건 신청서 작성")
+  @PostMapping(value = "/makeSbk.do")
+  public BasicResponse makeSbk(@ApiParam(value = "quoId 값만 전송") @RequestBody SbkDTO.Req req)
+      throws Exception {
+
+    LoginVO user = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+    boolean result = true;
+    String msg = "";
+    SbkDTO.Res detail = new SbkDTO.Res();
+
+    // 로그인정보
+    req.setInsMemId(user.getId());
+    req.setUdtMemId(user.getId());
+
+    Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+
+    if (isAuthenticated) {
+      // 이미 연결된 신청서가 있는지 확인
+      if (sbkService.selectDetail(req) != null) {
+        result = false;
+        msg = ResponseMessage.DUPLICATE_SBK;
+      } else {
+
+        // 신청서 생성
+        result = sbkService.insert(req);
+
+        // 신청서 정보 보내주기
+        detail = sbkService.selectDetail(req);
+
+        if (detail == null) {
+          result = false;
+          msg = ResponseMessage.NO_DATA;
         }
-    	
-    	Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
-    	
-    	if (isAuthenticated) {
-    		FileVO FileResult = null;
-    		String atchFileId = "";
-    		// 신청인 서명
-    	    if (!ObjectUtils.isEmpty(appFile)) {
-	    		FileResult = fileUtil.parseFile(appFile, "SBK", 0, "", "");
-	    		atchFileId = fileMngService.insertFileInf(FileResult);
-	    	    sbk.setAppSignUrl(atchFileId);
-    	    }
-    	    // 신청인 동의 서명
-    	    if (!ObjectUtils.isEmpty(agreeFile)) {
-	    		FileResult = fileUtil.parseFile(agreeFile, "SBK", 0, "", "");
-	    		atchFileId = fileMngService.insertFileInf(FileResult);
-	    	    sbk.setAppAgreeSignUrl(atchFileId);
-    	    }
-    	    // 업무자 서명
-    	    if (!ObjectUtils.isEmpty(workFile)) {
-	    		FileResult = fileUtil.parseFile(workFile, "SBK", 0, "", "");
-	    		atchFileId = fileMngService.insertFileInf(FileResult);
-	    	    sbk.setWorkSignUrl(atchFileId);
-    	    }
-    	    
-    	    if (StringUtils.isEmpty(sbk.getSbkId()))
-    	    	result = sbkService.insert(sbk);
-    	    else 
-    	    	result = sbkService.update(sbk);
-    	    
-    	} else {
-    		result = false;
-    		msg = ResponseMessage.UNAUTHORIZED;
-    	}
-    	
-    	BasicResponse res = BasicResponse.builder().result(result)
-    			.message(msg)
-				.build();
-    	
-    	return res;
-    }
-    
-    @ApiOperation(value = "신청서 상세보기")
-    @GetMapping(value="/{sbkId}/detail.do")
-    public BasicResponse sbkDetail(@ApiParam(value = "신청서 고유번호", required = true, example = "SB23-G0003") @PathVariable(name = "sbkId") String sbkId) throws Exception{
-    	boolean result = true;
-    	String msg = "";
-    	SbkDTO.Res detail = new SbkDTO.Res();
-    	SbkDTO.Req req = new SbkDTO.Req();
-    	
-    	req.setSbkId(sbkId);
-    	detail = sbkService.selectDetail(req);
-    	
-    	if (detail == null) {
-    		result = false;
-    		msg = ResponseMessage.NO_DATA;
-    	}
-    	
-    	BasicResponse res = BasicResponse.builder().result(result)
-    			.message(msg)
-				.data(detail)
-				.build();
-    	
-        return res;
+
+      }
+
     }
 
-    @ApiOperation(value = "서명요청하기", notes="testItemSeq, revId, sendType(S:문자, M:메일)")
-    @PostMapping(value="/signRequest.do")
-    public BasicResponse signRequest(@RequestBody TestItemDTO req) throws Exception{
-//    	LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
-    	LoginVO user = new LoginVO();
-    	boolean result = true;
-    	String msg = "";
-    	
-    	Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
-    	
-    	if (isAuthenticated) {
-   			result = sbkService.updateTestItemSign(req);
-    	} else {
-    		result = false;
-    		msg = ResponseMessage.UNAUTHORIZED;
-    	}
-    	
-    	BasicResponse res = BasicResponse.builder().result(result)
-    			.message(msg)
-				.build();
-    	
-        return res;
-    }
-    
-    @ApiOperation(value = "기술책임자 서명", notes="testItemSeq=시험항목번호, state=I:신규, U:수정, D:삭제")
-    @PostMapping(value="/signRev.do", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
-    public BasicResponse updateTestItemSign(@RequestPart(value = "files", required = false) final MultipartFile multiRequest,
-    							@RequestPart(value="req") TestItemDTO req) throws Exception{
-    	
-//    	LoginVO user = new LoginVO();
-    	LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
-    	String msg = "";
-    	boolean result = false;
-//    	if (user == null) { return new ResponseEntity(BasicResponse.res(StatusCode.UNAUTHORIZED, ResponseMessage.NO_LOGIN), HttpStatus.OK); }
-    	
-    	// 로그인정보
-    	req.setInsMemId(user.getId());
-    	req.setUdtMemId(user.getId());
-    	
-    	System.out.println("=-===========");
-    	System.out.println(req.toString());
-    	System.out.println("=-===========");
-    	ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
-        Validator validator = validatorFactory.getValidator();
-    	
-    	Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
-    	
-    	if (isAuthenticated) {
-    		FileVO FileResult = null;
-    		
-    		String atchFileId = "";
-    	    if (!ObjectUtils.isEmpty(multiRequest)) {
-	    		FileResult = fileUtil.parseFile(multiRequest, "SIGN", 0, "", "");
-	    		atchFileId = fileMngService.insertFileInf(FileResult);
-	    		req.setRevSignUrl(atchFileId);
-    	    }
-    	    
-	    	result = sbkService.updateTestItemSign(req);
-    	    
-    	} else {
-    		result = false;
-    		msg = ResponseMessage.UNAUTHORIZED;
-    	}
-    	
-    	BasicResponse res = BasicResponse.builder().result(result)
-    			.message(msg)
-				.build();
-    	
-    	return res;
+    BasicResponse res = BasicResponse.builder().result(result).message(msg).data(detail).build();
+
+    return res;
+
+  }
+
+  @ApiOperation(value = "신청서리스트",
+      notes = "1.결과값은 StbDTO.Res 참고\n" + "2.검색박스는 공통코드 CS, 필요한항목만 노출시켜서 사용\n" + " 고객유형(PT)\n"
+          + " 신청구분:신규-1,기술기준변경-2,동일기자재-3,기술기준외변경-4\n" + " 시험배정(TT), 미배정-9999")
+  @GetMapping(value = "/list.do")
+  public BasicResponse sbkList(@ModelAttribute ComParam param) throws Exception {
+
+    LoginVO user = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+    boolean result = true;
+    String msg = "";
+    List<SbkDTO.Res> list = new ArrayList<SbkDTO.Res>();
+
+    // 페이징
+    param.setPageUnit(10);
+    param.setPageSize(propertyService.getInt("pageSize"));
+
+    PagingVO pagingVO = new PagingVO();
+
+    pagingVO.setCurrentPageNo(param.getPageIndex());
+    pagingVO.setDisplayRow(param.getPageUnit());
+    pagingVO.setDisplayPage(param.getPageSize());
+
+    param.setFirstIndex(pagingVO.getFirstRecordIndex());
+    int cnt = sbkService.selectListCnt(param);
+    System.out.println(">>> 신청서 리스트 갯수 >>> "+cnt);
+    pagingVO.setTotalCount(cnt);
+    param.setTotalCount(cnt);
+    pagingVO.setTotalPage(
+        (int) Math.ceil(pagingVO.getTotalCount() / (double) pagingVO.getDisplayRow()));
+    list = sbkService.selectList(param);
+
+    if (list == null) {
+      result = false;
+      msg = ResponseMessage.NO_DATA;
     }
 
-    
-    @ApiOperation(value = "반려메모 내역")
-    @GetMapping(value="/signRejectList.do")
-    public BasicResponse signRejectList(@ApiParam(value = "시험항목 고유번호", required = true, example = "175") @RequestParam(value="testItemSeq") String testItemSeq) throws Exception{
-    	
-//    	LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
-    	LoginVO user = new LoginVO();
-    	boolean result = true;
-    	String msg = "";
-    	List<TestItemRej> list = new ArrayList<TestItemRej>();
-		
-    	list = sbkService.signRejectList(testItemSeq);
+    BasicResponse res =
+        BasicResponse.builder().result(result).message(msg).data(list).paging(pagingVO).build();
 
-    	if (list == null) {
-    		result = false;
-    		msg = ResponseMessage.NO_DATA;
-    	}
-    	
-    	BasicResponse res = BasicResponse.builder().result(result)
-    			.message(msg)
-    			.data(list)
-				.build();
-    	
-        return res;  
-    }
-    
-    @ApiOperation(value = "반려메모 저장")
-    @PostMapping(value="/signRejectInsert.do")
-    public BasicResponse signRejectInsert(@RequestBody TestItemRej req) throws Exception{
-//    	LoginVO user = new LoginVO();
-    	LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
-    	
-    	// 로그인정보
-    	req.setInsMemId(user.getId());
-    	req.setUdtMemId(user.getId());
-    	
-    	boolean result = false;
-    	String msg = "";
-    	
-    	Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
-    	
-    	if (isAuthenticated) {
-   			result = sbkService.signRejectInsert(req);
-    	} else {
-    		result = false;
-    		msg = ResponseMessage.UNAUTHORIZED;
-    	}
-    	
-    	BasicResponse res = BasicResponse.builder().result(result)
-    			.message(msg)
-				.build();
-    	
-    	return res;
-    }
-    
-    
-    @ApiOperation(value = "신청서 수정 히스토리")
-    @GetMapping(value="/hisList.do")
-    public BasicResponse hisList(@ApiParam(value = "신청서 고유번호", required = true, example = "SB23-G0044") @RequestParam(value="sbkId") String sbkId) throws Exception{
-    	
-//    	LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
-    	LoginVO user = new LoginVO();
-    	boolean result = true;
-    	String msg = "";
-    	List<HisDTO> list = new ArrayList<HisDTO>();
-		
-    	list = sbkService.hisList(sbkId);
+    return res;
+  }
 
-    	if (list == null) {
-    		result = false;
-    		msg = ResponseMessage.NO_DATA;
-    	}
-    	
-    	BasicResponse res = BasicResponse.builder().result(result)
-    			.message(msg)
-    			.data(list)
-				.build();
-    	
-        return res;  
+  @ApiOperation(value = "신청서 저장", notes = "appFile=신청인서명, agreeFile=동의서명, workFile=업무상담자 서명")
+  @PostMapping(value = "/insert.do",
+      consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE,
+          MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+  public BasicResponse insert(
+      @RequestPart(value = "appFile", required = false) MultipartFile appFile,
+      @RequestPart(value = "agreeFile", required = false) MultipartFile agreeFile,
+      @RequestPart(value = "workFile", required = false) MultipartFile workFile,
+      @RequestPart(value = "sbk") SbkDTO.Req sbk) throws Exception {
+    LoginVO user = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+    String msg = "";
+    boolean result = false;
+    // if (user == null) { return new ResponseEntity(BasicResponse.res(StatusCode.UNAUTHORIZED,
+    // ResponseMessage.NO_LOGIN), HttpStatus.OK); }
+
+    // 로그인정보
+    sbk.setInsMemId(user.getId());
+    sbk.setUdtMemId(user.getId());
+
+    System.out.println("=-===========");
+    System.out.println(sbk.toString());
+    System.out.println("=-===========");
+    ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+    Validator validator = validatorFactory.getValidator();
+
+    Set<ConstraintViolation<SbkDTO.Req>> violations = validator.validate(sbk);
+
+    for (ConstraintViolation<SbkDTO.Req> violation : violations) {
+      msg = violation.getMessage();
+
+      System.out.println(msg);
+      BasicResponse res = BasicResponse.builder().result(false).message(msg).build();
+
+      return res;
     }
+
+    Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+
+    if (isAuthenticated) {
+      FileVO FileResult = null;
+      String atchFileId = "";
+      // 신청인 서명
+      if (!ObjectUtils.isEmpty(appFile)) {
+        FileResult = fileUtil.parseFile(appFile, "SBK", 0, "", "");
+        atchFileId = fileMngService.insertFileInf(FileResult);
+        sbk.setAppSignUrl(atchFileId);
+      }
+      // 신청인 동의 서명
+      if (!ObjectUtils.isEmpty(agreeFile)) {
+        FileResult = fileUtil.parseFile(agreeFile, "SBK", 0, "", "");
+        atchFileId = fileMngService.insertFileInf(FileResult);
+        sbk.setAppAgreeSignUrl(atchFileId);
+      }
+      // 업무자 서명
+      if (!ObjectUtils.isEmpty(workFile)) {
+        FileResult = fileUtil.parseFile(workFile, "SBK", 0, "", "");
+        atchFileId = fileMngService.insertFileInf(FileResult);
+        sbk.setWorkSignUrl(atchFileId);
+      }
+
+      if (StringUtils.isEmpty(sbk.getSbkId()))
+        result = sbkService.insert(sbk);
+      else
+        result = sbkService.update(sbk);
+
+    } else {
+      result = false;
+      msg = ResponseMessage.UNAUTHORIZED;
+    }
+
+    BasicResponse res = BasicResponse.builder().result(result).message(msg).build();
+
+    return res;
+  }
+
+  @ApiOperation(value = "신청서 상세보기")
+  @GetMapping(value = "/{sbkId}/detail.do")
+  public BasicResponse sbkDetail(@ApiParam(value = "신청서 고유번호", required = true,
+      example = "SB23-G0003") @PathVariable(name = "sbkId") String sbkId) throws Exception {
+    boolean result = true;
+    String msg = "";
+    SbkDTO.Res detail = new SbkDTO.Res();
+    SbkDTO.Req req = new SbkDTO.Req();
+
+    req.setSbkId(sbkId);
+    detail = sbkService.selectDetail(req);
+
+    if (detail == null) {
+      result = false;
+      msg = ResponseMessage.NO_DATA;
+    }
+
+    BasicResponse res = BasicResponse.builder().result(result).message(msg).data(detail).build();
+
+    return res;
+  }
+
+  @ApiOperation(value = "서명요청하기", notes = "testItemSeq, revId, sendType(S:문자, M:메일)")
+  @PostMapping(value = "/signRequest.do")
+  public BasicResponse signRequest(@RequestBody TestItemDTO req) throws Exception {
+    LoginVO user = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+    boolean result = true;
+    String msg = "";
+
+    Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+
+    if (isAuthenticated) {
+      result = sbkService.updateTestItemSign(req);
+    } else {
+      result = false;
+      msg = ResponseMessage.UNAUTHORIZED;
+    }
+
+    BasicResponse res = BasicResponse.builder().result(result).message(msg).build();
+
+    return res;
+  }
+
+  @ApiOperation(value = "기술책임자 서명", notes = "testItemSeq=시험항목번호, state=I:신규, U:수정, D:삭제")
+  @PostMapping(value = "/signRev.do",
+      consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+  public BasicResponse updateTestItemSign(
+      @RequestPart(value = "files", required = false) final MultipartFile multiRequest,
+      @RequestPart(value = "req") TestItemDTO req) throws Exception {
+
+    LoginVO user = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+    String msg = "";
+    boolean result = false;
+    // if (user == null) { return new ResponseEntity(BasicResponse.res(StatusCode.UNAUTHORIZED,
+    // ResponseMessage.NO_LOGIN), HttpStatus.OK); }
+
+    // 로그인정보
+    req.setInsMemId(user.getId());
+    req.setUdtMemId(user.getId());
+
+    System.out.println("=-===========");
+    System.out.println(req.toString());
+    System.out.println("=-===========");
+    ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+    Validator validator = validatorFactory.getValidator();
+
+    Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+
+    if (isAuthenticated) {
+      FileVO FileResult = null;
+
+      String atchFileId = "";
+      if (!ObjectUtils.isEmpty(multiRequest)) {
+        FileResult = fileUtil.parseFile(multiRequest, "SIGN", 0, "", "");
+        atchFileId = fileMngService.insertFileInf(FileResult);
+        req.setRevSignUrl(atchFileId);
+      }
+
+      result = sbkService.updateTestItemSign(req);
+
+    } else {
+      result = false;
+      msg = ResponseMessage.UNAUTHORIZED;
+    }
+
+    BasicResponse res = BasicResponse.builder().result(result).message(msg).build();
+
+    return res;
+  }
+
+
+  @ApiOperation(value = "반려메모 내역")
+  @GetMapping(value = "/signRejectList.do")
+  public BasicResponse signRejectList(
+      @ApiParam(value = "시험항목 고유번호", required = true,
+          example = "175") @RequestParam(value = "testItemSeq") String testItemSeq)
+      throws Exception {
+
+    LoginVO user = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+    boolean result = true;
+    String msg = "";
+    List<TestItemRej> list = new ArrayList<TestItemRej>();
+
+    list = sbkService.signRejectList(testItemSeq);
+
+    if (list == null) {
+      result = false;
+      msg = ResponseMessage.NO_DATA;
+    }
+
+    BasicResponse res = BasicResponse.builder().result(result).message(msg).data(list).build();
+
+    return res;
+  }
+
+  @ApiOperation(value = "반려메모 저장")
+  @PostMapping(value = "/signRejectInsert.do")
+  public BasicResponse signRejectInsert(@RequestBody TestItemRej req) throws Exception {
+    LoginVO user = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+
+    // 로그인정보
+    req.setInsMemId(user.getId());
+    req.setUdtMemId(user.getId());
+
+    boolean result = false;
+    String msg = "";
+
+    Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+
+    if (isAuthenticated) {
+      result = sbkService.signRejectInsert(req);
+    } else {
+      result = false;
+      msg = ResponseMessage.UNAUTHORIZED;
+    }
+
+    BasicResponse res = BasicResponse.builder().result(result).message(msg).build();
+
+    return res;
+  }
+
+
+  @ApiOperation(value = "신청서 수정 히스토리")
+  @GetMapping(value = "/hisList.do")
+  public BasicResponse hisList(@ApiParam(value = "신청서 고유번호", required = true,
+      example = "SB23-G0044") @RequestParam(value = "sbkId") String sbkId) throws Exception {
+
+    LoginVO user = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+    boolean result = true;
+    String msg = "";
+    List<HisDTO> list = new ArrayList<HisDTO>();
+
+    list = sbkService.hisList(sbkId);
+
+    if (list == null) {
+      result = false;
+      msg = ResponseMessage.NO_DATA;
+    }
+
+    BasicResponse res = BasicResponse.builder().result(result).message(msg).data(list).build();
+
+    return res;
+  }
 }

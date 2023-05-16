@@ -52,7 +52,7 @@ public class LoginVO {
 	@Column
 	private String id;
 	
-	@ApiModelProperty(value="이름", example = "문동은", hidden = true)
+	@ApiModelProperty(value="이름", example = "문동은")
 	@Column
 	private String empName;
 	
@@ -60,7 +60,7 @@ public class LoginVO {
 	@Column
 	private String email;
 	
-	@ApiModelProperty(value="비밀번호", example = "akstp!", required = true)
+	@ApiModelProperty(value="비밀번호", example = "akstp!", required = true, hidden = true)
 	@Column
 	private String password;
 	
@@ -125,9 +125,11 @@ public class LoginVO {
 	@Column
 	private String url;
 	
-	@ApiModelProperty(value="사용자 IP정보", example = "1", hidden = true)
+	@ApiModelProperty(value="사용자 IP정보", example = "1")
 	@Column
-	private String ip;
+	private String lastIp;
 
-
+    @ApiModelProperty(value="마지막 로그인 날짜", example = "1")
+    @Column
+    private String lastLoginDt;
 }

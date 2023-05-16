@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 
-import egovframework.raw.dto.SetupDTO;
+import egovframework.raw.dto.PicDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -19,7 +19,13 @@ public class RawData {
 	@ApiModelProperty(value="시험번호+RD+001 ", example = "")
 	@Column
 	private int rawSeq;
-
+	
+	
+	@ApiModelProperty(value="시험번호+RD+001 ", example = "")
+	@Column
+	private String rawId;
+	
+	
 	@ApiModelProperty(value="신청서번호 ", example = "")
 	@Column
 	private String sbkId;
@@ -72,6 +78,16 @@ public class RawData {
 	@Column
 	private String reportNo;
 
+	
+	@ApiModelProperty(value="성적서 발급일 ", example = "2023-05-30")
+	@Column	
+	private String reportDt;
+
+	
+	@ApiModelProperty(value="성적서 발급사유 ", example = "최초발급")
+	@Column	
+	private String reportMemo;
+	
 
 	@ApiModelProperty(value="시험시작 ", example = "2023-01-23")
 	@Column
@@ -295,6 +311,23 @@ public class RawData {
 	private String stdMemo;
 
 
+	@ApiModelProperty(value="디스플레이 관찰 거리 ", example = "해당없다")
+	@Column
+	private String addTestDis;
+	
+	@ApiModelProperty(value="네트워킹 기능 시험 시 사용한 케이블 유형 ", example = "해당없다")
+	@Column
+	private String addTestCable;
+	
+	@ApiModelProperty(value="네트워킹 기능 시험 시 데이터 속도 ", example = "해당없다")
+	@Column
+	private String addTestData;
+	
+	@ApiModelProperty(value="오디오 출력 기능 시험 시 선정된 레벨 ", example = "해당없다")
+	@Column
+	private String addTestAudio;
+	
+	
 	@ApiModelProperty(value="등록자 아이디 ", example = "", hidden = true)
 	@Column
 	private String insMemId;
@@ -345,5 +378,5 @@ public class RawData {
 	
 	@ApiModelProperty(value="Test Set-up Configuraiotn for EUT", example = "")
 	@Column
-	private List<SetupDTO> setupList;
+	private List<PicDTO> setupList;
 }

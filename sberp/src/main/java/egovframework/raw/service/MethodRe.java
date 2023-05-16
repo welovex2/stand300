@@ -124,12 +124,22 @@ public class MethodRe {
 	@Column
 	private String hz1Temp;
 
-
+	
+	@ApiModelProperty(value="대역1_온도 ", example = "")
+	@Column
+	private String hz1TempPlus;
+	
+	
 	@ApiModelProperty(value="대역1_습도 ", example = "")
 	@Column
 	private String hz1Hmdt;
 
 
+	@ApiModelProperty(value="대역1_습도 ", example = "")
+	@Column
+	private String hz1HmdtPlus;
+	
+	
 	@ApiModelProperty(value="대역1_측정년 ", example = "")
 	@Column
 	private int hz1MsrmnYear;
@@ -230,11 +240,21 @@ public class MethodRe {
 	private String hz2Temp;
 
 
+	@ApiModelProperty(value="대역2_온도 ", example = "")
+	@Column
+	private String hz2TempPlus;
+
+	
 	@ApiModelProperty(value="대역2_습도 ", example = "")
 	@Column
 	private String hz2Hmdt;
 
-
+	
+	@ApiModelProperty(value="대역2_습도 ", example = "")
+	@Column
+	private String hz2HmdtPlus;
+	
+	
 	@ApiModelProperty(value="대역2_측정년 ", example = "")
 	@Column
 	private int hz2MsrmnYear;

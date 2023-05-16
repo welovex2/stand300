@@ -13,7 +13,12 @@ public class HisDTO {
 	@Column
 	private String sbkId;
 
-
+	
+	@ApiModelProperty(value="테이블명 ", example = "")
+	@Column
+	private String tb;
+	
+	
 	@ApiModelProperty(value="컬럼명 ", example = "")
 	@Column
 	private String col;

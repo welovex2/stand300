@@ -5,7 +5,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +35,16 @@ public class LoginController {
 		try {
 			String enpassword = EgovFileScrty.encryptPassword("akstp!", "system");
 			System.out.println(enpassword);
+			enpassword = EgovFileScrty.encryptPassword("vv", "v");
+            System.out.println("a>> "+enpassword);
+            enpassword = EgovFileScrty.encryptPassword("ww", "w");
+            System.out.println("a>> "+enpassword);
+            enpassword = EgovFileScrty.encryptPassword("xx", "x");
+            System.out.println("a>> "+enpassword);
+            enpassword = EgovFileScrty.encryptPassword("yy", "y");
+            System.out.println("a>> "+enpassword);
+            enpassword = EgovFileScrty.encryptPassword("zz", "z");
+            System.out.println("a>> "+enpassword);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -52,6 +61,7 @@ public class LoginController {
 		String msg = "";
 		
 		// 1. 일반 로그인 처리
+		loginVO.setLastIp(getClientIP(request));
 		LoginVO resultVO = loginService.actionLogin(loginVO);
 
 		boolean loginPolicyYn = true;
@@ -118,5 +128,34 @@ public class LoginController {
 				.build();
     	
         return res;  
+	}
+	
+	public static String getClientIP(HttpServletRequest request) {
+	    String ip = request.getHeader("X-Forwarded-For");
+	    System.out.println("> X-FORWARDED-FOR : " + ip);
+
+	    if (ip == null) {
+	        ip = request.getHeader("Proxy-Client-IP");
+	        System.out.println("> Proxy-Client-IP : " + ip);
+	    }
+	    if (ip == null) {
+	        ip = request.getHeader("WL-Proxy-Client-IP");
+	        System.out.println(">  WL-Proxy-Client-IP : " + ip);
+	    }
+	    if (ip == null) {
+	        ip = request.getHeader("HTTP_CLIENT_IP");
+	        System.out.println("> HTTP_CLIENT_IP : " + ip);
+	    }
+	    if (ip == null) {
+	        ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+	        System.out.println("> HTTP_X_FORWARDED_FOR : " + ip);
+	    }
+	    if (ip == null) {
+	        ip = request.getRemoteAddr();
+	        System.out.println("> getRemoteAddr : "+ip);
+	    }
+	    System.out.println("> Result : IP Address : "+ip);
+
+	    return ip;
 	}
 }

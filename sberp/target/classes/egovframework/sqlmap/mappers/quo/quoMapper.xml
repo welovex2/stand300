@@ -56,75 +56,82 @@
 	</select>
 	
 	<select id="selectList" parameterType="comParam" resultType="egovMap">
-		SELECT 
+		set @rownum:=0;
 		
-			ROW_NUMBER() OVER(ORDER BY QUO_TB.ins_dt) AS no,
-			if(chq_seq=0,'-',chq_seq) chqId,
-		    FN_GET_SEQSTRING('Q',QUO_TB.quo_ym,type,QUO_TB.quo_seq) quoId, 
-			FN_MEM_NAME(QUO_TB.ins_mem_id) memName,
-		    date_format(QUO_TB.INS_DT, '%Y-%m-%d') insDtStr,
-		    IFNULL(date_format(SLS_TB.CNFRM_DT, '%Y-%m-%d'),'') cnfrmDtStr,
-		    IFNULL(FN_MEM_NAME(SLS_TB.CNFRM_ID),'') cnfrmName,
-		    JOB_TB.CMPY_SEQ, 
-		    IFNULL(FN_CODE_NAME(CMPY_TB.CMPY_CODE,'PT'), '미등록') cmpy_type,
-		    IFNULL(CMPY_TB.CMPY_NAME, '') cmpyTitle,
-		    IFNULL(JOB_TB.CMPY_NAME, '') cmpyName,
-		    JOB_TB.PRDCT_NAME,
-		    IFNULL(items.CHRGS, 0) CHRGS,
-		    IFNULL(items.NET_SALES, 0) NET_SALES,
-		    IFNULL(JOB_TB.CNS_SEQ, '') CNS_SEQ,
-		    IFNULL(FN_LAST_CNS_MENO(JOB_TB.CNS_SEQ), '') lastMemo,
-			IFNULL(FN_GET_SEQSTRING('SB',JOB_TB.sbk_ym,type,JOB_TB.sbk_seq), '') sbkId
-		    
-		FROM QUO_TB
+		select lst.*
+		from (
+			SELECT 
 			
-		    INNER JOIN JOB_TB
-		    ON QUO_TB.QUO_YM = JOB_TB.QUO_YM
-		    AND QUO_TB.quo_seq = JOB_TB.QUO_SEQ
-		    AND JOB_TB.state != 'D'
-		    
-		    LEFT JOIN (
-				SELECT QUO_YM, QUO_SEQ, sum(CHRGS) CHRGS, sum(NET_SALES) NET_SALES
-				FROM TEST_ITEM_TB
-		        where state != 'D'
-		        group by QUO_YM, QUO_SEQ
-		    ) items
-		    ON QUO_TB.QUO_YM = items.QUO_YM
-		    AND QUO_TB.quo_seq = items.QUO_SEQ
-		        
-		    LEFT JOIN SLS_TB
-		    ON QUO_TB.QUO_YM = SLS_TB.QUO_YM
-		    AND QUO_TB.quo_seq = SLS_TB.QUO_SEQ
-		    AND SLS_TB.state != 'D'
-		    
-		    LEFT JOIN CMPY_TB
-			ON JOB_TB.CMPY_SEQ = CMPY_TB.CMPY_SEQ
-    
-		where 1=1
-		<if test="searchVO != null">
-	        <foreach collection="searchVO" item="item" separator="">
-	       
-	        	<choose>
-					<!-- 1	고객유형 -->
-					<when test="item.searchCode == 1">and IFNULL(CMPY_TB.CMPY_CODE,'9999') = #{item.searchWord}</when>
-					<!-- 2	작성자 -->
-					<when test="item.searchCode == 2">and IFNULL(FN_MEM_NAME(QUO_TB.INS_MEM_ID), '') like concat('%',#{item.searchWord},'%')</when>
-					<!-- 4	컨설팅명 -->
-					<when test="item.searchCode == 4">and IFNULL(CMPY_TB.CMPY_NAME, '') like concat('%',#{item.searchWord},'%')</when>
-					<!-- 6	제품명 -->
-					<when test="item.searchCode == 6">and IFNULL(JOB_TB.PRDCT_NAME, '') like concat('%',#{item.searchWord},'%')</when>
-					<!-- 12	회사명 -->
-					<when test="item.searchCode == 12">and IFNULL(JOB_TB.CMPY_NAME, '') like concat('%',#{item.searchWord},'%')</when>
-					<!-- 15	작성일 -->
-					<when test="item.searchCode == 15">and date_format(QUO_TB.INS_DT, '%Y%m%d') between date_format(#{item.startDate}, '%Y%m%d') and date_format(#{item.endDate}, '%Y%m%d')</when>
-					<!-- 16	매출확정일 -->
-					<when test="item.searchCode == 16">and date_format(SLS_TB.CNFRM_DT, '%Y%m%d') between date_format(#{item.startDate}, '%Y%m%d') and date_format(#{item.endDate}, '%Y%m%d')</when>
-					<!-- 19 매출확정자 -->
-					<when test="item.searchCode == 19">and IFNULL(FN_MEM_NAME(SLS_TB.CNFRM_ID),'') like concat('%',#{item.searchWord},'%')</when>
-	        	</choose>
-	        </foreach>
-		</if>
-        order by no desc
+				@rownum:=@rownum+1 as no,
+				#ROW_NUMBER() OVER(ORDER BY QUO_TB.ins_dt) AS no,
+				if(QUO_TB.CHQ_SEQ=0,'-',concat('CH',QUO_TB.CHQ_YM,'-',LPAD(QUO_TB.CHQ_SEQ,3,0))) chqId,
+			    FN_GET_SEQSTRING('Q',QUO_TB.quo_ym,type,QUO_TB.quo_seq) quoId, 
+				FN_MEM_NAME(QUO_TB.ins_mem_id) memName,
+			    date_format(QUO_TB.INS_DT, '%Y-%m-%d') insDtStr,
+			    IFNULL(date_format(SLS_TB.CNFRM_DT, '%Y-%m-%d'),'') cnfrmDtStr,
+			    IFNULL(FN_MEM_NAME(SLS_TB.CNFRM_ID),'') cnfrmName,
+			    JOB_TB.CMPY_SEQ, 
+			    IFNULL(FN_CODE_NAME(CMPY_TB.CMPY_CODE,'PT'), '미등록') cmpy_type,
+			    IFNULL(CMPY_TB.CMPY_NAME, '') cmpyTitle,
+			    IFNULL(JOB_TB.CMPY_NAME, '') cmpyName,
+			    JOB_TB.PRDCT_NAME,
+			    IFNULL(items.CHRGS, 0) CHRGS,
+			    IFNULL(items.NET_SALES, 0) NET_SALES,
+			    IFNULL(JOB_TB.CNS_SEQ, '') CNS_SEQ,
+			    IFNULL(FN_LAST_CNS_MENO(JOB_TB.CNS_SEQ), '') lastMemo,
+				IFNULL(FN_GET_SEQSTRING('SB',JOB_TB.sbk_ym,type,JOB_TB.sbk_seq), '') sbkId
+			    
+			FROM QUO_TB
+				
+			    INNER JOIN JOB_TB
+			    ON QUO_TB.QUO_YM = JOB_TB.QUO_YM
+			    AND QUO_TB.quo_seq = JOB_TB.QUO_SEQ
+			    AND JOB_TB.state != 'D'
+			    
+			    LEFT JOIN (
+					SELECT QUO_YM, QUO_SEQ, sum(CHRGS) CHRGS, sum(NET_SALES) NET_SALES
+					FROM TEST_ITEM_TB
+			        where state != 'D'
+			        group by QUO_YM, QUO_SEQ
+			    ) items
+			    ON QUO_TB.QUO_YM = items.QUO_YM
+			    AND QUO_TB.quo_seq = items.QUO_SEQ
+			        
+			    LEFT JOIN SLS_TB
+			    ON QUO_TB.QUO_YM = SLS_TB.QUO_YM
+			    AND QUO_TB.quo_seq = SLS_TB.QUO_SEQ
+			    AND SLS_TB.state != 'D'
+			    
+			    LEFT JOIN CMPY_TB
+				ON JOB_TB.CMPY_SEQ = CMPY_TB.CMPY_SEQ
+	    
+			where 1=1
+			<if test="searchVO != null">
+		        <foreach collection="searchVO" item="item" separator="">
+		       
+		        	<choose>
+						<!-- 1	고객유형 -->
+						<when test="item.searchCode == 1">and IFNULL(CMPY_TB.CMPY_CODE,'9999') = #{item.searchWord}</when>
+						<!-- 2	작성자 -->
+						<when test="item.searchCode == 2">and IFNULL(FN_MEM_NAME(QUO_TB.INS_MEM_ID), '') like concat('%',#{item.searchWord},'%')</when>
+						<!-- 4	컨설팅명 -->
+						<when test="item.searchCode == 4">and IFNULL(CMPY_TB.CMPY_NAME, '') like concat('%',#{item.searchWord},'%')</when>
+						<!-- 6	제품명 -->
+						<when test="item.searchCode == 6">and IFNULL(JOB_TB.PRDCT_NAME, '') like concat('%',#{item.searchWord},'%')</when>
+						<!-- 12	회사명 -->
+						<when test="item.searchCode == 12">and IFNULL(JOB_TB.CMPY_NAME, '') like concat('%',#{item.searchWord},'%')</when>
+						<!-- 15	작성일 -->
+						<when test="item.searchCode == 15">and date_format(QUO_TB.INS_DT, '%Y%m%d') between date_format(#{item.startDate}, '%Y%m%d') and date_format(#{item.endDate}, '%Y%m%d')</when>
+						<!-- 16	매출확정일 -->
+						<when test="item.searchCode == 16">and date_format(SLS_TB.CNFRM_DT, '%Y%m%d') between date_format(#{item.startDate}, '%Y%m%d') and date_format(#{item.endDate}, '%Y%m%d')</when>
+						<!-- 19 매출확정자 -->
+						<when test="item.searchCode == 19">and IFNULL(FN_MEM_NAME(SLS_TB.CNFRM_ID),'') like concat('%',#{item.searchWord},'%')</when>
+		        	</choose>
+		        </foreach>
+			</if>
+	        order by QUO_TB.ins_dt asc
+	    ) lst
+	    order by no desc
 		LIMIT #{pageUnit} OFFSET #{firstIndex};
 	</select>
 	
@@ -140,7 +147,6 @@
 			(
 				QUO_YM,
 				QUO_SEQ,
-				CHQ_SEQ,
 				ISSUE_DT,
 				TRGT_CRTFC,
 				PRD_INF,
@@ -165,7 +171,6 @@
 			(
 				date_format(now(), '%y%m'),
 				#{quoSeq},
-				#{chqSeq},
 				ifnull(#{issueDt},now()),
 				#{trgtCrtfc},
 				#{prdInf},
@@ -358,9 +363,9 @@
 				CMPY_FAX = replace(#{cmpyFax},'-',''),
 				MNG_NAME = #{mngName},
 				PRDCT_NAME = (select ifnull(nullif(group_concat(DISTINCT  product), ''), #{prdctName}) 
-								from TEST_ITEM_TB where quo_ym = substring(#{quoId},2,4) and quo_seq = substring(#{quoId},8,4) and state != 'D'),
+								from TEST_ITEM_TB where quo_ym = substring(#{quoId},2,4) and quo_seq = substring(#{quoId},8,4) and state != 'D' order by TEST_ITEM_SEQ),
 				MODEL_NAME = (select ifnull(nullif(group_concat(DISTINCT  model), ''), #{modelName})
-								from TEST_ITEM_TB where quo_ym = substring(#{quoId},2,4) and quo_seq = substring(#{quoId},8,4) and state != 'D'),
+								from TEST_ITEM_TB where quo_ym = substring(#{quoId},2,4) and quo_seq = substring(#{quoId},8,4) and state != 'D' order by TEST_ITEM_SEQ),
 				UDT_MEM_ID = #{udtMemId}
 		]]>
 		WHERE 1=1

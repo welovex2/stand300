@@ -350,7 +350,12 @@ public class MethodEsd {
 	@Column
 	private int cmntEtcYn;
 
+	
+    @ApiModelProperty(value="정전기 방전 인가부위 ", example = "")
+    @Column
+    private String imgUrl;
 
+    
 	@ApiModelProperty(value="등록자 아이디 ", example = "", hidden = true)
 	@Column
 	private String insMemId;

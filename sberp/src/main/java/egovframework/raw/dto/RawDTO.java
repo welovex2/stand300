@@ -6,7 +6,6 @@ import javax.persistence.Column;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import egovframework.cmm.service.FileVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -31,6 +30,6 @@ public class RawDTO {
 	
 	@ApiModelProperty(value="Test Set-up Configuraiotn for EUT", example = "")
 	@Column
-	private List<SetupDTO> setupList;
+	private List<PicDTO> setupList;
 
 } 

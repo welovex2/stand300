@@ -12,9 +12,7 @@ import java.io.OutputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -29,7 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 //import java.util.HashMap;
 
 import egovframework.cmm.service.FileVO;
-import egovframework.raw.dto.SetupDTO;
+import egovframework.raw.dto.PicDTO;
 import egovframework.rte.fdl.idgnr.EgovIdGnrService;
 import egovframework.rte.fdl.property.EgovPropertyService;
 
@@ -69,7 +67,7 @@ public class EgovFileMngUtil {
      * @return
      * @throws Exception
      */
-    public List<FileVO> parseSetupFile(List<SetupDTO> files, String KeyStr, int fileKeyParam, String atchFileId, String storePath) throws Exception {
+    public List<FileVO> parsePicFile(List<PicDTO> files, String KeyStr, int fileKeyParam, String atchFileId, String storePath) throws Exception {
 		int fileKey = fileKeyParam;
 	
 		String storePathString = "";
@@ -109,26 +107,34 @@ public class EgovFileMngUtil {
 		while (files.size() > i) {
 	
 		    file = files.get(i).getImage();
-		    String orginFileName = file.getOriginalFilename();
-	
-		    //--------------------------------------
-		    // 원 파일명이 없는 경우 처리
-		    // (첨부가 되지 않은 input file type)
-		    //--------------------------------------
-		    if ("".equals(orginFileName)) {
-			continue;
+		    String orginFileName = "";
+		    String fileExt = "";
+		    String newName = "";
+		    long _size = 0;
+		    if (file != null) {
+
+			    orginFileName = file.getOriginalFilename();
+		
+			    //--------------------------------------
+			    // 원 파일명이 없는 경우 처리
+			    // (첨부가 되지 않은 input file type)
+			    //--------------------------------------
+			    if ("".equals(orginFileName)) {
+				continue;
+			    }
+			    ////------------------------------------
+		
+			    int index = orginFileName.lastIndexOf(".");
+			    fileExt = orginFileName.substring(index + 1);
+			    newName = EgovStringUtil.getTimeStamp() + fileKey;
+			    _size = file.getSize();
+		
+			    if (!"".equals(orginFileName)) {
+					filePath = storePathString + File.separator + newName;
+					file.transferTo(new File(filePath));
+			    }
 		    }
-		    ////------------------------------------
-	
-		    int index = orginFileName.lastIndexOf(".");
-		    String fileExt = orginFileName.substring(index + 1);
-		    String newName = EgovStringUtil.getTimeStamp() + fileKey;
-		    long _size = file.getSize();
-	
-		    if (!"".equals(orginFileName)) {
-				filePath = storePathString + File.separator + newName;
-				file.transferTo(new File(filePath));
-		    }
+		    
 		    fvo = new FileVO();
 		    fvo.setFileExtsn(fileExt);
 		    fvo.setFileStreCours(storePathString);
@@ -138,6 +144,7 @@ public class EgovFileMngUtil {
 		    fvo.setAtchFileId(atchFileIdString);
 		    fvo.setFileSn(String.valueOf(fileKey));
 		    fvo.setFileCn(files.get(i).getTitle());
+		    fvo.setFileMemo(files.get(i).getMode());
 		    result.add(fvo);
 	
 		    fileKey++;i++;
@@ -169,7 +176,7 @@ public class EgovFileMngUtil {
 		if ("".equals(storePath) || storePath == null) {
 		    storePathString = propertyService.getString("Globals.fileStorePath").concat(KeyStr).concat("/").concat(formatedNow);
 		} else {
-		    storePathString = propertyService.getString(storePath);
+		    storePathString = storePath;
 		}
 	
 		if ("".equals(atchFileId) || atchFileId == null) {

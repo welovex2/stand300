@@ -4,6 +4,7 @@ import java.util.List;
 
 import egovframework.cnf.service.Cmpy;
 import egovframework.cnf.service.CmpyMng;
+import egovframework.cnf.service.Member;
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
 
 @Mapper("CmmMapper")

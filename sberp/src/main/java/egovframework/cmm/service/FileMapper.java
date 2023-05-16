@@ -22,7 +22,9 @@ public interface FileMapper {
 	int getMaxFileSN(FileVO fvo);
 
 	void deleteCOMTNFILE(FileVO fvo);
-
+	
+	void deletePicAll(FileVO fvo);
+	
 	List<FileVO> selectFileListByFileNm(FileVO fvo);
 
 	int selectFileListCntByFileNm(FileVO fvo);

@@ -2,7 +2,7 @@ package egovframework.cmm.service;
 
 public class ResponseMessage {
     public static final String LOGIN_SUCCESS = "로그인 성공";
-    public static final String LOGIN_FAIL = "로그인 실패";
+    public static final String LOGIN_FAIL = "아이디 패스워드를 확인하세요.";
     public static final String NO_LOGIN = "로그인정보가 없습니다";
     public static final String UNAUTHORIZED = "권한이 없습니다";
     
@@ -25,4 +25,9 @@ public class ResponseMessage {
     public static final String DUPLICATE_TEST = "이미등록된 시험이 있습니다";
     public static final String DUPLICATE_RAW = "이미등록된 로데이터가 있습니다";
     public static final String DUPLICATE_RAW_BASIC = "이미등록된 로데이터 기본정보가 있습니다";
+    public static final String DUPLICATE_CHQ = "이미등록된 취합견적서가 있습니다";
+    
+    public static final String DUPLICATE_CNFRMED = "매출확정이된 견적서가 포함되어 있습니다";
+    public static final String DIFFERENT_CONS = "동일한 컨설팅만 취합할 수 있습니다";
+    public static final String INSERT_TWO = "2개이상 취합할수 있습니다";
 }

@@ -8,7 +8,7 @@
 	        	<entry key="pageUnit" value="15"/>
 	        	<entry key="pageSize" value="10"/>
 	        	<entry key="posblAtchFileSize" value="5242880"/>
-	        	<entry key="Globals.fileStorePath" value="/webapps/sbfile/"/>
+	        	<entry key="Globals.fileStorePath" value="/stand500admin/tomcat/webapps/sbfile/"/>
 	        	<entry key="Globals.addedOptions" value="false"/>
 	        </map>
 		</property>

@@ -38,5 +38,13 @@ public class RawMet {
 	@Column
 	private String memo;
 
+	
+	@ApiModelProperty(value="성적서 > 3.2 시험항목 > NOTE")
+	@Column
+	private String reportMemo;
 
+	
+	@ApiModelProperty(value="성적서 > 3.2 시험항목 > 비고")
+	@Column
+	private String note;
 }
