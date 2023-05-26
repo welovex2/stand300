@@ -10,34 +10,25 @@
 		<result property="empName" column="memName"/>
 		<result property="deptName" column="deptName"/>
 		<result property="lastLoginDt" column="lastLoginDt"/>
-<!-- 		<result property="userSe" column="userSe"/> -->
-<!-- 		<result property="orgnztId" column="orgnztId"/> -->
-<!-- 		<result property="uniqId" column="uniqId"/>		 -->
+		<result property="lockYn" column="lockYn"/>
+		<result property="failPassCnt" column="failPassCnt"/>
+		<result property="authCode" column="authCode"/>		
 	</resultMap>
 	
-	<!-- 아이디 찾기를 위한 resultMap 
-	<resultMap id="id" class="egovframework.com.cmm.LoginVO">
-		<result property="id" column="id" columnIndex="1"/>
-	</resultMap>
-	-->
-	<!-- 비밀번호 처리를 위한 resultMap 
-	<resultMap id="password" class="egovframework.com.cmm.LoginVO">
-		<result property="password" column="password" columnIndex="1"/>
-	</resultMap>
-	-->
 	<!-- 일반 로그인 -->
 	<select id="actionLogin" resultMap="login">
-<!-- 		<isEqual property="userSe" compareValue="USR"> -->
 			<![CDATA[
             SELECT ID id
                  , MEM_NAME memName
                  , FN_DEPT_NAME(ID) deptName
                  , DATE_FORMAT(LAST_LOGIN_DT, '%Y-%m-%d %T') lastLoginDt
+                 , LOCK_YN lockYn
+                 , AUTH_CODE authCode
               FROM MEMBER_TB
-             WHERE ID = #{id}
+             WHERE 1=1
+               AND ID = #{id}
                AND PASSWORD = #{password}
 			]]>
-<!-- 		</isEqual> -->
 	</select>
 	
 	<!-- 로그인 정보 저장 -->
@@ -45,120 +36,42 @@
 		UPDATE MEMBER_TB
 		SET LAST_IP = #{lastIp}
 			, LAST_LOGIN_DT = NOW() 
+			, FAIL_PASS_CNT = 0
 		WHERE 1=1
 		AND ID = #{id}
 	</update>
 	
-	<!-- 인증서 로그인
-	<select id="actionCrtfctLogin" resultMap="login">
-		<![CDATA[
-		SELECT emplyr_id AS id
-		     , USER_NM AS name
-		     , password AS password
-		     , ihidnum AS ihidNum
-		     , email_adres AS email
-		     , 'USR' AS userSe
-		     , orgnzt_id AS orgnztId
-		     , ESNTL_ID AS uniqId
-		  FROM LETTNEMPLYRINFO
-		 WHERE sub_dn = #dn#
-		]]>
-	</select>
-	 -->
-	<!-- 아이디 찾기
-	<select id="searchId" resultMap="id">
-		<isEqual property="userSe" compareValue="GNR">
-			<![CDATA[
-			SELECT mber_id AS id
-			  FROM LETTNGNRLMBER
-			 WHERE mber_nm = #name#
-			   AND mber_email_adres = #email#
-			   AND mber_sttus = 'P'
-			]]>
-		</isEqual>
-		<isEqual property="userSe" compareValue="ENT">
-			<![CDATA[
-			SELECT entrprsmber_id AS id
-			  FROM LETTNENTRPRSMBER
-			 WHERE cmpny_nm = #name#
-			   AND applcnt_email_adres = #email#
-			   AND entrprs_mber_sttus = 'P'
-			]]>
-		</isEqual>
-		<isEqual property="userSe" compareValue="USR">
-			<![CDATA[
-			SELECT emplyr_id AS id
-			  FROM LETTNEMPLYRINFO
-			 WHERE USER_NM = #name#
-			   AND email_adres = #email#
-			   AND emplyr_sttus_code = 'P'
-			]]>
-		</isEqual>
-	</select>
-	 -->
-	<!-- 비밀번호 찾기 
-	<select id="searchPassword" resultMap="password">
-		<isEqual property="userSe" compareValue="GNR">
-			<![CDATA[
-			SELECT password AS password
-			  FROM LETTNGNRLMBER
-			 WHERE mber_id = #id#
-			   AND mber_nm = #name#
-			   AND mber_email_adres = #email#
-			   AND password_hint = #passwordHint#
-			   AND password_cnsr = #passwordCnsr#
-			   AND mber_sttus = 'P'
-			]]>
-		</isEqual>
-		<isEqual property="userSe" compareValue="ENT">
-			<![CDATA[
-			SELECT entrprs_mber_password AS password
-			  FROM LETTNENTRPRSMBER
-			 WHERE entrprsmber_id = #id#
-			   AND cmpny_nm = #name#
-			   AND applcnt_email_adres = #email#
-			   AND entrprs_mber_password_hint = #passwordHint#
-			   AND entrprs_mber_password_cnsr = #passwordCnsr#
-			   AND entrprs_mber_sttus = 'P'
-			]]>
-		</isEqual>
-		<isEqual property="userSe" compareValue="USR">
-			<![CDATA[
-			SELECT password AS password
-			  FROM LETTNEMPLYRINFO
-			 WHERE emplyr_id = #id#
-			   AND USER_NM = #name#
-			   AND email_adres = #email#
-			   AND password_hint = #passwordHint#
-			   AND password_cnsr = #passwordCnsr#
-			   AND emplyr_sttus_code = 'P'
-			]]>
-		</isEqual>
-	</select>
-	-->
-	<!-- 변경된 비밀번호를 저장 
-	<update id="updatePassword">
-		<isEqual property="userSe" compareValue="GNR">
-			<![CDATA[
-			UPDATE LETTNGNRLMBER
-			   SET password = #password#
-			 WHERE mber_id = #id#
-			]]>
-		</isEqual>
-		<isEqual property="userSe" compareValue="ENT">
-			<![CDATA[
-			UPDATE LETTNENTRPRSMBER
-			   SET entrprs_mber_password = #password#
-			 WHERE entrprsmber_id = #id#
-			]]>
-		</isEqual>
-		<isEqual property="userSe" compareValue="USR">
-			<![CDATA[
-			UPDATE LETTNEMPLYRINFO
-			   SET password = #password#
-			 WHERE emplyr_id = #id#
-			]]>
-		</isEqual>
+	<!-- 로그인 실패 횟수 저장 -->
+	<update id="updateLoginFailCnt" >
+		UPDATE MEMBER_TB
+		SET FAIL_PASS_CNT = FAIL_PASS_CNT+1
+		WHERE 1=1
+		AND ID = #{id}
 	</update>
-	-->
+	
+	<!-- 비밀번호 실패 횟수 조회 -->
+	<select id="selectLoginFailCnt" resultMap="login">
+       SELECT FAIL_PASS_CNT failPassCnt
+      	, LOCK_YN lockYn
+         FROM MEMBER_TB
+        WHERE ID = #{id}
+	</select>
+	
+	<!-- 계정잠금 -->
+	<update id="lockLogin" >
+		UPDATE MEMBER_TB
+		SET LOCK_YN = 1
+		WHERE 1=1
+		AND ID = #{id}
+	</update>
+
+	<!-- 계정잠금 해제 -->
+	<update id="clearLock" >
+		UPDATE MEMBER_TB
+		SET LOCK_YN = 0
+		, FAIL_PASS_CNT = 0
+		WHERE 1=1
+		AND ID = #{id}
+	</update>
+
 </mapper>

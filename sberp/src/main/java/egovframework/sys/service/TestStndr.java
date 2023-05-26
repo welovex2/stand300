@@ -6,31 +6,17 @@ import javax.validation.constraints.NotNull;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 public class TestStndr {
 
   @ApiModelProperty(value = "TEST_STNDR_SEQ ", example = "")
   @Column
   @NotNull
   private int testStndrSeq;
-
-
-  @ApiModelProperty(value = "공통코드 : CN ", example = "")
-  @Column
-  private String countryCode;
-
-
-  @ApiModelProperty(value = "인증종류 ", example = "")
-  @Column
-  private int crtfTypeSeq;
-
-
-  @ApiModelProperty(value = "시험종류(시험부) ", example = "")
-  @Column
-  private String testTypeCode;
-
 
   @ApiModelProperty(value = "시험규격 ", example = "")
   @Column
@@ -40,11 +26,6 @@ public class TestStndr {
   @ApiModelProperty(value = "MEMO ", example = "")
   @Column
   private String memo;
-
-
-  @ApiModelProperty(value = "사용여부 ", example = "", hidden = true)
-  @Column
-  private String useYn;
 
 
   @ApiModelProperty(value = "등록자 아이디 ", example = "", hidden = true)

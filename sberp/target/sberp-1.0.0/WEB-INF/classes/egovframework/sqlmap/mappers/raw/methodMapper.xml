@@ -111,18 +111,72 @@
 	</insert>
 	
 	<select id="macList" resultType="egovMap">
-		SELECT RAW_MAC_SEQ,
-			MACHINE_TYPE,
-			RAW_SEQ,
-			MACHINE_SEQ,
-			USE_YN
-		FROM RAW_MAC_TB
-		WHERE 1=1
+		SELECT
+		    RAW_MAC_SEQ,
+		    MACHINE_TYPE,
+		    RAW_SEQ,
+		    RAW_MAC_TB.MACHINE_SEQ,
+		    name,
+		    model,
+		    MNFCT_CMPNY,
+		    MNFCT_SERIAL,
+		    ifnull (date_format (REFORM_DT, '%Y-%m-%d'), '-') reformDtStr,
+		    concat (REFORM_PERIOD, '년') REFORM_PERIOD,
+		    USE_YN
+		FROM
+		    RAW_MAC_TB
+		    inner join MACHINE_TB on RAW_MAC_TB.MACHINE_SEQ = MACHINE_TB.MACHINE_SEQ
+		WHERE
+		    1 = 1
 		AND RAW_SEQ = #{rawSeq}
-		AND MACHINE_TYPE = #{machineType}
-		ORDER BY MACHINE_SEQ
+		<if test="machineType == 'CA' or machineType == 'CB'">
+			AND MACHINE_TYPE = 'CE'
+			<if test="machineType == 'CA'">and CEA_YN = 1</if>
+			<if test="machineType == 'CB'">and CEB_YN = 1</if>
+		</if>
+		<if test="machineType != 'CA' and machineType != 'CB'">
+			AND MACHINE_TYPE = #{machineType}
+		</if>
+		ORDER BY
+		    MACHINE_TB.DIS_ORDR asc,
+		    MACHINE_TB.MACHINE_SEQ asc
 	</select>
-	
+
+	<select id="emptyMacList" resultType="egovMap">
+		SELECT
+		    '' RAW_MAC_SEQ,
+		    #{machineType} MACHINE_TYPE,
+		    '' RAW_SEQ,
+		    MACHINE_TB.MACHINE_SEQ,
+		    name,
+		    model,
+		    MNFCT_CMPNY,
+		    MNFCT_SERIAL,
+		    ifnull (date_format (REFORM_DT, '%Y-%m-%d'), '-') reformDtStr,
+		    concat (REFORM_PERIOD, '년') REFORM_PERIOD,
+		    false USE_YN
+		FROM
+		    MACHINE_TB
+		WHERE
+		    1 = 1
+		<choose>
+			<when test="machineType == 'RE'">and RE_YN = 1</when>
+			<when test="machineType == 'ED'">and ESD_YN = 1</when>
+			<when test="machineType == 'RS'">and RS_YN = 1</when>
+			<when test="machineType == 'ET'">and EFT_YN = 1</when>
+			<when test="machineType == 'SG'">and SURGE_YN = 1</when>
+			<when test="machineType == 'CS'">and CS_YN = 1</when>
+			<when test="machineType == 'MF'">and MFLD_YN = 1</when>
+			<when test="machineType == 'VD'">and VDIP_YN = 1</when>
+			<when test="machineType == 'CT'">and CTI_YN = 1</when>
+			<when test="machineType == 'CA'">and CEA_YN = 1</when>
+			<when test="machineType == 'CB'">and CEB_YN = 1</when>
+		</choose>
+		ORDER BY
+		    MACHINE_TB.DIS_ORDR asc,
+		    MACHINE_TB.MACHINE_SEQ asc
+	</select>
+		
 	<select id="esdSubList" parameterType="int" resultType="egovMap">
 		SELECT 
 			ESD_SUB_SEQ,
@@ -754,9 +808,26 @@
 		AND RAW_SEQ = #{rawSeq}
 	</select>
 	
+	<select id="rsSubList" parameterType="int" resultType="egovMap">
+		SELECT 
+			RS_SEQ,
+			RS_SUB_SEQ,
+			APPL_TYPE,
+			NO_YN,
+			ifnull(APPL_NAME, '') APPL_NAME,
+			H_RESULT_CODE,
+			V_RESULT_CODE,
+			MEMO,
+			STATE
+		FROM METHOD_RS_SUB_TB
+		WHERE 1=1
+		AND STATE != 'D'
+		AND RS_SEQ = #{rsSeq}
+	</select>
+	
 	<insert id="insertRs" parameterType="rsDTO">
-		<selectKey resultType="int" keyProperty="rsSeq" order="BEFORE">
-	        SELECT ifnull(MAX(RS_SEQ)+1,1) rsSeq FROM METHOD_RS_TB
+		<selectKey resultType="int" keyProperty="rsSeq" order="AFTER">
+			SELECT RS_SEQ csSeq FROM METHOD_RS_TB WHERE RAW_SEQ = #{rawSeq}
 	    </selectKey>
 		INSERT INTO METHOD_RS_TB
 		(
@@ -816,26 +887,26 @@
 			V_B_CODE,
 			V_R_CODE,
 			V_L_CODE,
-			AUDIO_ELCT_YN,
-			AUDIO_ACST_YN,
-			AUDIO_NEAR_YN,
-			AUDIO_FEAR_YN,
-			AUDIO1_CODE,
-			AUDIO2_CODE,
-			SPKR_ELCT_YN,
-			SPKR_ACST_YN,
-			SPKR_NEAR_YN,
-			SPKR_FEAR_YN,
-			SPKR1_CODE,
-			SPKR2_CODE,
-			COMM1_NOISE_YN,
-			COMM1_ACST_YN,
-			COMM1_CODE1,
-			COMM1_CODE2,
-			COMM2_NOISE_YN,
-			COMM2_ACST_YN,
-			COMM2_CODE1,
-			COMM2_CODE2,
+<!-- 			AUDIO_ELCT_YN, -->
+<!-- 			AUDIO_ACST_YN, -->
+<!-- 			AUDIO_NEAR_YN, -->
+<!-- 			AUDIO_FEAR_YN, -->
+<!-- 			AUDIO1_CODE, -->
+<!-- 			AUDIO2_CODE, -->
+<!-- 			SPKR_ELCT_YN, -->
+<!-- 			SPKR_ACST_YN, -->
+<!-- 			SPKR_NEAR_YN, -->
+<!-- 			SPKR_FEAR_YN, -->
+<!-- 			SPKR1_CODE, -->
+<!-- 			SPKR2_CODE, -->
+<!-- 			COMM1_NOISE_YN, -->
+<!-- 			COMM1_ACST_YN, -->
+<!-- 			COMM1_CODE1, -->
+<!-- 			COMM1_CODE2, -->
+<!-- 			COMM2_NOISE_YN, -->
+<!-- 			COMM2_ACST_YN, -->
+<!-- 			COMM2_CODE1, -->
+<!-- 			COMM2_CODE2, -->
 			CMNT_A_YN,
 			CMNT_ETC,
 			CMNT_ETC_YN,
@@ -844,7 +915,7 @@
 		)
 		VALUES
 		(
-			#{rsSeq},	
+			(SELECT ifnull(MAX(seq.RS_SEQ)+1,1) rsSeq FROM METHOD_RS_TB seq),	
 			#{rawSeq},
 			#{vltAcYn},
 			#{vltEtc},
@@ -900,26 +971,26 @@
 			#{vBCode},
 			#{vRCode},
 			#{vLCode},
-			#{audioElctYn},
-			#{audioAcstYn},
-			#{audioNearYn},
-			#{audioFearYn},
-			#{audio1Code},
-			#{audio2Code},
-			#{spkrElctYn},
-			#{spkrAcstYn},
-			#{spkrNearYn},
-			#{spkrFearYn},
-			#{spkr1Code},
-			#{spkr2Code},
-			#{comm1NoiseYn},
-			#{comm1AcstYn},
-			#{comm1Code1},
-			#{comm1Code2},
-			#{comm2NoiseYn},
-			#{comm2AcstYn},
-			#{comm2Code1},
-			#{comm2Code2},
+<!-- 			#{audioElctYn}, -->
+<!-- 			#{audioAcstYn}, -->
+<!-- 			#{audioNearYn}, -->
+<!-- 			#{audioFearYn}, -->
+<!-- 			#{audio1Code}, -->
+<!-- 			#{audio2Code}, -->
+<!-- 			#{spkrElctYn}, -->
+<!-- 			#{spkrAcstYn}, -->
+<!-- 			#{spkrNearYn}, -->
+<!-- 			#{spkrFearYn}, -->
+<!-- 			#{spkr1Code}, -->
+<!-- 			#{spkr2Code}, -->
+<!-- 			#{comm1NoiseYn}, -->
+<!-- 			#{comm1AcstYn}, -->
+<!-- 			#{comm1Code1}, -->
+<!-- 			#{comm1Code2}, -->
+<!-- 			#{comm2NoiseYn}, -->
+<!-- 			#{comm2AcstYn}, -->
+<!-- 			#{comm2Code1}, -->
+<!-- 			#{comm2Code2}, -->
 			#{cmntAYn},
 			#{cmntEtc},
 			#{cmntEtcYn},
@@ -981,31 +1052,80 @@
 		      V_B_CODE = #{vBCode},
 		      V_R_CODE = #{vRCode},
 		      V_L_CODE = #{vLCode},
-		      AUDIO_ELCT_YN = #{audioElctYn},
-		      AUDIO_ACST_YN = #{audioAcstYn},
-		      AUDIO_NEAR_YN = #{audioNearYn},
-		      AUDIO_FEAR_YN = #{audioFearYn},
-		      AUDIO1_CODE = #{audio1Code},
-			  AUDIO2_CODE = #{audio2Code},
-			  SPKR_ELCT_YN = #{spkrElctYn},
-			  SPKR_ACST_YN = #{spkrAcstYn},
-			  SPKR_NEAR_YN = #{spkrNearYn},
-			  SPKR_FEAR_YN = #{spkrFearYn},
-			  SPKR1_CODE = #{spkr1Code},
-			  SPKR2_CODE = #{spkr2Code},
-			  COMM1_NOISE_YN = #{comm1NoiseYn},
-			  COMM1_ACST_YN = #{comm1AcstYn},
-			  COMM1_CODE1 = #{comm1Code1},
-			  COMM1_CODE2 = #{comm1Code2},
-			  COMM2_NOISE_YN = #{comm2NoiseYn},
-			  COMM2_ACST_YN = #{comm2AcstYn},
-			  COMM2_CODE1 = #{comm2Code1},
-			  COMM2_CODE2 = #{comm2Code2},
+<!-- 		      AUDIO_ELCT_YN = #{audioElctYn}, -->
+<!-- 		      AUDIO_ACST_YN = #{audioAcstYn}, -->
+<!-- 		      AUDIO_NEAR_YN = #{audioNearYn}, -->
+<!-- 		      AUDIO_FEAR_YN = #{audioFearYn}, -->
+<!-- 		      AUDIO1_CODE = #{audio1Code}, -->
+<!-- 			  AUDIO2_CODE = #{audio2Code}, -->
+<!-- 			  SPKR_ELCT_YN = #{spkrElctYn}, -->
+<!-- 			  SPKR_ACST_YN = #{spkrAcstYn}, -->
+<!-- 			  SPKR_NEAR_YN = #{spkrNearYn}, -->
+<!-- 			  SPKR_FEAR_YN = #{spkrFearYn}, -->
+<!-- 			  SPKR1_CODE = #{spkr1Code}, -->
+<!-- 			  SPKR2_CODE = #{spkr2Code}, -->
+<!-- 			  COMM1_NOISE_YN = #{comm1NoiseYn}, -->
+<!-- 			  COMM1_ACST_YN = #{comm1AcstYn}, -->
+<!-- 			  COMM1_CODE1 = #{comm1Code1}, -->
+<!-- 			  COMM1_CODE2 = #{comm1Code2}, -->
+<!-- 			  COMM2_NOISE_YN = #{comm2NoiseYn}, -->
+<!-- 			  COMM2_ACST_YN = #{comm2AcstYn}, -->
+<!-- 			  COMM2_CODE1 = #{comm2Code1}, -->
+<!-- 			  COMM2_CODE2 = #{comm2Code2}, -->
 			  CMNT_A_YN = #{cmntAYn},
 			  CMNT_ETC = #{cmntEtc},
 			  CMNT_ETC_YN = #{cmntEtcYn},
 			  UDT_MEM_ID = #{udtMemId}
 	</insert>
+	
+	<insert id="insertRsSub">
+		INSERT INTO METHOD_RS_SUB_TB
+		(
+			RS_SEQ,
+			APPL_TYPE,
+			NO_YN,
+			APPL_NAME,
+			H_RESULT_CODE,
+			V_RESULT_CODE,
+			MEMO
+		)
+		VALUES
+		<foreach collection="MethodRsSubList" item="item" separator=",">
+		(
+			#{rsSeq},
+			#{item.applType},
+			#{item.noYn},
+			#{item.applName},
+			#{item.hResultCode},
+			#{item.vResultCode},
+			#{item.memo}
+		)
+		</foreach>
+	</insert>
+	
+	<update id="updateRsSub">
+		<foreach collection="MethodRsSubList" item="item" separator=";">
+		UPDATE METHOD_RS_SUB_TB
+		SET
+			APPL_TYPE = #{item.applType},
+			NO_YN = #{item.noYn},
+			APPL_NAME = #{item.applName},
+			H_RESULT_CODE = #{item.hResultCode},
+			V_RESULT_CODE = #{item.vResultCode},
+			MEMO = #{item.memo},
+			STATE = #{item.state}
+		WHERE RS_SUB_SEQ = #{item.rsSubSeq}
+		</foreach>
+	</update>
+
+	<update id="deleteRsSub">
+		<foreach collection="MethodRsSubList" item="item" separator=";">
+		UPDATE METHOD_RS_SUB_TB
+		SET
+			STATE = #{item.state}
+		WHERE RS_SUB_SEQ = #{item.rsSubSeq}
+		</foreach>
+	</update>
 	
 	<select id="eftDetail" parameterType="int" resultType="eftDTO">
 		SELECT 
@@ -1022,23 +1142,54 @@
 		    MSRMN_YEAR, MSRMN_MON, MSRMN_DAY, MSRMN_HOUR, MSRMN_MIN,
 		    SIGN, <![CDATA[concat('/file/getImage.do?atchFileId=',SIGN_URL,'&fileSn=0') SIGN_URL,]]>
 		    RESULT_CODE,
-		    POWER_L_YN, POWER_N_YN, POWER_PE_YN, POWER_ETC, POWER_ETC_YN,
-		    POWER_LN_YN, POWER_LPE_YN, POWER_NPE_YN, POWER_LNPE_YN, 
-		    POWER_ETC1, POWER_ETC2, POWER_ETC3, POWER_ETC4, POWER_ETC5, POWER_ETC6,
-			POWER_ETC1_YN, POWER_ETC2_YN, POWER_ETC3_YN, POWER_ETC4_YN, POWER_ETC5_YN, POWER_ETC6_YN,
-		    DC_POWER_P_YN, DC_POWER_N_YN, DC_POWER_PN_YN,
-		    SGNL_ETC1, SGNL_ETC1_YN, SGNL_ETC2, SGNL_ETC2_YN, SGNL_ETC3, SGNL_ETC3_YN,
-		    POWER_L_CODE, POWER_LN_CODE, POWER_LNPE_CODE, POWER_ETC1_CODE, POWER_ETC2_CODE,
-		    DC_POWER_P_CODE, SGN_ETC1_CODE, SGN_ETC2_CODE, SGN_ETC3_CODE,
+<!-- 		    POWER_L_YN, POWER_N_YN, POWER_PE_YN, POWER_ETC, POWER_ETC_YN, -->
+<!-- 		    POWER_LN_YN, POWER_LPE_YN, POWER_NPE_YN, POWER_LNPE_YN,  -->
+<!-- 		    POWER_ETC1, POWER_ETC2, POWER_ETC3, POWER_ETC4, POWER_ETC5, POWER_ETC6, -->
+<!-- 			POWER_ETC1_YN, POWER_ETC2_YN, POWER_ETC3_YN, POWER_ETC4_YN, POWER_ETC5_YN, POWER_ETC6_YN, -->
+<!-- 		    DC_POWER_P_YN, DC_POWER_N_YN, DC_POWER_PN_YN, -->
+<!-- 		    SGNL_ETC1, SGNL_ETC1_YN, SGNL_ETC2, SGNL_ETC2_YN, SGNL_ETC3, SGNL_ETC3_YN, -->
+<!-- 		    POWER_L_CODE, POWER_LN_CODE, POWER_LNPE_CODE, POWER_ETC1_CODE, POWER_ETC2_CODE, -->
+<!-- 		    DC_POWER_P_CODE, SGN_ETC1_CODE, SGN_ETC2_CODE, SGN_ETC3_CODE, -->
 		    CMNT_A_YN, CMNT_ETC, CMNT_ETC_YN
 		FROM METHOD_EFT_TB
 		WHERE 1=1
 		AND RAW_SEQ = #{rawSeq}
 	</select>
 	
+	<select id="eftSubList" parameterType="int" resultType="egovMap">
+		SELECT 
+			EFT_SUB_SEQ,
+			EFT_SEQ,
+			APPL_TYPE,
+			NO_YN,
+			POWER_L_YN,
+			POWER_N_YN,
+			POWER_PE_YN,
+			POWER_LN_YN,
+			POWER_LPE_YN,
+			POWER_NPE_YN,
+			POWER_LNPE_YN,
+			POWER_ETC,
+			POWER_ETC_YN,
+			DC_POWER_P_YN,
+			DC_POWER_N_YN,
+			DC_POWER_PN_YN,
+			DC_POWER_ETC,
+			DC_POWER_ETC_YN,
+			SGNL_NAME,
+			PLUS_RESULT_CODE,
+			MINUS_RESULT_CODE,
+			MEMO,
+			STATE
+		FROM METHOD_EFT_SUB_TB
+		WHERE 1=1
+		AND STATE != 'D'
+		AND EFT_SEQ = #{eftSeq}
+	</select>
+	
 	<insert id="insertEft" parameterType="eftDTO">
-		<selectKey resultType="int" keyProperty="eftSeq" order="BEFORE">
-	        SELECT ifnull(MAX(EFT_SEQ)+1,1) EftSeq FROM METHOD_EFT_TB
+		<selectKey resultType="int" keyProperty="eftSeq" order="AFTER">
+	        SELECT EFT_SEQ eftSeq FROM METHOD_EFT_TB WHERE RAW_SEQ = #{rawSeq}
 	    </selectKey>
 		INSERT INTO METHOD_EFT_TB
 		(
@@ -1054,21 +1205,21 @@
 			MSRMN_YEAR, MSRMN_MON, MSRMN_DAY, MSRMN_HOUR, MSRMN_MIN,
 			SIGN, SIGN_URL,
 			RESULT_CODE,
-			POWER_L_YN, POWER_N_YN, POWER_PE_YN, POWER_ETC, POWER_ETC_YN,
-			POWER_LN_YN, POWER_LPE_YN, POWER_NPE_YN, POWER_LNPE_YN, 
-			POWER_ETC1, POWER_ETC2, POWER_ETC3, POWER_ETC4, POWER_ETC5, POWER_ETC6,
-			POWER_ETC1_YN, POWER_ETC2_YN, POWER_ETC3_YN, POWER_ETC4_YN, POWER_ETC5_YN, POWER_ETC6_YN,
-			DC_POWER_P_YN, DC_POWER_N_YN, DC_POWER_PN_YN,
-			SGNL_ETC1, SGNL_ETC1_YN, SGNL_ETC2, SGNL_ETC2_YN, SGNL_ETC3, SGNL_ETC3_YN,
-			POWER_L_CODE,
-			POWER_LN_CODE,
-			POWER_LNPE_CODE,
-			POWER_ETC1_CODE,
-			POWER_ETC2_CODE,
-			DC_POWER_P_CODE,
-			SGN_ETC1_CODE,
-			SGN_ETC2_CODE,
-			SGN_ETC3_CODE,
+<!-- 			POWER_L_YN, POWER_N_YN, POWER_PE_YN, POWER_ETC, POWER_ETC_YN, -->
+<!-- 			POWER_LN_YN, POWER_LPE_YN, POWER_NPE_YN, POWER_LNPE_YN,  -->
+<!-- 			POWER_ETC1, POWER_ETC2, POWER_ETC3, POWER_ETC4, POWER_ETC5, POWER_ETC6, -->
+<!-- 			POWER_ETC1_YN, POWER_ETC2_YN, POWER_ETC3_YN, POWER_ETC4_YN, POWER_ETC5_YN, POWER_ETC6_YN, -->
+<!-- 			DC_POWER_P_YN, DC_POWER_N_YN, DC_POWER_PN_YN, -->
+<!-- 			SGNL_ETC1, SGNL_ETC1_YN, SGNL_ETC2, SGNL_ETC2_YN, SGNL_ETC3, SGNL_ETC3_YN, -->
+<!-- 			POWER_L_CODE, -->
+<!-- 			POWER_LN_CODE, -->
+<!-- 			POWER_LNPE_CODE, -->
+<!-- 			POWER_ETC1_CODE, -->
+<!-- 			POWER_ETC2_CODE, -->
+<!-- 			DC_POWER_P_CODE, -->
+<!-- 			SGN_ETC1_CODE, -->
+<!-- 			SGN_ETC2_CODE, -->
+<!-- 			SGN_ETC3_CODE, -->
 			CMNT_A_YN,
 			CMNT_ETC,
 			CMNT_ETC_YN,
@@ -1077,7 +1228,7 @@
 		)
 		VALUES
 		(
-			#{eftSeq},
+			(SELECT ifnull(MAX(seq.EFT_SEQ)+1,1) eftSeq FROM METHOD_EFT_TB seq),
 			#{rawSeq},
 			#{vltAcYn},
 			#{vltEtc},
@@ -1114,35 +1265,35 @@
 			#{sign},
 			#{signUrl},
 			#{resultCode},
-			#{powerLYn},
-			#{powerNYn},
-			#{powerPeYn},
-			#{powerEtc},
-			#{powerEtcYn},
-			#{powerLnYn},
-			#{powerLpeYn},
-			#{powerNpeYn},
-			#{powerLnpeYn},
-			#{powerEtc1}, #{powerEtc2}, #{powerEtc3}, #{powerEtc4}, #{powerEtc5}, #{powerEtc6},
-			#{powerEtc1Yn}, #{powerEtc2Yn}, #{powerEtc3Yn}, #{powerEtc4Yn}, #{powerEtc5Yn}, #{powerEtc6Yn},
-			#{dcPowerPYn},
-			#{dcPowerNYn},
-			#{dcPowerPnYn},
-			#{sgnlEtc1},
-			#{sgnlEtc1Yn},
-			#{sgnlEtc2},
-			#{sgnlEtc2Yn},
-			#{sgnlEtc3},
-			#{sgnlEtc3Yn},
-			#{powerLCode},
-			#{powerLnCode},
-			#{powerLnpeCode},
-			#{powerEtc1Code},
-			#{powerEtc2Code},
-			#{dcPowerPCode},
-			#{sgnEtc1Code},
-			#{sgnEtc2Code},
-			#{sgnEtc3Code},
+<!-- 			#{powerLYn}, -->
+<!-- 			#{powerNYn}, -->
+<!-- 			#{powerPeYn}, -->
+<!-- 			#{powerEtc}, -->
+<!-- 			#{powerEtcYn}, -->
+<!-- 			#{powerLnYn}, -->
+<!-- 			#{powerLpeYn}, -->
+<!-- 			#{powerNpeYn}, -->
+<!-- 			#{powerLnpeYn}, -->
+<!-- 			#{powerEtc1}, #{powerEtc2}, #{powerEtc3}, #{powerEtc4}, #{powerEtc5}, #{powerEtc6}, -->
+<!-- 			#{powerEtc1Yn}, #{powerEtc2Yn}, #{powerEtc3Yn}, #{powerEtc4Yn}, #{powerEtc5Yn}, #{powerEtc6Yn}, -->
+<!-- 			#{dcPowerPYn}, -->
+<!-- 			#{dcPowerNYn}, -->
+<!-- 			#{dcPowerPnYn}, -->
+<!-- 			#{sgnlEtc1}, -->
+<!-- 			#{sgnlEtc1Yn}, -->
+<!-- 			#{sgnlEtc2}, -->
+<!-- 			#{sgnlEtc2Yn}, -->
+<!-- 			#{sgnlEtc3}, -->
+<!-- 			#{sgnlEtc3Yn}, -->
+<!-- 			#{powerLCode}, -->
+<!-- 			#{powerLnCode}, -->
+<!-- 			#{powerLnpeCode}, -->
+<!-- 			#{powerEtc1Code}, -->
+<!-- 			#{powerEtc2Code}, -->
+<!-- 			#{dcPowerPCode}, -->
+<!-- 			#{sgnEtc1Code}, -->
+<!-- 			#{sgnEtc2Code}, -->
+<!-- 			#{sgnEtc3Code}, -->
 			#{cmntAYn},
 			#{cmntEtc},
 			#{cmntEtcYn},
@@ -1185,50 +1336,141 @@
 		    SIGN = #{sign},
 		    <if test="signUrl != null and signUrl != ''">SIGN_URL = #{signUrl},</if>
 		    RESULT_CODE = #{resultCode},
-		    POWER_L_YN = #{powerLYn},
-		    POWER_N_YN = #{powerNYn},
-		    POWER_PE_YN = #{powerPeYn},
-		    POWER_ETC = #{powerEtc},
-		    POWER_ETC_YN = #{powerEtcYn},
-		    POWER_LN_YN = #{powerLnYn},
-		    POWER_LPE_YN = #{powerLpeYn},
-		    POWER_NPE_YN = #{powerNpeYn},
-		    POWER_LNPE_YN = #{powerLnpeYn},
-		    POWER_ETC1 = #{powerEtc1},
-		    POWER_ETC2 = #{powerEtc2},
-		    POWER_ETC3 = #{powerEtc3},
-		    POWER_ETC4 = #{powerEtc4},
-		    POWER_ETC5 = #{powerEtc5},
-		    POWER_ETC6 = #{powerEtc6},
-		    POWER_ETC1_YN = #{powerEtc1Yn},
-		    POWER_ETC2_YN = #{powerEtc2Yn},
-		    POWER_ETC3_YN = #{powerEtc3Yn},
-		    POWER_ETC4_YN = #{powerEtc4Yn},
-		    POWER_ETC5_YN = #{powerEtc5Yn},
-		    POWER_ETC6_YN = #{powerEtc6Yn},
-		    DC_POWER_P_YN = #{dcPowerPYn},
-		    DC_POWER_N_YN = #{dcPowerNYn},
-		    DC_POWER_PN_YN = #{dcPowerPnYn},
-		    SGNL_ETC1 = #{sgnlEtc1},
-		    SGNL_ETC1_YN = #{sgnlEtc1Yn},
-		    SGNL_ETC2 = #{sgnlEtc2},
-		    SGNL_ETC2_YN = #{sgnlEtc2Yn},
-	        SGNL_ETC3 = #{sgnlEtc3},
-	        SGNL_ETC3_YN = #{sgnlEtc3Yn},
-	        POWER_L_CODE = #{powerLCode},
-	        POWER_LN_CODE = #{powerLnCode},
-	        POWER_LNPE_CODE = #{powerLnpeCode},
-	        POWER_ETC1_CODE = #{powerEtc1Code},
-	        POWER_ETC2_CODE = #{powerEtc2Code},
-	        DC_POWER_P_CODE = #{dcPowerPCode},
-	        SGN_ETC1_CODE = #{sgnEtc1Code},
-	        SGN_ETC2_CODE = #{sgnEtc2Code},
-	        SGN_ETC3_CODE = #{sgnEtc3Code},
+<!-- 		    POWER_L_YN = #{powerLYn}, -->
+<!-- 		    POWER_N_YN = #{powerNYn}, -->
+<!-- 		    POWER_PE_YN = #{powerPeYn}, -->
+<!-- 		    POWER_ETC = #{powerEtc}, -->
+<!-- 		    POWER_ETC_YN = #{powerEtcYn}, -->
+<!-- 		    POWER_LN_YN = #{powerLnYn}, -->
+<!-- 		    POWER_LPE_YN = #{powerLpeYn}, -->
+<!-- 		    POWER_NPE_YN = #{powerNpeYn}, -->
+<!-- 		    POWER_LNPE_YN = #{powerLnpeYn}, -->
+<!-- 		    POWER_ETC1 = #{powerEtc1}, -->
+<!-- 		    POWER_ETC2 = #{powerEtc2}, -->
+<!-- 		    POWER_ETC3 = #{powerEtc3}, -->
+<!-- 		    POWER_ETC4 = #{powerEtc4}, -->
+<!-- 		    POWER_ETC5 = #{powerEtc5}, -->
+<!-- 		    POWER_ETC6 = #{powerEtc6}, -->
+<!-- 		    POWER_ETC1_YN = #{powerEtc1Yn}, -->
+<!-- 		    POWER_ETC2_YN = #{powerEtc2Yn}, -->
+<!-- 		    POWER_ETC3_YN = #{powerEtc3Yn}, -->
+<!-- 		    POWER_ETC4_YN = #{powerEtc4Yn}, -->
+<!-- 		    POWER_ETC5_YN = #{powerEtc5Yn}, -->
+<!-- 		    POWER_ETC6_YN = #{powerEtc6Yn}, -->
+<!-- 		    DC_POWER_P_YN = #{dcPowerPYn}, -->
+<!-- 		    DC_POWER_N_YN = #{dcPowerNYn}, -->
+<!-- 		    DC_POWER_PN_YN = #{dcPowerPnYn}, -->
+<!-- 		    SGNL_ETC1 = #{sgnlEtc1}, -->
+<!-- 		    SGNL_ETC1_YN = #{sgnlEtc1Yn}, -->
+<!-- 		    SGNL_ETC2 = #{sgnlEtc2}, -->
+<!-- 		    SGNL_ETC2_YN = #{sgnlEtc2Yn}, -->
+<!-- 	        SGNL_ETC3 = #{sgnlEtc3}, -->
+<!-- 	        SGNL_ETC3_YN = #{sgnlEtc3Yn}, -->
+<!-- 	        POWER_L_CODE = #{powerLCode}, -->
+<!-- 	        POWER_LN_CODE = #{powerLnCode}, -->
+<!-- 	        POWER_LNPE_CODE = #{powerLnpeCode}, -->
+<!-- 	        POWER_ETC1_CODE = #{powerEtc1Code}, -->
+<!-- 	        POWER_ETC2_CODE = #{powerEtc2Code}, -->
+<!-- 	        DC_POWER_P_CODE = #{dcPowerPCode}, -->
+<!-- 	        SGN_ETC1_CODE = #{sgnEtc1Code}, -->
+<!-- 	        SGN_ETC2_CODE = #{sgnEtc2Code}, -->
+<!-- 	        SGN_ETC3_CODE = #{sgnEtc3Code}, -->
 	        CMNT_A_YN = #{cmntAYn},
 	        CMNT_ETC = #{cmntEtc},
 	        CMNT_ETC_YN = #{cmntEtcYn},
 	        UDT_MEM_ID = #{udtMemId}
 	</insert>
+	
+	<insert id="insertEftSub">
+		INSERT INTO METHOD_EFT_SUB_TB
+		(
+			EFT_SEQ,
+			APPL_TYPE,
+			NO_YN,
+			POWER_L_YN,
+			POWER_N_YN,
+			POWER_PE_YN,
+			POWER_LN_YN,
+			POWER_LPE_YN,
+			POWER_NPE_YN,
+			POWER_LNPE_YN,
+			POWER_ETC,
+			POWER_ETC_YN,
+			DC_POWER_P_YN,
+			DC_POWER_N_YN,
+			DC_POWER_PN_YN,
+			DC_POWER_ETC,
+			DC_POWER_ETC_YN,
+			SGNL_NAME,
+			PLUS_RESULT_CODE,
+			MINUS_RESULT_CODE,
+			MEMO
+		)
+		VALUES
+		<foreach collection="MethodEftSubList" item="item" separator=",">
+		(
+			#{eftSeq},
+			#{item.applType},
+			#{item.noYn},
+			#{item.powerLYn},
+			#{item.powerNYn},
+			#{item.powerPeYn},
+			#{item.powerLnYn},
+			#{item.powerLpeYn},
+			#{item.powerNpeYn},
+			#{item.powerLnpeYn},
+			#{item.powerEtc},
+			#{item.powerEtcYn},
+			#{item.dcPowerPYn},
+			#{item.dcPowerNYn},
+			#{item.dcPowerPnYn},
+			#{item.dcPowerEtc},
+			#{item.dcPowerEtcYn},
+			#{item.sgnlName},
+			#{item.plusResultCode},
+			#{item.minusResultCode},
+			#{item.memo}
+		)
+		</foreach>
+	</insert>
+	
+	<update id="updateEftSub">
+		<foreach collection="MethodEftSubList" item="item" separator=";">
+		UPDATE METHOD_EFT_SUB_TB
+		SET
+			APPL_TYPE = #{item.applType},
+			NO_YN = #{item.noYn},
+			POWER_L_YN = #{item.powerLYn},
+			POWER_N_YN = #{item.powerNYn},
+			POWER_PE_YN = #{item.powerPeYn},
+			POWER_LN_YN = #{item.powerLnYn},
+			POWER_LPE_YN = #{item.powerLpeYn},
+			POWER_NPE_YN = #{item.powerNpeYn},
+			POWER_LNPE_YN = #{item.powerLnpeYn},
+			POWER_ETC = #{item.powerEtc},
+			POWER_ETC_YN = #{item.powerEtcYn},
+			DC_POWER_P_YN = #{item.dcPowerPYn},
+			DC_POWER_N_YN = #{item.dcPowerNYn},
+			DC_POWER_PN_YN = #{item.dcPowerPnYn},
+			DC_POWER_ETC = #{item.dcPowerEtc},
+			DC_POWER_ETC_YN = #{item.dcPowerEtcYn},
+			SGNL_NAME = #{item.sgnlName},
+			PLUS_RESULT_CODE = #{item.plusResultCode},
+			MINUS_RESULT_CODE = #{item.minusResultCode},
+			MEMO = #{item.memo},
+			STATE = #{item.state}
+		WHERE EFT_SUB_SEQ = #{item.eftSubSeq}
+		</foreach>
+	</update>
+
+	<update id="deleteEftSub">
+		<foreach collection="MethodEftSubList" item="item" separator=";">
+		UPDATE METHOD_EFT_SUB_TB
+		SET
+			STATE = #{item.state}
+		WHERE EFT_SUB_SEQ = #{item.eftSubSeq}
+		</foreach>
+	</update>
 	
 	<select id="surgeDetail" parameterType="int" resultType="surgeDTO">
 		SELECT 
@@ -1246,21 +1488,47 @@
 		    MSRMN_YEAR, MSRMN_MON, MSRMN_DAY, MSRMN_HOUR, MSRMN_MIN,
 		    SIGN, <![CDATA[concat('/file/getImage.do?atchFileId=',SIGN_URL,'&fileSn=0') SIGN_URL,]]>
 		    RESULT_CODE,
-		    POWER_LN_YN, POWER_LN_ETC, POWER_LN_ETC_YN, POWER_LPE_YN, POWER_NPE_YN,
-		    POWER_ECT1_YN, POWER_ECT2_YN, POWER_ECT3_YN, POWER_ECT4_YN, POWER_ECT5_YN, POWER_ECT6_YN,
-		    POWER_ECT1, POWER_ECT2, POWER_ECT3, POWER_ECT4, POWER_ECT5, POWER_ECT6,
-		    DC_POWER_PN_YN, DC_POWER_ETC_YN, DC_POWER_ETC, DC_POWER_TEXT,
-		    SGNL1, SGNL2,
-		    POWER_LN_CODE, POWER_LPE_CODE, POWER_ECT1_CODE, POWER_ECT2_CODE,
-		    DC_POWER_PN_CODE, DC_POWER_ETC_CODE, SGNL1_CODE, SGNL2_CODE,
+<!-- 		    POWER_LN_YN, POWER_LN_ETC, POWER_LN_ETC_YN, POWER_LPE_YN, POWER_NPE_YN, -->
+<!-- 		    POWER_ECT1_YN, POWER_ECT2_YN, POWER_ECT3_YN, POWER_ECT4_YN, POWER_ECT5_YN, POWER_ECT6_YN, -->
+<!-- 		    POWER_ECT1, POWER_ECT2, POWER_ECT3, POWER_ECT4, POWER_ECT5, POWER_ECT6, -->
+<!-- 		    DC_POWER_PN_YN, DC_POWER_ETC_YN, DC_POWER_ETC, DC_POWER_TEXT, -->
+<!-- 		    SGNL1, SGNL2, -->
+<!-- 		    POWER_LN_CODE, POWER_LPE_CODE, POWER_ECT1_CODE, POWER_ECT2_CODE, -->
+<!-- 		    DC_POWER_PN_CODE, DC_POWER_ETC_CODE, SGNL1_CODE, SGNL2_CODE, -->
 		    CMNT_A_YN, CMNT_ETC, CMNT_ETC_YN
 		FROM METHOD_SURGE_TB
 		WHERE 1=1
 		AND RAW_SEQ = #{rawSeq}
 	</select>
+	
+	<select id="surgeSubList" parameterType="int" resultType="egovMap">
+		SELECT 
+			SURGE_SUB_SEQ,
+			SURGE_SEQ,
+			APPL_TYPE,
+			NO_YN,
+			POWER_LN_YN,
+			POWER_LPE_YN,
+			POWER_NPE_YN,
+			POWER_ETC,
+			POWER_ETC_YN,
+			DC_POWER_PN_YN,
+			DC_POWER_ETC,
+			DC_POWER_ETC_YN,
+			SGNL_NAME,
+			PLUS_RESULT_CODE,
+			MINUS_RESULT_CODE,
+			MEMO,
+			STATE
+		FROM METHOD_SURGE_SUB_TB
+		WHERE 1=1
+		AND STATE != 'D'
+		AND SURGE_SEQ = #{surgeSeq}
+	</select>
+	
 	<insert id="insertSurge" parameterType="surgeDTO">
-		<selectKey resultType="int" keyProperty="surgeSeq" order="BEFORE">
-	        SELECT ifnull(MAX(SURGE_SEQ)+1,1) surgeSeq FROM METHOD_SURGE_TB
+		<selectKey resultType="int" keyProperty="surgeSeq" order="AFTER">
+	        SELECT SURGE_SEQ surgeSeq FROM METHOD_SURGE_TB WHERE RAW_SEQ = #{rawSeq}
 	    </selectKey>
 	    INSERT INTO METHOD_SURGE_TB
 		(
@@ -1278,19 +1546,19 @@
 		    MSRMN_YEAR, MSRMN_MON, MSRMN_DAY, MSRMN_HOUR, MSRMN_MIN,
 		    SIGN, SIGN_URL,
 		    RESULT_CODE,
-		    POWER_LN_YN, POWER_LN_ETC, POWER_LN_ETC_YN, POWER_LPE_YN, POWER_NPE_YN,
-		    POWER_ECT1_YN, POWER_ECT2_YN, POWER_ECT3_YN, POWER_ECT4_YN, POWER_ECT5_YN, POWER_ECT6_YN,
-		    POWER_ECT1, POWER_ECT2, POWER_ECT3, POWER_ECT4, POWER_ECT5, POWER_ECT6,
-		    DC_POWER_PN_YN, DC_POWER_ETC_YN, DC_POWER_ETC, DC_POWER_TEXT,
-		    SGNL1, SGNL2,
-		    POWER_LN_CODE, POWER_LPE_CODE, POWER_ECT1_CODE, POWER_ECT2_CODE,
-		    DC_POWER_PN_CODE, DC_POWER_ETC_CODE, SGNL1_CODE, SGNL2_CODE,
+<!-- 		    POWER_LN_YN, POWER_LN_ETC, POWER_LN_ETC_YN, POWER_LPE_YN, POWER_NPE_YN, -->
+<!-- 		    POWER_ECT1_YN, POWER_ECT2_YN, POWER_ECT3_YN, POWER_ECT4_YN, POWER_ECT5_YN, POWER_ECT6_YN, -->
+<!-- 		    POWER_ECT1, POWER_ECT2, POWER_ECT3, POWER_ECT4, POWER_ECT5, POWER_ECT6, -->
+<!-- 		    DC_POWER_PN_YN, DC_POWER_ETC_YN, DC_POWER_ETC, DC_POWER_TEXT, -->
+<!-- 		    SGNL1, SGNL2, -->
+<!-- 		    POWER_LN_CODE, POWER_LPE_CODE, POWER_ECT1_CODE, POWER_ECT2_CODE, -->
+<!-- 		    DC_POWER_PN_CODE, DC_POWER_ETC_CODE, SGNL1_CODE, SGNL2_CODE, -->
 		    CMNT_A_YN, CMNT_ETC, CMNT_ETC_YN,
 		    INS_MEM_ID, UDT_MEM_ID
 		)
 		VALUES 
 		(
-			#{surgeSeq}, #{rawSeq},
+			(SELECT ifnull(MAX(seq.SURGE_SEQ)+1,1) surgeSeq FROM METHOD_SURGE_TB seq), #{rawSeq},
 			#{vltAcYn}, #{vltEtc}, #{vltEtcYn}, #{varNYn}, #{varYYn},
 			#{room1Yn}, #{room2Yn}, #{roomEtc}, #{roomEtcYn},
 			#{temp}, #{tempPlus}, #{hmdt}, #{hmdtPlus}, #{brmt}, #{brmtPlus},
@@ -1304,14 +1572,14 @@
 			#{msrmnYear}, #{msrmnMon}, #{msrmnDay}, #{msrmnHour}, #{msrmnMin},
 			#{sign}, #{signUrl},
 			#{resultCode},
-			#{powerLnYn}, #{powerLnEtc}, #{powerLnEtcYn}, #{powerLpeYn}, #{powerNpeYn},
-			#{powerEct1Yn}, #{powerEct2Yn}, #{powerEct3Yn}, #{powerEct4Yn}, #{powerEct5Yn}, #{powerEct6Yn},
-			#{powerEct1}, #{powerEct2}, #{powerEct3}, #{powerEct4}, #{powerEct5}, #{powerEct6},
-			#{dcPowerPnYn}, #{dcPowerEtcYn}, #{dcPowerEtc}, #{dcPowerText},
-			#{sgnl1}, #{sgnl2},
-			#{powerLnCode}, #{powerLpeCode}, #{powerEct1Code}, #{powerEct2Code},
-			#{dcPowerPnCode}, #{dcPowerEtcCode},
-			#{sgnl1Code}, #{sgnl2Code},
+<!-- 			#{powerLnYn}, #{powerLnEtc}, #{powerLnEtcYn}, #{powerLpeYn}, #{powerNpeYn}, -->
+<!-- 			#{powerEct1Yn}, #{powerEct2Yn}, #{powerEct3Yn}, #{powerEct4Yn}, #{powerEct5Yn}, #{powerEct6Yn}, -->
+<!-- 			#{powerEct1}, #{powerEct2}, #{powerEct3}, #{powerEct4}, #{powerEct5}, #{powerEct6}, -->
+<!-- 			#{dcPowerPnYn}, #{dcPowerEtcYn}, #{dcPowerEtc}, #{dcPowerText}, -->
+<!-- 			#{sgnl1}, #{sgnl2}, -->
+<!-- 			#{powerLnCode}, #{powerLpeCode}, #{powerEct1Code}, #{powerEct2Code}, -->
+<!-- 			#{dcPowerPnCode}, #{dcPowerEtcCode}, -->
+<!-- 			#{sgnl1Code}, #{sgnl2Code}, -->
 			#{cmntAYn}, #{cmntEtc}, #{cmntEtcYn},
 			#{insMemId},#{udtMemId}
 		)
@@ -1362,42 +1630,115 @@
 			SIGN = #{sign},
 			<if test="signUrl != null and signUrl != ''">SIGN_URL = #{signUrl},</if>
 			RESULT_CODE = #{resultCode},
-			POWER_LN_YN = #{powerLnYn},
-			POWER_LN_ETC = #{powerLnEtc},
-			POWER_LN_ETC_YN = #{powerLnEtcYn},
-			POWER_LPE_YN = #{powerLpeYn},
-			POWER_NPE_YN = #{powerNpeYn},
-			POWER_ECT1_YN = #{powerEct1Yn},
-			POWER_ECT2_YN = #{powerEct2Yn},
-			POWER_ECT3_YN = #{powerEct3Yn},
-			POWER_ECT4_YN = #{powerEct4Yn},
-			POWER_ECT5_YN = #{powerEct5Yn},
-			POWER_ECT6_YN = #{powerEct6Yn},
-			POWER_ECT1 = #{powerEct1},
-			POWER_ECT2 = #{powerEct2},
-			POWER_ECT3 = #{powerEct3},
-			POWER_ECT4 = #{powerEct4},
-			POWER_ECT5 = #{powerEct5},
-			POWER_ECT6 = #{powerEct6},
-			DC_POWER_PN_YN = #{dcPowerPnYn},
-			DC_POWER_ETC_YN = #{dcPowerEtcYn},
-			DC_POWER_ETC = #{dcPowerEtc},
-			DC_POWER_TEXT = #{dcPowerText},
-			SGNL1 = #{sgnl1},
-			SGNL2 = #{sgnl2},
-			POWER_LN_CODE = #{powerLnCode},
-			POWER_LPE_CODE = #{powerLpeCode},
-			POWER_ECT1_CODE = #{powerEct1Code},
-			POWER_ECT2_CODE = #{powerEct2Code},
-			DC_POWER_PN_CODE = #{dcPowerPnCode},
-			DC_POWER_ETC_CODE = #{dcPowerEtcCode},
-			SGNL1_CODE = #{sgnl1Code},
-			SGNL2_CODE = #{sgnl2Code},
+<!-- 			POWER_LN_YN = #{powerLnYn}, -->
+<!-- 			POWER_LN_ETC = #{powerLnEtc}, -->
+<!-- 			POWER_LN_ETC_YN = #{powerLnEtcYn}, -->
+<!-- 			POWER_LPE_YN = #{powerLpeYn}, -->
+<!-- 			POWER_NPE_YN = #{powerNpeYn}, -->
+<!-- 			POWER_ECT1_YN = #{powerEct1Yn}, -->
+<!-- 			POWER_ECT2_YN = #{powerEct2Yn}, -->
+<!-- 			POWER_ECT3_YN = #{powerEct3Yn}, -->
+<!-- 			POWER_ECT4_YN = #{powerEct4Yn}, -->
+<!-- 			POWER_ECT5_YN = #{powerEct5Yn}, -->
+<!-- 			POWER_ECT6_YN = #{powerEct6Yn}, -->
+<!-- 			POWER_ECT1 = #{powerEct1}, -->
+<!-- 			POWER_ECT2 = #{powerEct2}, -->
+<!-- 			POWER_ECT3 = #{powerEct3}, -->
+<!-- 			POWER_ECT4 = #{powerEct4}, -->
+<!-- 			POWER_ECT5 = #{powerEct5}, -->
+<!-- 			POWER_ECT6 = #{powerEct6}, -->
+<!-- 			DC_POWER_PN_YN = #{dcPowerPnYn}, -->
+<!-- 			DC_POWER_ETC_YN = #{dcPowerEtcYn}, -->
+<!-- 			DC_POWER_ETC = #{dcPowerEtc}, -->
+<!-- 			DC_POWER_TEXT = #{dcPowerText}, -->
+<!-- 			SGNL1 = #{sgnl1}, -->
+<!-- 			SGNL2 = #{sgnl2}, -->
+<!-- 			POWER_LN_CODE = #{powerLnCode}, -->
+<!-- 			POWER_LPE_CODE = #{powerLpeCode}, -->
+<!-- 			POWER_ECT1_CODE = #{powerEct1Code}, -->
+<!-- 			POWER_ECT2_CODE = #{powerEct2Code}, -->
+<!-- 			DC_POWER_PN_CODE = #{dcPowerPnCode}, -->
+<!-- 			DC_POWER_ETC_CODE = #{dcPowerEtcCode}, -->
+<!-- 			SGNL1_CODE = #{sgnl1Code}, -->
+<!-- 			SGNL2_CODE = #{sgnl2Code}, -->
 			CMNT_A_YN = #{cmntAYn},
 			CMNT_ETC = #{cmntEtc},
 			CMNT_ETC_YN = #{cmntEtcYn},
 			UDT_MEM_ID = #{udtMemId}
 	</insert>	
+	
+	<insert id="insertSurgeSub">
+		INSERT INTO METHOD_SURGE_SUB_TB
+		(
+			SURGE_SEQ,
+			APPL_TYPE,
+			NO_YN,
+			POWER_LN_YN,
+			POWER_LPE_YN,
+			POWER_NPE_YN,
+			POWER_ETC,
+			POWER_ETC_YN,
+			DC_POWER_PN_YN,
+			DC_POWER_ETC,
+			DC_POWER_ETC_YN,
+			SGNL_NAME,
+			PLUS_RESULT_CODE,
+			MINUS_RESULT_CODE,
+			MEMO
+		)
+		VALUES
+		<foreach collection="MethodSurgeSubList" item="item" separator=",">
+		(
+			#{surgeSeq},
+			#{item.applType},
+			#{item.noYn},
+			#{item.powerLnYn},
+			#{item.powerLpeYn},
+			#{item.powerNpeYn},
+			#{item.powerEtc},
+			#{item.powerEtcYn},
+			#{item.dcPowerPnYn},
+			#{item.dcPowerEtc},
+			#{item.dcPowerEtcYn},
+			#{item.sgnlName},
+			#{item.plusResultCode},
+			#{item.minusResultCode},
+			#{item.memo}
+		)
+		</foreach>
+	</insert>
+	
+	<update id="updateSurgeSub">
+		<foreach collection="MethodSurgeSubList" item="item" separator=";">
+		UPDATE METHOD_SURGE_SUB_TB
+		SET
+			APPL_TYPE = #{item.applType},
+			NO_YN = #{item.noYn},
+			POWER_LN_YN = #{item.powerLnYn},
+			POWER_LPE_YN = #{item.powerLpeYn},
+			POWER_NPE_YN = #{item.powerNpeYn},
+			POWER_ETC = #{item.powerEtc},
+			POWER_ETC_YN = #{item.powerEtcYn},
+			DC_POWER_PN_YN = #{item.dcPowerPnYn},
+			DC_POWER_ETC = #{item.dcPowerEtc},
+			DC_POWER_ETC_YN = #{item.dcPowerEtcYn},
+			SGNL_NAME = #{item.sgnlName},
+			PLUS_RESULT_CODE = #{item.plusResultCode},
+			MINUS_RESULT_CODE = #{item.minusResultCode},
+			MEMO = #{item.memo},
+			STATE = #{item.state}
+		WHERE SURGE_SUB_SEQ = #{item.surgeSubSeq}
+		</foreach>
+	</update>
+
+	<update id="deleteSurgeSub">
+		<foreach collection="MethodSurgeSubList" item="item" separator=";">
+		UPDATE METHOD_SURGE_SUB_TB
+		SET
+			STATE = #{item.state}
+		WHERE SURGE_SUB_SEQ = #{item.surgeSubSeq}
+		</foreach>
+	</update>
 	
 	<select id="csDetail" parameterType="int" resultType="csDTO">
 		SELECT 

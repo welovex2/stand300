@@ -32,4 +32,8 @@ public class CsDTO extends MethodCS {
   @ApiModelProperty(value = "인가부위 리스트", example = "")
   @Column
   List<MethodCsSub> subList;
+  
+  @ApiModelProperty(value="해당됨/해당없음 ", example = "")
+  @Column
+  private int picYn = 1;
 }

@@ -658,7 +658,8 @@
 	
 	<select id="report" parameterType="int" resultType="reportDTO">
 		SELECT
-
+			
+			RAW_TB.SBK_ID,
 			/* 1	발급번호 */
 			REPORT_NO,
 			REPORT_DT,

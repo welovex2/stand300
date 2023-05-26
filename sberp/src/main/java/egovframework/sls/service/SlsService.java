@@ -26,7 +26,7 @@ public interface SlsService {
 
   List<BillDTO.Res> selectBillList(String slsSeq);
 
-  boolean billInsert(BillDTO.Req req);
+  boolean billInsert(SlsDTO.Req req);
 
   boolean delete(String memId, List<String> slsSeqs);
 

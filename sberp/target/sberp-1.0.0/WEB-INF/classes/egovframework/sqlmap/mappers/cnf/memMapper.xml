@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="egovframework.cnf.service.MemMapper">
+
+	<select id="selectListCnt" parameterType="comParam" resultType="int">
+		SELECT
+			count(1)
+		FROM
+			MEMBER_TB
+		WHERE
+			1 = 1
+				<if test="searchVO != null">
+			        <foreach collection="searchVO" item="item" separator="">
+			       
+			        	<choose>
+			        		<!-- 42	이름 -->
+							<when test="item.searchCode == 42">and mem_name like concat('%',#{item.searchWord},'%')</when>
+							<!-- 43	직위 -->
+			        		<when test="item.searchCode == 43">AND FN_POS_NAME (id) like concat('%',#{item.searchWord},'%')</when>
+							<!-- 44	연락처 -->
+							<when test="item.searchCode == 44">AND PHONE like concat('%',replace(#{item.searchWord},'-',''),'%')</when>
+							<!-- 45	권한 -->
+							<when test="item.searchCode == 45">AND AUTH_CODE = #{item.searchWord}</when>
+							<!-- 15	작성일 -->
+			        		<when test="item.searchCode == 15">and date_format(CMPY_TB.ins_dt, '%Y%m%d') between date_format(#{item.startDate}, '%Y%m%d') and date_format(#{item.endDate}, '%Y%m%d')</when>
+						</choose>
+					</foreach>
+				</if>
+	</select>
+
+	<select id="selectList" parameterType="comParam" resultType="egovMap">
+		set @rownum:=0;
+		
+		SELECT
+			@rownum:=@rownum+1 as no, 
+			lst.*
+		FROM
+			(
+				SELECT
+					LPAD (member_seq, 4, 0) memberSeq,
+					date_format (MEMBER_TB.IN_DT, '%Y-%m-%d') inDt,
+					FN_DEPT_NAME (id) deptName,
+					id,
+					mem_name,
+					FN_POS_NAME (id) posName,
+					EMAIL,
+					FN_GET_PHONE_FORMAT (PHONE) PHONE,
+					AUTH_CODE,
+					CONCAT (
+					    FN_CODE_NAME (WORK_STATE, 'PW'),
+					    IFNULL (
+					        CASE
+					            WHEN WORK_STATE = 2 THEN CONCAT (
+					                ' (',
+					                IFNULL (
+					                    date_format (MEMBER_TB.LEAVE_S_DT, '%Y-%m-%d'),
+					                    ''
+					                ),
+					                '~',
+					                IFNULL (
+					                    date_format (MEMBER_TB.LEAVE_E_DT, '%Y-%m-%d'),
+					                    ''
+					                ),
+					                ')'
+					            )
+					            WHEN WORK_STATE = 3 THEN CONCAT (
+					                '(',
+					                IFNULL (date_format (MEMBER_TB.QUIT_DT, '%Y-%m-%d'), ''),
+					                ')'
+					            )
+					        END,
+					        ''
+					    )
+					) workSate,
+					date_format (MEMBER_TB.LEAVE_S_DT, '%Y-%m-%d') leaveSDt,
+					date_format (MEMBER_TB.LEAVE_S_DT, '%Y-%m-%d') leaveEDt,
+					date_format (MEMBER_TB.LEAVE_S_DT, '%Y-%m-%d') quitDt
+					from
+					    MEMBER_TB
+				WHERE
+					1 = 1
+				<if test="searchVO != null">
+			        <foreach collection="searchVO" item="item" separator="">
+			       
+			        	<choose>
+			        		<!-- 42	이름 -->
+							<when test="item.searchCode == 42">and mem_name like concat('%',#{item.searchWord},'%')</when>
+							<!-- 43	직위 -->
+			        		<when test="item.searchCode == 43">AND FN_POS_NAME (id) like concat('%',#{item.searchWord},'%')</when>
+							<!-- 44	연락처 -->
+							<when test="item.searchCode == 44">AND PHONE like concat('%',replace(#{item.searchWord},'-',''),'%')</when>
+							<!-- 45	권한 -->
+							<when test="item.searchCode == 45">AND AUTH_CODE = #{item.searchWord}</when>
+							<!-- 15	작성일 -->
+			        		<when test="item.searchCode == 15">and date_format(CMPY_TB.ins_dt, '%Y%m%d') between date_format(#{item.startDate}, '%Y%m%d') and date_format(#{item.endDate}, '%Y%m%d')</when>
+						</choose>
+					</foreach>
+				</if>
+				order by
+					MEMBER_TB.MEMBER_SEQ ASC
+			) lst
+		ORDER BY
+			no desc
+		LIMIT #{pageUnit} OFFSET #{firstIndex};
+	</select>
+	
+	<insert id="insert" parameterType="member">
+	    <selectKey resultType="int" keyProperty="memberSeq" order="AFTER">
+	        SELECT MAX(MEMBER_SEQ) memberSeq FROM MEMBER_TB;
+	    </selectKey>
+	    INSERT INTO MEMBER_TB
+	    (
+			MEMBER_SEQ,
+		    IN_DT,
+		    DEPT_SEQ,
+		    ID,
+		    PASSWORD,
+		    MEM_NAME,
+		    POS_SEQ,
+		    REV_YN,
+		    EMAIL,
+		    PHONE,
+		    AUTH_CODE,
+		    WORK_STATE,
+		    <if test="leaveSDt != null and leaveSDt != ''">LEAVE_S_DT,</if>
+		    <if test="leaveEDt != null and leaveEDt != ''">LEAVE_E_DT,</if>
+		    <if test="quitDt != null and quitDt != ''">QUIT_DT,</if>
+		    INS_MEM_ID,
+		    UDT_MEM_ID
+	    )
+	    VALUES
+		(
+	        IF(#{memberSeq}=0,(SELECT IFNULL(MAX(seq.MEMBER_SEQ)+1,1) cmpySeq FROM MEMBER_TB seq), #{memberSeq}),
+			#{inDt},
+			#{deptSeq},
+			#{id},
+			#{password},
+			#{memName},
+			#{posSeq},
+			#{revYn},
+			#{email},
+			replace(#{phone},'-',''),
+			#{authCode},
+			#{workState},
+			<if test="leaveSDt != null and leaveSDt != ''">#{leaveSDt},</if>
+			<if test="leaveEDt != null and leaveEDt != ''">#{leaveEDt},</if>
+			<if test="quitDt != null and quitDt != ''">#{quitDt},</if>
+			#{insMemId},
+			#{udtMemId}
+		)
+		ON DUPLICATE KEY UPDATE
+		    IN_DT = #{inDt},
+		    DEPT_SEQ = #{deptSeq},
+		    ID = #{id},
+		    PASSWORD = #{password},
+		    MEM_NAME = #{memName},
+		    POS_SEQ = #{posSeq},
+		    REV_YN = #{revYn},
+		    EMAIL = #{email},
+		    PHONE = replace(#{phone},'-',''),
+		    AUTH_CODE = #{authCode},
+		    WORK_STATE = #{workState},
+		    <if test="leaveSDt != null and leaveSDt != ''">LEAVE_S_DT = #{leaveSDt},</if>
+		    <if test="leaveEDt != null and leaveEDt != ''">LEAVE_E_DT = #{leaveEDt},</if>
+		    <if test="quitDt != null and quitDt != ''">QUIT_DT = #{quitDt},</if>
+		    UDT_MEM_ID = #{udtMemId},
+	        UDT_DT = NOW(),
+	        STATE = 'U'
+	</insert>
+	
+	<select id="detail" parameterType="int" resultType="member">
+		SELECT
+			lpad (MEMBER_SEQ, 4, 0) memberSeq,
+		    date_format (IN_DT, '%Y-%m-%d') inDt,
+		    DEPT_SEQ,
+		    ID,
+		    MEM_NAME,
+		    POS_SEQ,
+		    REV_YN,
+		    EMAIL,
+		    FN_GET_PHONE_FORMAT(PHONE) PHONE,
+		    AUTH_CODE,
+		    WORK_STATE,
+		    date_format (LEAVE_S_DT, '%Y-%m-%d') leaveSDt,
+		    date_format (LEAVE_E_DT, '%Y-%m-%d') leaveEDt,
+		    date_format (QUIT_DT, '%Y-%m-%d') quitDt
+		FROM
+			MEMBER_TB
+		WHERE MEMBER_SEQ = #{memberSeq}
+	</select>
+</mapper>

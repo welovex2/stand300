@@ -31,11 +31,13 @@ public interface SlsMapper {
 
   List<BillDTO.Res> selectBillList(String slsSeq);
 
-  boolean billInsert(BillDTO.Req req);
+  boolean billInsert(SlsDTO.Req req);
 
   boolean delete(@Param("memId") String memId, @Param("slsId") String slsIds);
 
   String selectQuoId(String slsSeq);
 
   List<String> selectQuoIdList(Req req);
+
+  void update(Req req);
 }

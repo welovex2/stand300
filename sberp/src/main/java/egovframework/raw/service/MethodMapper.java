@@ -23,6 +23,9 @@ public interface MethodMapper {
   public List<RawMac> macList(@Param("machineType") String machineType,
       @Param("rawSeq") int rawSeq);
 
+  public List<RawMac> emptyMacList(@Param("machineType") String machineType,
+      @Param("rawSeq") int rawSeq);
+  
   public CeDTO ceDetail(int rawSeq);
 
   public void insertCe(CeDTO req);

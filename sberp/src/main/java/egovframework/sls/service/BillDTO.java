@@ -1,7 +1,6 @@
 package egovframework.sls.service;
 
 import javax.persistence.Column;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -11,7 +10,7 @@ public class BillDTO {
 	
 	@Getter @Setter
 	@ApiModel(value="BillDTO.Req", description = "계산서 발행상태 변경")
-	public static class Req extends BillStatus {
+	public static class Req extends Bill {
 		@ApiModelProperty(value="매출번호", example = "M2303-0002")
 		@Column
 		private String slsId;
@@ -19,7 +18,7 @@ public class BillDTO {
 	
 	@Getter @Setter
 	@ApiModel(value="BillDTO.Res", description = "계산서 발행상태 조회")
-	public static class Res extends BillStatus {
+	public static class Res extends Bill {
 		
 		@ApiModelProperty(value="매출번호", example = "M2303-0002")
 		@Column
@@ -36,5 +35,9 @@ public class BillDTO {
 		@ApiModelProperty(value="상태", example = "납부완료(계좌이체)")
 		@Column
 		private String stateType;		
-	}
+
+	    @ApiModelProperty(value="계산서발행여부 ", example = "")
+	    @Column
+	    private String billYnStr;	
+	    }
 }

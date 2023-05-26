@@ -53,9 +53,11 @@ import egovframework.raw.dto.SurgeDTO;
 import egovframework.raw.dto.VdipDTO;
 import egovframework.raw.service.FileRaw;
 import egovframework.raw.service.RawData;
+import egovframework.raw.service.RawMac;
 import egovframework.raw.service.RawMet;
 import egovframework.raw.service.RawService;
 import egovframework.rte.fdl.property.EgovPropertyService;
+import egovframework.sys.service.MacService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -76,6 +78,9 @@ public class RawController {
 
   @Resource(name = "propertiesService")
   protected EgovPropertyService propertyService;
+
+  @Resource(name = "MacService")
+  private MacService macService;
 
   @ApiOperation(value = "로데이터 작성여부 확인")
   @GetMapping(value = "/{testSeq}/regState.do")
@@ -1624,177 +1629,6 @@ public class RawController {
 
     return res;
   }
-
-  @ApiOperation(value = "성적서 상세보기")
-  @GetMapping(value = "/{rawSeq}/report.do")
-  public BasicResponse rawReport(@ApiParam(value = "로데이터 고유번호", required = true,
-      example = "22") @PathVariable(name = "rawSeq") int rawSeq) throws Exception {
-    boolean result = true;
-    String msg = "";
-    ReportDTO detail = new ReportDTO();
-
-    detail = rawService.report(rawSeq);
-
-    if (detail == null) {
-      result = false;
-      msg = ResponseMessage.NO_DATA;
-    } else {
-      /* 세부데이터 추가로 가지고 오기 */
-
-      // 3.2 시험항목 >> methodList
-      detail.setMethodList(rawService.methodList(rawSeq));
-      // 3.3 피시험기기의 보완내용 >> modList
-      FileVO fileVO = new FileVO();
-      fileVO.setAtchFileId(detail.getModUrl());
-      List<FileVO> modResult = fileMngService.selectImageFileList(fileVO);
-      List<String> modList = new ArrayList<String>();
-      if (modResult != null) {
-        for (FileVO item : modResult) {
-          modList.add("/file/getImage.do?atchFileId=".concat(detail.getModUrl()).concat("&fileSn=")
-              .concat(item.getFileSn()));
-        }
-      }
-      detail.setModFileList(modList);
-      // 4.2 기술 제원 >> SpecList
-      detail.setRawSpecList(rawService.specList(rawSeq));
-      // 5.1 전체구성 >> AsstnList
-      detail.setRawAsstnList(rawService.asstnList(rawSeq));
-      // 5.2 시스템구성 (시험기자재가 컴퓨터 및 시스템인 경우) >> sysList
-      detail.setRawSysList(rawService.sysList(rawSeq));
-      // 5.3 접속 케이블 >> cableList
-      detail.setRawCableList(rawService.cableList(rawSeq));
-      // 5.5 배치도 >> setupList
-      fileVO = new FileVO();
-      fileVO.setAtchFileId(detail.getSetupUrl());
-      List<FileVO> setupReulst = fileMngService.selectImageFileList(fileVO);
-      List<PicDTO> setupList = new ArrayList<PicDTO>();
-      if (setupReulst != null) {
-        for (FileVO item : setupReulst) {
-          PicDTO map = new PicDTO();
-          map.setTitle(item.getFileCn());
-          map.setImageUrl("/file/getImage.do?atchFileId=".concat(detail.getSetupUrl())
-              .concat("&fileSn=").concat(item.getFileSn()));
-          setupList.add(map);
-
-        }
-      }
-      detail.setSetupList(setupList);
-
-      CeDTO ce = null;
-      ReDTO re = null;
-      for (int i = 0; i < detail.getMethodList().size(); i++) {
-
-        RawMet met = (RawMet) detail.getMethodList().get(i);
-
-        if (met.getCheckYn() == 1) {
-          switch (met.getMetSeq()) {
-            //   9.1 교류 주전원 포트에서의 전도성 방해 시험
-            case 0:
-              if (ObjectUtils.isEmpty(ce))
-                ce = rawService.ceDetail(rawSeq);
-              detail.setCe1(ce);
-              break;
-            //   9.2 비대칭모드 전도성 방해 시험
-            case 1:
-              if (ObjectUtils.isEmpty(ce))
-                ce = rawService.ceDetail(rawSeq);
-              detail.setCe2(ce);
-              break;
-            //   9.3 B급 기기의 방송수신기 튜너포트 차동전압 전도성 방해 시험
-            case 2:
-              if (ObjectUtils.isEmpty(ce))
-                ce = rawService.ceDetail(rawSeq);
-              detail.setCe2(ce);
-              break;
-            //   9.4 B급 기기의 RF변조기 출력포트에서의 차동전압 전도성 방해 시험
-            case 3:
-              if (ObjectUtils.isEmpty(ce))
-                ce = rawService.ceDetail(rawSeq);
-              detail.setCe4(ce);
-              break;
-            //   9.5 방사성 방해 시험 (1GHz 이하 대역)
-            case 4:
-              if (ObjectUtils.isEmpty(re))
-                re = rawService.reDetail(rawSeq);
-              detail.setRe1(re);
-              break;
-            case 5:
-              //   9.6 방사성 방해 시험 (1GHz 초과 대역)
-              if (ObjectUtils.isEmpty(re))
-                re = rawService.reDetail(rawSeq);
-              detail.setRe2(re);
-              break;
-            //   9.7 정전기 방전 시험
-            case 6:
-              detail.setEsd(rawService.esdDetail(rawSeq));
-              break;
-            //   9.8 방사성 RF 전자기장 시험
-            case 7:
-              detail.setRs(rawService.rsDetail(rawSeq));
-              break;
-            //   9.9 전기적 빠른 과도현상 시험
-            case 8:
-              detail.setEft(rawService.eftDetail(rawSeq));
-              break;
-            //   9.10 서지 시험
-            case 9:
-              detail.setSurge(rawService.surgeDetail(rawSeq));
-              break;
-            //   9.11 전도성 RF 전자기장 시험
-            case 10:
-              detail.setCs(rawService.csDetail(rawSeq));
-              break;
-            //   9.12 전원 주파수 자기장 시험
-            case 11:
-              detail.setMf(rawService.mfDetail(rawSeq));
-              break;
-            //   9.13 전압 강하 및 순간 정전 시험
-            case 12:
-              detail.setVdip(rawService.vdipDetail(rawSeq));
-              break;
-
-          } // -- END switch
-        } // -- END if
-      } // -- END for
-    }
-
-    // 시험장면 사진
-    List<PicDTO> resultList = new ArrayList<PicDTO>();
-    
-
-    for (int i = 1; i < 14; i++) {
-
-      ImgDTO img = new ImgDTO();
-      img.setRawSeq(rawSeq);
-      img.setPicId(Integer.toString(i));
-      img = rawService.imgDetail(img);
-
-      if (img != null) {
-        FileVO fileVO = new FileVO();
-        fileVO.setAtchFileId(img.getAtchFileId());
-        List<FileVO> fileReulst = fileMngService.selectFileInfs(fileVO);
-        if (fileReulst != null) {
-          for (FileVO item : fileReulst) {
-            PicDTO pic = new PicDTO();
-            pic.setPicId(Integer.toString(i));
-            pic.setImageUrl("/file/getImage.do?atchFileId=".concat(img.getAtchFileId())
-                .concat("&fileSn=").concat(item.getFileSn()));
-            pic.setTitle(item.getFileCn());
-            pic.setMode(item.getFileMemo());
-            resultList.add(pic);
-
-          }
-        }
-      }
-
-    }
-    detail.setImgList(resultList);
-
-    BasicResponse res = BasicResponse.builder().result(result).message(msg).data(detail).build();
-
-    return res;
-  }
-
 
   @ApiOperation(value = "로데이터 > 첨부파일 로데이터 등록", notes = "0. testSeq값 필수\n" + "1. fileType : 공통코드 RF")
   @PostMapping(value = "/file/insert.do")

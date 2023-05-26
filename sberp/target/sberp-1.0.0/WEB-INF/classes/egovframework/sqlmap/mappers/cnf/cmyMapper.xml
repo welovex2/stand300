@@ -13,15 +13,17 @@
 			        <foreach collection="searchVO" item="item" separator="">
 			       
 			        	<choose>
-			        		<!-- 00-협력사, 직접고객분류(내부처리) -->
+			        		<!-- 00	협력사, 직접고객분류(내부처리) -->
 			        		<when test="item.searchCode == 99">AND CMPY_CODE = #{item.searchWord}</when>
+			        		<!-- 2	작성자 -->
+							<when test="item.searchCode == 2">and IFNULL(FN_MEM_NAME(CMPY_TB.INS_MEM_ID), '') like concat('%',#{item.searchWord},'%')</when>
 			        		<!-- 12	회사명 -->
 			        		<when test="item.searchCode == 12">AND cmpy_name like concat('%',#{item.searchWord},'%')</when>
 							<!-- 13	회사연락처 -->
 							<when test="item.searchCode == 13">AND cmpy_phone like concat('%',replace(#{item.searchWord},'-',''),'%')</when>
 							<!-- 41	회사종류 -->
-							<when test="item.searchCode == 41">AND FN_CODE_NAME (type_code, 'PK') like concat('%',#{item.searchWord},'%')</when>
-							<!-- 15-작성일 -->
+							<when test="item.searchCode == 41">AND IFNULL(type_code,'9999') = #{item.searchWord}</when>
+							<!-- 15	작성일 -->
 			        		<when test="item.searchCode == 15">and date_format(CMPY_TB.ins_dt, '%Y%m%d') between date_format(#{item.startDate}, '%Y%m%d') and date_format(#{item.endDate}, '%Y%m%d')</when>
 						</choose>
 					</foreach>
@@ -55,15 +57,17 @@
 			        <foreach collection="searchVO" item="item" separator="">
 			       
 			        	<choose>
-			        		<!-- 00-협력사, 직접고객분류(내부처리) -->
+			        		<!-- 00	협력사, 직접고객분류(내부처리) -->
 			        		<when test="item.searchCode == 99">AND CMPY_CODE = #{item.searchWord}</when>
+			        		<!-- 2	작성자 -->
+							<when test="item.searchCode == 2">and IFNULL(FN_MEM_NAME(CMPY_TB.INS_MEM_ID), '') like concat('%',#{item.searchWord},'%')</when>
 			        		<!-- 12	회사명 -->
 			        		<when test="item.searchCode == 12">AND cmpy_name like concat('%',#{item.searchWord},'%')</when>
 							<!-- 13	회사연락처 -->
 							<when test="item.searchCode == 13">AND cmpy_phone like concat('%',replace(#{item.searchWord},'-',''),'%')</when>
 							<!-- 41	회사종류 -->
-							<when test="item.searchCode == 41">AND FN_CODE_NAME (type_code, 'PK') like concat('%',#{item.searchWord},'%')</when>
-							<!-- 15-작성일 -->
+							<when test="item.searchCode == 41">AND IFNULL(type_code,'9999') = #{item.searchWord}</when>
+							<!-- 15	작성일 -->
 			        		<when test="item.searchCode == 15">and date_format(CMPY_TB.ins_dt, '%Y%m%d') between date_format(#{item.startDate}, '%Y%m%d') and date_format(#{item.endDate}, '%Y%m%d')</when>
 						</choose>
 					</foreach>

@@ -2,9 +2,7 @@ package egovframework.sls.web;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.annotation.Resource;
-
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import egovframework.cmm.service.BasicResponse;
 import egovframework.cmm.service.ComParam;
 import egovframework.cmm.service.LoginVO;
@@ -103,24 +100,23 @@ public class SlsController {
 
       // 취합견적서에 속한 견적서 아이디 리스트
       List<String> quoIds = slsService.selectQuoIdList(req);
-      
+
       // 기등록 매출 데이터 확인
-      for (String id : quoIds) {
-        req.setQuoId(id);
+//      for (String id : quoIds) {
         if (slsService.selectDetail(req) != null) {
           result = false;
           msg = ResponseMessage.DUPLICATE_SLS;
-          
+
           BasicResponse res = BasicResponse.builder().result(result).message(msg).build();
           return res;
         }
-      }
-      
+//      }
+
       // 매출 등록
       req.setQuoStateCode("1"); // 매출확정 코드
       req.setQuoIds(quoIds);
       result = slsService.insertChq(req);
-      
+
     } else {
       result = false;
       msg = ResponseMessage.UNAUTHORIZED;
@@ -130,10 +126,10 @@ public class SlsController {
 
     return res;
   }
-  
+
   @ApiOperation(value = "매출확정 등록")
   @PostMapping(value = "/insert.do")
-  public BasicResponse slsInsert(@ApiParam(value = "quoId 값만 전송") @RequestBody SlsDTO.Req req)
+  public BasicResponse slsInsert(@ApiParam(value = "quoId 값, 신청금액 전송") @RequestBody SlsDTO.Req req)
       throws Exception {
 
     LoginVO user = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
@@ -153,7 +149,11 @@ public class SlsController {
 
     if (isAuthenticated) {
 
-      if (slsService.selectDetail(req) != null) {
+      // 신청금액 필수값 체크
+      if (req.getBill() <= 0) {
+        result = false;
+        msg = ResponseMessage.CHECK_DATA;
+      } else if (slsService.selectDetail(req) != null) {
         result = false;
         msg = ResponseMessage.DUPLICATE_SLS;
       } else {
@@ -210,57 +210,57 @@ public class SlsController {
     return res;
   }
 
-  @ApiOperation(value = "납부상태 리스트", notes = "결과값은 PayDTO.Res 참고")
-  @GetMapping(value = "/payList.do")
-  public BasicResponse payList(@ApiParam(value = "매출 고유번호", required = true,
-      example = "M2303-0002") @RequestParam(value = "slsSeq") String slsSeq) throws Exception {
+//  @ApiOperation(value = "납부상태 리스트", notes = "결과값은 PayDTO.Res 참고")
+//  @GetMapping(value = "/payList.do")
+//  public BasicResponse payList(@ApiParam(value = "매출 고유번호", required = true,
+//      example = "M2303-0002") @RequestParam(value = "slsSeq") String slsSeq) throws Exception {
+//
+//    LoginVO user = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+//    boolean result = true;
+//    String msg = "";
+//    List<PayDTO.Res> list = new ArrayList<PayDTO.Res>();
+//
+//    list = slsService.selectPayList(slsSeq);
+//
+//    if (list == null) {
+//      result = false;
+//      msg = ResponseMessage.NO_DATA;
+//    }
+//
+//    BasicResponse res = BasicResponse.builder().result(result).message(msg).data(list).build();
+//
+//    return res;
+//  }
 
-    LoginVO user = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
-    boolean result = true;
-    String msg = "";
-    List<PayDTO.Res> list = new ArrayList<PayDTO.Res>();
-
-    list = slsService.selectPayList(slsSeq);
-
-    if (list == null) {
-      result = false;
-      msg = ResponseMessage.NO_DATA;
-    }
-
-    BasicResponse res = BasicResponse.builder().result(result).message(msg).data(list).build();
-
-    return res;
-  }
-
-  @ApiOperation(value = "납부상태 변경", notes = "납부상태 공통코드 : MP")
-  @PostMapping(value = "/payInsert.do")
-  public BasicResponse payInsert(@RequestBody PayDTO.Req req) throws Exception {
-
-    LoginVO user = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
-
-    // 로그인정보
-    req.setInsMemId(user.getId());
-    req.setUdtMemId(user.getId());
-
-    boolean result = false;
-    String msg = "";
-
-    Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
-
-    if (isAuthenticated) {
-      result = slsService.payInsert(req);
-    } else {
-      result = false;
-      msg = ResponseMessage.UNAUTHORIZED;
-    }
-
-    BasicResponse res = BasicResponse.builder().result(result).message(msg).build();
-
-    return res;
-  }
+//  @ApiOperation(value = "납부상태 변경", notes = "납부상태 공통코드 : MP")
+//  @PostMapping(value = "/payInsert.do")
+//  public BasicResponse payInsert(@RequestBody PayDTO.Req req) throws Exception {
+//
+//    LoginVO user = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+//
+//    // 로그인정보
+//    req.setInsMemId(user.getId());
+//    req.setUdtMemId(user.getId());
+//
+//    boolean result = false;
+//    String msg = "";
+//
+//    Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+//
+//    if (isAuthenticated) {
+//      result = slsService.payInsert(req);
+//    } else {
+//      result = false;
+//      msg = ResponseMessage.UNAUTHORIZED;
+//    }
+//
+//    BasicResponse res = BasicResponse.builder().result(result).message(msg).build();
+//
+//    return res;
+//  }
 
 
-  @ApiOperation(value = "계산서발행여부 리스트", notes = "결과값은 BillDTO.Res 참고")
+  @ApiOperation(value = "계산서 상태 리스트", notes = "결과값은 BillDTO.Res 참고")
   @GetMapping(value = "/billList.do")
   public BasicResponse billList(@ApiParam(value = "매출 고유번호", required = true,
       example = "M2303-0002") @RequestParam(value = "slsSeq") String slsSeq) throws Exception {
@@ -282,9 +282,10 @@ public class SlsController {
     return res;
   }
 
-  @ApiOperation(value = "계산서발행여부 변경", notes = "계산서 발행상태 공통코드 : MB")
+  @ApiOperation(value = "계산서 상태 변경",
+      notes = "계산서 발행여부 : slsId, billSeq, billYn=1 필수\n계산서 발행 작성일 : slsId, billSeq, otherBillDt\n납부상태 변경 : slsId, billSeq, payCode(MP)")
   @PostMapping(value = "/billInsert.do")
-  public BasicResponse billInsert(@RequestBody BillDTO.Req req) throws Exception {
+  public BasicResponse billInsert(@RequestBody SlsDTO.Req req) throws Exception {
 
     LoginVO user = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
 

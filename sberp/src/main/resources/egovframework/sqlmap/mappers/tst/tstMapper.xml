@@ -69,7 +69,7 @@
 			on TEST_ITEM_TB.TEST_STNDR_SEQ = TEST_STNDR_TB.TEST_STNDR_SEQ
 		            
 		    inner join TEST_CATE_TB A
-			on TEST_STNDR_TB.CRTF_TYPE_SEQ = A.test_cate_seq
+			on TEST_ITEM_TB.CRTF_TYPE_SEQ = A.test_cate_seq
 			
 			inner join TEST_CATE_TB B
 			on A.TOP_DEPTH_SEQ = B.test_cate_seq	
@@ -110,7 +110,7 @@
 						</choose>
 					</when>
 					<!-- 23	시험부 -->
-					<when test="item.searchCode == 23">and if(TEST_TB.TEST_SEQ is null, '9999', TEST_STNDR_TB.TEST_TYPE_CODE) = #{item.searchWord}</when>
+					<when test="item.searchCode == 23">and if(TEST_TB.TEST_SEQ is null, '9999', TEST_ITEM_TB.TEST_TYPE_CODE) = #{item.searchWord}</when>
 					<!-- 26	로데이터 -->
 					<when test="item.searchCode == 26"></when>
 					<!-- 27	모델명 -->
@@ -145,7 +145,7 @@
 				CONCAT_WS(',', IF(SG_NEW_YN=1,'신규',null),IF(SG_GB_YN=1,'기술기준 변경',null),IF(SG_DG_YN=1,'동일기자재',null),IF(SG_ETC_YN=1,'기술기준외 변경',null)) sgText,
 				B.name crtfc1Name,
 			    A.name crtfc2Name,
-			    FN_CODE_NAME(TEST_STNDR_TB.TEST_TYPE_CODE,'TT') TEST_TYPE,
+			    FN_CODE_NAME(TEST_ITEM_TB.TEST_TYPE_CODE,'TT') TEST_TYPE,
 			    TEST_STNDR_TB.TEST_STNDR_SEQ,
 			    TEST_STNDR_TB.TEST_STNDR,
 			    TEST_ITEM_TB.model,
@@ -174,7 +174,7 @@
 				on TEST_ITEM_TB.TEST_STNDR_SEQ = TEST_STNDR_TB.TEST_STNDR_SEQ
 			            
 			    inner join TEST_CATE_TB A
-				on TEST_STNDR_TB.CRTF_TYPE_SEQ = A.test_cate_seq
+				on TEST_ITEM_TB.CRTF_TYPE_SEQ = A.test_cate_seq
 				
 				inner join TEST_CATE_TB B
 				on A.TOP_DEPTH_SEQ = B.test_cate_seq	
@@ -226,7 +226,7 @@
 							</choose>
 						</when>
 						<!-- 23	시험부 -->
-						<when test="item.searchCode == 23">and if(TEST_TB.TEST_SEQ is null, '9999', TEST_STNDR_TB.TEST_TYPE_CODE) = #{item.searchWord}</when>
+						<when test="item.searchCode == 23">and if(TEST_TB.TEST_SEQ is null, '9999', TEST_ITEM_TB.TEST_TYPE_CODE) = #{item.searchWord}</when>
 						<!-- 26	로데이터 -->
 						<when test="item.searchCode == 26"></when>
 						<!-- 27	모델명 -->

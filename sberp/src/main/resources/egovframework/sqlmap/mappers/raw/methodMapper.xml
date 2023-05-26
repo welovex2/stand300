@@ -111,18 +111,72 @@
 	</insert>
 	
 	<select id="macList" resultType="egovMap">
-		SELECT RAW_MAC_SEQ,
-			MACHINE_TYPE,
-			RAW_SEQ,
-			MACHINE_SEQ,
-			USE_YN
-		FROM RAW_MAC_TB
-		WHERE 1=1
+		SELECT
+		    RAW_MAC_SEQ,
+		    MACHINE_TYPE,
+		    RAW_SEQ,
+		    RAW_MAC_TB.MACHINE_SEQ,
+		    name,
+		    model,
+		    MNFCT_CMPNY,
+		    MNFCT_SERIAL,
+		    ifnull (date_format (REFORM_DT, '%Y-%m-%d'), '-') reformDtStr,
+		    concat (REFORM_PERIOD, '년') REFORM_PERIOD,
+		    USE_YN
+		FROM
+		    RAW_MAC_TB
+		    inner join MACHINE_TB on RAW_MAC_TB.MACHINE_SEQ = MACHINE_TB.MACHINE_SEQ
+		WHERE
+		    1 = 1
 		AND RAW_SEQ = #{rawSeq}
-		AND MACHINE_TYPE = #{machineType}
-		ORDER BY MACHINE_SEQ
+		<if test="machineType == 'CA' or machineType == 'CB'">
+			AND MACHINE_TYPE = 'CE'
+			<if test="machineType == 'CA'">and CEA_YN = 1</if>
+			<if test="machineType == 'CB'">and CEB_YN = 1</if>
+		</if>
+		<if test="machineType != 'CA' and machineType != 'CB'">
+			AND MACHINE_TYPE = #{machineType}
+		</if>
+		ORDER BY
+		    MACHINE_TB.DIS_ORDR asc,
+		    MACHINE_TB.MACHINE_SEQ asc
 	</select>
-	
+
+	<select id="emptyMacList" resultType="egovMap">
+		SELECT
+		    '' RAW_MAC_SEQ,
+		    #{machineType} MACHINE_TYPE,
+		    '' RAW_SEQ,
+		    MACHINE_TB.MACHINE_SEQ,
+		    name,
+		    model,
+		    MNFCT_CMPNY,
+		    MNFCT_SERIAL,
+		    ifnull (date_format (REFORM_DT, '%Y-%m-%d'), '-') reformDtStr,
+		    concat (REFORM_PERIOD, '년') REFORM_PERIOD,
+		    false USE_YN
+		FROM
+		    MACHINE_TB
+		WHERE
+		    1 = 1
+		<choose>
+			<when test="machineType == 'RE'">and RE_YN = 1</when>
+			<when test="machineType == 'ED'">and ESD_YN = 1</when>
+			<when test="machineType == 'RS'">and RS_YN = 1</when>
+			<when test="machineType == 'ET'">and EFT_YN = 1</when>
+			<when test="machineType == 'SG'">and SURGE_YN = 1</when>
+			<when test="machineType == 'CS'">and CS_YN = 1</when>
+			<when test="machineType == 'MF'">and MFLD_YN = 1</when>
+			<when test="machineType == 'VD'">and VDIP_YN = 1</when>
+			<when test="machineType == 'CT'">and CTI_YN = 1</when>
+			<when test="machineType == 'CA'">and CEA_YN = 1</when>
+			<when test="machineType == 'CB'">and CEB_YN = 1</when>
+		</choose>
+		ORDER BY
+		    MACHINE_TB.DIS_ORDR asc,
+		    MACHINE_TB.MACHINE_SEQ asc
+	</select>
+		
 	<select id="esdSubList" parameterType="int" resultType="egovMap">
 		SELECT 
 			ESD_SUB_SEQ,
@@ -726,26 +780,6 @@
 		    V_B_CODE,
 		    V_R_CODE,
 		    V_L_CODE,
-		    AUDIO_ELCT_YN,
-		    AUDIO_ACST_YN,
-		    AUDIO_NEAR_YN,
-		    AUDIO_FEAR_YN,
-		    AUDIO1_CODE,
-		    AUDIO2_CODE,
-		    SPKR_ELCT_YN,
-		    SPKR_ACST_YN,
-		    SPKR_NEAR_YN,
-		    SPKR_FEAR_YN,
-		    SPKR1_CODE,
-		    SPKR2_CODE,
-		    COMM1_NOISE_YN,
-		    COMM1_ACST_YN,
-		    COMM1_CODE1,
-		    COMM1_CODE2,
-		    COMM2_NOISE_YN,
-		    COMM2_ACST_YN,
-		    COMM2_CODE1,
-		    COMM2_CODE2,
 		    CMNT_A_YN,
 		    CMNT_ETC,
 		    CMNT_ETC_YN

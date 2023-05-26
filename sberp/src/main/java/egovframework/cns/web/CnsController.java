@@ -46,11 +46,6 @@ public class CnsController {
 
   private static Validator validator;
 
-  @BeforeClass
-  public static void setValidator() {
-    ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-    validator = factory.getValidator();
-  }
 
   @ApiOperation(value = "상담서 리스트", notes = "검색박스는 공통코드 CS, 필요한항목만 노출시켜서 사용\n고객유형(PT)")
   @GetMapping(value = "/list.do")

@@ -63,6 +63,8 @@ public interface RawService {
 
 	List<RawMac> macList(String machineType, int rawSeq);
 
+	List<RawMac> emptyMacList(String machineType, int rawSeq);
+	   
 	List<MethodEsdSub> esdSubList(int esdSeq);
 	
 	List<MethodCtiSub> ctiSubList(int ctiSeq);

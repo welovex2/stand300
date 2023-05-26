@@ -1,9 +1,7 @@
 package egovframework.quo.service;
 
 import java.util.List;
-
 import org.apache.ibatis.annotations.Param;
-
 import egovframework.cmm.service.ComParam;
 import egovframework.cmm.service.HisDTO;
 import egovframework.quo.service.QuoDTO.Req;
@@ -40,6 +38,8 @@ public interface QuoMapper {
 
 	public boolean updateQuoState(QuoModDTO.Req req);
 
+	public boolean billInsert(QuoModDTO.Req req);
+	  
 	public List<QuoModDTO.Res> selectStatusList(String quoSeq);
 
 	public boolean insertState(QuoModDTO.Req req);

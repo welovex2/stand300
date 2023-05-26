@@ -16,8 +16,8 @@
 <!--         <property name="password" value="erp345."/> -->
 
 		<property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
-        <property name="url" value="jdbc:mysql://stand500.com:3306/stand500admin?allowMultiQueries=true&amp;characterEncoding=utf8" />
-<!-- 		<property name="url" value="jdbc:mysql://localhost:3306/stand500admin?allowMultiQueries=true" /> -->
+<!--         <property name="url" value="jdbc:mysql://stand500.com:3306/stand500admin?allowMultiQueries=true&amp;characterEncoding=utf8" /> -->
+		<property name="url" value="jdbc:mysql://localhost:3306/stand500admin?allowMultiQueries=true" />
         <property name="username" value="stand500admin"/>
         <property name="password" value="stb9394!@!!"/>
     </bean>

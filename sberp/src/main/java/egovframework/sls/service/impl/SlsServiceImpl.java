@@ -4,6 +4,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import egovframework.cmm.service.ComParam;
 import egovframework.sls.service.BillDTO;
 import egovframework.sls.service.PayDTO;
@@ -36,7 +37,10 @@ public class SlsServiceImpl implements SlsService {
 
     // 매출리스트 등록
     result = slsMapper.insert(req);
-
+    
+    // 계산서 발행내역 등록
+    result = slsMapper.billInsert(req);
+    
     // 견적서 상태변경
     for(String id : req.getQuoIds()) {
       req.setQuoId(id);
@@ -53,6 +57,9 @@ public class SlsServiceImpl implements SlsService {
 
     // 매출리스트 등록
     result = slsMapper.insert(req);
+    
+    // 계산서 발행내역 등록
+    result = slsMapper.billInsert(req);
 
     // 견적서 상태변경
     result = slsMapper.updateQuoState(req);
@@ -92,7 +99,12 @@ public class SlsServiceImpl implements SlsService {
   }
 
   @Override
-  public boolean billInsert(BillDTO.Req req) {
+  public boolean billInsert(SlsDTO.Req req) {
+    
+    // 납부가 완료되면 매출리스트 미수금액 조정
+    if (!StringUtils.isEmpty(req.getPayCode())) {
+      slsMapper.update(req);
+    }
     return slsMapper.billInsert(req);
   }
 

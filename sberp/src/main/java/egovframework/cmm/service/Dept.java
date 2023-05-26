@@ -36,7 +36,7 @@ public class Dept {
 
 	@ApiModelProperty(value="ORDER ", example = "")
 	@Column
-	private int order;
+	private int oder;
 
 
 	@ApiModelProperty(value="등록자 아이디 ", example = "", hidden=true)

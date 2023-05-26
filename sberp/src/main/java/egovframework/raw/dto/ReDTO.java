@@ -11,22 +11,28 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@Getter @Setter @ToString(callSuper = true)
+@Getter
+@Setter
+@ToString(callSuper = true)
 public class ReDTO extends MethodRe {
 
-	@ApiModelProperty(value="시험고유번호", example = "15", hidden = true)
-	@Column
-	int testSeq;
-	
-	@ApiModelProperty(value="측정설비 종류(공통코드 : TM)", example = "CE")
-	@Column
-	String macType;
-	
-	@ApiModelProperty(value="측정설비 리스트", example = "")
-	@Column
-	List<RawMac> macList;
-	
-	@ApiModelProperty(value="시험결과 별도첨부 리스트", example = "")
-	@Column
-	List<String> resultList;
+  @ApiModelProperty(value = "시험고유번호", example = "15", hidden = true)
+  @Column
+  int testSeq;
+
+  @ApiModelProperty(value = "측정설비 종류(공통코드 : TM)", example = "CE")
+  @Column
+  String macType;
+
+  @ApiModelProperty(value = "측정설비 리스트", example = "")
+  @Column
+  List<RawMac> macList;
+
+  @ApiModelProperty(value = "시험결과 별도첨부 리스트", example = "")
+  @Column
+  List<String> resultList;
+
+  @ApiModelProperty(value = "해당됨/해당없음 ", example = "")
+  @Column
+  private int picYn = 1;
 }

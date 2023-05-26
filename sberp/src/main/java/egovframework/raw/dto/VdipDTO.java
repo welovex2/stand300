@@ -11,18 +11,24 @@ import lombok.ToString;
 import lombok.Setter;
 import lombok.Getter;
 
-@Getter @Setter @ToString(callSuper = true)
+@Getter
+@Setter
+@ToString(callSuper = true)
 public class VdipDTO extends MethodVdip {
-	
-	@ApiModelProperty(value="시험고유번호", example = "15", hidden = true)
-	@Column
-	int testSeq;
-	
-	@ApiModelProperty(value="측정설비 종류(공통코드 : TM)", example = "MF")
-	@Column
-	String macType;
-	
-	@ApiModelProperty(value="측정설비 리스트", example = "")
-	@Column
-	List<RawMac> macList;
+
+  @ApiModelProperty(value = "시험고유번호", example = "15", hidden = true)
+  @Column
+  int testSeq;
+
+  @ApiModelProperty(value = "측정설비 종류(공통코드 : TM)", example = "MF")
+  @Column
+  String macType;
+
+  @ApiModelProperty(value = "측정설비 리스트", example = "")
+  @Column
+  List<RawMac> macList;
+
+  @ApiModelProperty(value = "해당됨/해당없음 ", example = "")
+  @Column
+  private int picYn = 1;
 }

@@ -148,6 +148,10 @@ public class QuoDTO {
 		@Column
 		private String email;
 		
+		@ApiModelProperty(value="미수금", example = "0")
+        @Column
+        private int arrears;
+		
 		@ApiModelProperty(value="계산서 상태", example = "-")
 		@Column
 		private String billState;

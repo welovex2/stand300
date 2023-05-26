@@ -6,18 +6,19 @@ import javax.validation.constraints.NotNull;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 public class Member {
 
   @ApiModelProperty(value = "MEMBER_SEQ ", example = "")
   @Column
-  @NotNull
   private int memberSeq;
 
 
-  @ApiModelProperty(value = "입사일 ", example = "")
+  @ApiModelProperty(value = "입사일 ", example = "", required = true)
   @Column
   private String inDt;
 
@@ -27,7 +28,7 @@ public class Member {
   private int deptSeq;
 
 
-  @ApiModelProperty(value = "아이디 ", example = "")
+  @ApiModelProperty(value = "아이디 ", example = "", required = true)
   @Column
   @NotNull
   private String id;
@@ -35,11 +36,10 @@ public class Member {
 
   @ApiModelProperty(value = "PASSWORD ", example = "")
   @Column
-  @NotNull
   private String password;
 
 
-  @ApiModelProperty(value = "MEM_NAME ", example = "")
+  @ApiModelProperty(value = "MEM_NAME ", example = "", required = true)
   @Column
   private String memName;
 
@@ -53,15 +53,15 @@ public class Member {
   @Column
   private int revYn;
 
-
+  
+  @ApiModelProperty(value = "email ", example = "")
+  @Column
+  private String email;
+  
+  
   @ApiModelProperty(value = "PHONE ", example = "")
   @Column
   private String phone;
-
-
-  @ApiModelProperty(value = "TEL ", example = "")
-  @Column
-  private String tel;
 
 
   @ApiModelProperty(value = "AUTH_CODE ", example = "")

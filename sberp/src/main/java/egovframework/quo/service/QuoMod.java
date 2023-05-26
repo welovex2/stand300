@@ -1,12 +1,8 @@
 package egovframework.quo.service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-
 import javax.persistence.Column;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,9 +30,9 @@ public class QuoMod {
 	private String memo;
 
 
-	@ApiModelProperty(value="공통코드(MM)", notes="1 매출확정, 2 수정요청, 3 수정허가 ,4 수정완료 ", example = "", required = true)
+	@ApiModelProperty(value="공통코드(MM)", notes="1 매출확정, 2 수정요청, 3 수정허가 ,4 수정완료, 5 세금계산서 신청 ", example = "", required = true)
 	@Column
-	@Pattern(regexp = "[234]", message = "2 수정요청, 3 수정허가 ,4 수정완료 상태만 입력 가능합니다.") 
+	@Pattern(regexp = "[2345]", message = "2 수정요청, 3 수정허가 ,4 수정완료, 5 세금계산서 신청 상태만 입력 가능합니다.") 
 	private String stateCode;
 
 

@@ -30,4 +30,8 @@ public class SurgeDTO extends MethodSurge {
   @ApiModelProperty(value = "포트 리스트", example = "")
   @Column
   List<MethodSurgeSub> subList;
+  
+  @ApiModelProperty(value="해당됨/해당없음 ", example = "")
+  @Column
+  private int picYn = 1;
 }

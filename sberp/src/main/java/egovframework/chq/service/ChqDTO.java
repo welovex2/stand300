@@ -49,23 +49,27 @@ public class ChqDTO extends Chq {
     
     @ApiModelProperty(value="접수비총합 ", example = "3000000")
     @Column
-    private String fee;
+    private int fee;
     
     @ApiModelProperty(value="면허세총합 ", example = "3000000")
     @Column
-    private String lcnsTax;
+    private int lcnsTax;
     
     @ApiModelProperty(value="시험비총합 ", example = "3000000")
     @Column
-    private String testFee;
+    private int testFee;
     
     @ApiModelProperty(value="청구액총합 ", example = "3000000")
     @Column
-    private String CostTotal;
+    private int CostTotal;
+    
+    @ApiModelProperty(value="조정금액", example = "3000000")
+    @Column
+    private int spclDscnt;
     
     @ApiModelProperty(value="VAT포함 총합계 ", example = "3300000")
     @Column
-    private String TotalVat;
+    private int TotalVat;
     
     @ApiModelProperty(value = "견적리스트", example = "")
     @Column

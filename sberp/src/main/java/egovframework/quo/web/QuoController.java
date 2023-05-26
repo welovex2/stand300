@@ -194,10 +194,10 @@ public class QuoController {
     return res;
   }
 
-  @ApiOperation(value = "견적서 수정요청", notes = "stateCode : 수정요청 = 2,  수정허용 = 3, 수정완료 = 4")
+  @ApiOperation(value = "견적서 수정요청", notes = "stateCode : 수정요청 = 2,  수정허용 = 3, 수정완료 = 4, 세금계산서신청 = 5\nbill = 세금계산서 신청금액")
   @PostMapping(value = "/updateStatus.do")
   public BasicResponse updateStatus(
-      @ApiParam(value = "quoId, memo, stateCode 입력") @RequestBody QuoModDTO.Req req)
+      @ApiParam(value = "quoId, memo, stateCode, bill 입력") @RequestBody QuoModDTO.Req req)
       throws Exception {
 
     LoginVO user = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
@@ -217,7 +217,6 @@ public class QuoController {
     for (ConstraintViolation<QuoModDTO.Req> violation : violations) {
       msg = violation.getMessage();
 
-      System.out.println(msg);
       BasicResponse res = BasicResponse.builder().result(false).message(msg).build();
 
       return res;
@@ -226,7 +225,13 @@ public class QuoController {
     Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
 
     if (isAuthenticated) {
-      result = quoService.updateStatus(req);
+      // 신청금액 필수값 체크
+      if ("5".equals(req.getStateCode()) && req.getBill() <= 0) {
+        result = false;
+        msg = ResponseMessage.NO_DATA;
+      } else {
+        result = quoService.updateStatus(req);
+      }
     } else {
       result = false;
       msg = ResponseMessage.UNAUTHORIZED;

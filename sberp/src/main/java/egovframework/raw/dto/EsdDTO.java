@@ -36,4 +36,8 @@ public class EsdDTO extends MethodEsd {
   @ApiModelProperty(value = "정전기 방전 인가부위", example = "")
   @Column
   private List<PicDTO> imgList;
+  
+  @ApiModelProperty(value="해당됨/해당없음 ", example = "")
+  @Column
+  private int picYn = 1;
 }

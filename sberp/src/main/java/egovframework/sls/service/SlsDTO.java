@@ -1,7 +1,9 @@
 package egovframework.sls.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.Column;
+import org.springmodules.validation.bean.conf.loader.annotation.handler.NotNull;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -32,6 +34,32 @@ public class SlsDTO {
         required = true)
     @Column
     private String quoStateCode;
+    
+    @ApiModelProperty(value = "매출번호", example = "M2303-0002")
+    @Column
+    private String slsId;
+
+    @ApiModelProperty(value="BILL_SEQ ", example = "")
+    @Column
+    @NotNull
+    private int billSeq;
+    
+    @ApiModelProperty(value = "매출확정 신청금액", example = "1000000")
+    @Column
+    private int bill;
+    
+    @ApiModelProperty(value="계산서발행여부 ", example = "")
+    @Column
+    private int billYn;
+    
+    @ApiModelProperty(value="납부상태(공통토드:MP) 01 납부완료(계좌이체) 02 납부완료(가상계좌) 03 납부완료(신용카드) 04 납부완료(기타입력)  ", example = "")
+    @Column
+    private String payCode;
+    
+    @ApiModelProperty(value="OTHER_BILL_DT ", example = "")
+    @Column
+    private String otherBillDt;
+    
   }
 
   @Getter
@@ -79,56 +107,13 @@ public class SlsDTO {
     @Column
     private String prdctName;
 
-    @ApiModelProperty(value = "접수비 ", example = "", required = true)
-    @Column
-    private int fee;
-
-    @ApiModelProperty(value = "면허세 ", example = "", required = true)
-    @Column
-    private int lcnsTax;
-
-
-    @ApiModelProperty(value = "시험비 ", example = "", required = true)
-    @Column
-    private int testFee;
-
-
     @ApiModelProperty(value = "청구액 ", example = "", required = true)
     @Column
     private int chrgs;
 
-
-    @ApiModelProperty(value = "대납분 ", example = "", required = true)
-    @Column
-    private int advncPymnt;
-
-
-    @ApiModelProperty(value = "특별할인 ", example = "", required = true)
-    @Column
-    private int spclDscnt;
-
-
-    @ApiModelProperty(value = "컨설팅비 ", example = "", required = true)
-    @Column
-    private int cnsltFee;
-
-
-    @ApiModelProperty(value = "외주비 ", example = "", required = true)
-    @Column
-    private int otsrcFee;
-
-
     @ApiModelProperty(value = "순매출 ", example = "", required = true)
     @Column
     private int netSales;
-
-    @ApiModelProperty(value = "상담서 고유번호", example = "63")
-    @Column
-    private int cnsSeq;
-
-    @ApiModelProperty(value = "고객 상담내용", example = "어쩌구저쩌구")
-    @Column
-    private String lastMemo;
 
     @ApiModelProperty(value = "정상총합 ", example = "3000000", required = true)
     @Column
@@ -138,30 +123,9 @@ public class SlsDTO {
     @Column
     private String TotalVat;
 
-    @ApiModelProperty(value = "납부상태 ", example = "", required = true)
-    @Column
-    private String payState;
-
-    @ApiModelProperty(value = "납부상태(일) ", example = "", required = true)
-    @Column
-    private String payDtStr;
-
-    @ApiModelProperty(value = "납부상태(금액) ", example = "", required = true)
-    @Column
-    private int pay;
-
-    @ApiModelProperty(value = "게산서발행여부상태", example = "", required = true)
-    @Column
-    private String billState;
-
-    @ApiModelProperty(value = "게산서발행여부(일) ", example = "", required = true)
-    @Column
-    private String billDtStr;
-
-    @ApiModelProperty(value = "게산서발행여부(금액) ", example = "", required = true)
-    @Column
-    private int bill;
-
+    @ApiModelProperty(value = "계산서발행내역 ", required = true)
+    private List<Bill> billList;
+    
     @ApiModelProperty(value = "수정요청상태 ", example = "", required = true)
     @Column
     private String quoState;
@@ -173,6 +137,9 @@ public class SlsDTO {
     @ApiModelProperty(value = "수정요청상태(이름) ", example = "", required = true)
     @Column
     private String prmsName;
-
+    
+    @ApiModelProperty(value = "삭제가능여부", example = "Y")
+    @Column
+    private String canDelete;
   }
 }

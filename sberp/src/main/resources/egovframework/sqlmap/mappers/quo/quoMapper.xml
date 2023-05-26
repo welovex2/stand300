@@ -229,6 +229,8 @@
 		(
 			QUO_YM,
 			QUO_SEQ,
+			CRTF_TYPE_SEQ,
+			TEST_TYPE_CODE,
 			TEST_STNDR_SEQ,
 			PRODUCT,
 			MODEL,
@@ -252,6 +254,8 @@
 	<![CDATA[
 			substring(#{quoId},2,4),
 			substring(#{quoId},8,4),
+			#{item.crtfTypeSeq},
+			#{item.testTypeCode},
 			#{item.testStndrSeq},
 			#{item.product},
 			#{item.model},
@@ -280,6 +284,8 @@
 			UPDATE TEST_ITEM_TB
 			SET
 		<![CDATA[
+				CRTF_TYPE_SEQ = #{item.crtfTypeSeq},
+				TEST_TYPE_CODE = #{item.testTypeCode},
 				TEST_STNDR_SEQ = #{item.testStndrSeq},
 				product = #{item.product},
 				MODEL = #{item.model},
@@ -418,10 +424,7 @@
 		<result column="dir" property="dir"/>
 		<result column="cp" property="cp"/>
 		<result column="email" property="email"/>
-		<result column="billState" property="billState"/>
-		<result column="billDtStr" property="billDtStr"/>
-		<result column="payState" property="payState"/>
-		<result column="payDtStr" property="payDtStr"/>
+		<result column="ARREARS" property="arrears"/>
 		<result column="quo_state_code" property="quoStateCode"/>
 		<result column="QUO_MOD_SEQ" property="quoModeSeq"/>
 		<result column="quoModState" property="quoModState"/>
@@ -488,10 +491,7 @@
 			,ifnull(FN_GET_PHONE_FORMAT(MEMBER_TB.phone), '') cp
 			,concat(MEMBER_TB.id,'@standardbank.co.kr') email
 			
-			, IFNULL(fn_code_name(BILL_STATUS_TB.STATE_CODE, 'MB'),'미발행') billState
-            , IFNULL(date_format(BILL_STATUS_TB.ins_dt, '%Y-%m-%d'),'') billDtStr
-			, IFNULL(fn_code_name(PAY_STATUS_TB.STATE_CODE, 'MP'), '미납') payState
-            , IFNULL(date_format(PAY_STATUS_TB.ins_dt, '%Y-%m-%d'),'') payDtStr
+			, IFNULL(SLS_TB.ARREARS,'') ARREARS
 			, IFNULL(quo_state_code, '0') quo_state_code
 			, QUO_MOD_TB.QUO_MOD_SEQ
 			, IFNULL(fn_code_name(QUO_MOD_TB.STATE_CODE, 'MM'), '') quoModState
@@ -503,12 +503,16 @@
 			
 			/* 시험항목 및 비용 */
 			,TEST_ITEM_TB.test_item_seq
-			,B.test_cate_seq crtfc1
-			,A.test_cate_seq crtfc2
-			,TEST_STNDR_TB.TEST_TYPE_CODE
+
+			,cate1.test_cate_seq crtfc1
+			,cate2.test_cate_seq crtfc2
+			,cate3.test_cate_seq crtfc3
+			,cate4.test_cate_seq crtfc4
+			
+			,TEST_ITEM_TB.TEST_TYPE_CODE
 			,TEST_STNDR_TB.TEST_STNDR_SEQ
-			,concat(B.name,'-',A.name) testCate
-			,fn_code_name(TEST_STNDR_TB.TEST_TYPE_CODE,'TT') TEST_TYPE
+			,concat(cate3.name,'-',cate4.name) testCate
+			,fn_code_name(TEST_ITEM_TB.TEST_TYPE_CODE,'TT') TEST_TYPE
 			,TEST_ITEM_TB.product
 			,TEST_ITEM_TB.model
 			,TEST_ITEM_TB.memo itemMemo
@@ -538,36 +542,15 @@
 		    left join TEST_STNDR_TB
 		    on TEST_ITEM_TB.TEST_STNDR_SEQ = TEST_STNDR_TB.TEST_STNDR_SEQ
 		    
-		    left join TEST_CATE_TB A
-		    on TEST_STNDR_TB.CRTF_TYPE_SEQ = A.test_cate_seq
-		    
-			left join TEST_CATE_TB B
-		    on A.TOP_DEPTH_SEQ = B.test_cate_seq
+		    LEFT JOIN TEST_CATE_TB cate4 ON TEST_ITEM_TB.CRTF_TYPE_SEQ = cate4.TEST_CATE_SEQ
+		    LEFT JOIN TEST_CATE_TB cate3 ON cate4.TOP_DEPTH_SEQ = cate3.TEST_CATE_SEQ
+		    LEFT JOIN TEST_CATE_TB cate2 ON cate3.TOP_DEPTH_SEQ = cate2.TEST_CATE_SEQ
+		    LEFT JOIN TEST_CATE_TB cate1 ON cate2.TOP_DEPTH_SEQ = cate1.TEST_CATE_SEQ
 
 			left join SLS_TB
 			ON SLS_TB.QUO_YM = JOB_TB.QUO_YM
 		    AND SLS_TB.quo_seq = JOB_TB.QUO_SEQ
 		    
-            left join PAY_STATUS_TB
-            on PAY_STATUS_TB.PAY_STATUS_SEQ = (
-								select PAY_STATUS_SEQ
-                                from PAY_STATUS_TB sub
-                                where sub.sls_ym = SLS_TB.sls_ym
-                                and sub.sls_seq = SLS_TB.sls_seq
-                                order by PAY_STATUS_SEQ desc
-                                limit 1
-            )
-            
-            left join BILL_STATUS_TB
-            on BILL_STATUS_TB.BILL_STATUS_SEQ = (
-								select BILL_STATUS_SEQ
-                                from BILL_STATUS_TB sub
-                                where sub.sls_ym = SLS_TB.sls_ym
-                                and sub.sls_seq = SLS_TB.sls_seq
-                                order by BILL_STATUS_SEQ desc
-                                limit 1
-            )
-            
             left join QUO_MOD_TB
             on QUO_MOD_TB.QUO_MOD_SEQ = (
 								select QUO_MOD_SEQ
@@ -590,26 +573,29 @@
 	</select>
 	
 	<select id="selectStatusList" parameterType="String" resultType="egovMap">
-		select
-			date_format(QUO_MOD_TB.ins_dt, '%Y-%m-%d') instDtStr,
-		    A.MEM_NAME insName,
-		    memo,
-			IFNULL(B.mem_name, '') PrmsName,
+		SELECT
+			date_format(QUO_MOD_TB.ins_dt, '%Y-%m-%d') insDtStr,
+		    FN_MEM_NAME(QUO_MOD_TB.ins_mem_id) insName,
+            QUO_MOD_TB.state_code,
+            if(QUO_MOD_TB.state_code=5,'세금계산서 신청','견적서 수정') type,
+		    IFNULL(memo, '') memo,
+		    bill,
+            IFNULL(fn_code_name(
+								case state_code
+                                when 2 then QUO_MOD_TB.state_code
+                                when 3 then QUO_MOD_TB.state_code
+                                when 5 then 0
+                                else 3 end
+                                ,'MM'), '-') prmsType,
+			FN_MEM_NAME(QUO_MOD_TB.PRMS_ID) PrmsName,
             IFNULL(date_format(QUO_MOD_TB.PRMS_DT, '%Y-%m-%d'), '') PRMS_DT,
-		    fn_code_name(QUO_MOD_TB.state_code,'MM') stateType,
-			IFNULL(date_format(QUO_MOD_TB.UDT_DT, '%Y-%m-%d'), '') UDT_DT
-
-		from QUO_MOD_TB
-		
-			inner join MEMBER_TB A
-			on QUO_MOD_TB.ins_mem_id = A.id
-		
-			left join MEMBER_TB B
-			on QUO_MOD_TB.PRMS_ID = B.id
-            
-		where 1=1
-		and QUO_MOD_TB.quo_ym = substring(#{quoId},2,4)
-		and QUO_MOD_TB.quo_seq = substring(#{quoId},8,4)
+		    IFNULL(fn_code_name(if(QUO_MOD_TB.state_code=4,4,0),'MM'), '-') stateType,
+			IFNULL(date_format(if(QUO_MOD_TB.state_code=4,QUO_MOD_TB.UDT_DT,''), '%Y-%m-%d'), '') UDT_DT,
+			if(QUO_MOD_TB.state_code=4,FN_MEM_NAME(QUO_MOD_TB.UDT_MEM_ID),'') udtName
+		FROM QUO_MOD_TB
+		WHERE 1=1
+		AND QUO_MOD_TB.quo_ym = substring(#{quoId},2,4)
+		AND QUO_MOD_TB.quo_seq = substring(#{quoId},8,4)
 		order by QUO_MOD_SEQ desc
 	</select>
 	
@@ -630,6 +616,7 @@
 			QUO_YM,
 			QUO_SEQ,
 			MEMO,
+			BILL,
 			STATE_CODE,
 			INS_MEM_ID,
 			UDT_MEM_ID
@@ -639,7 +626,8 @@
 			substring(#{quoId},2,4),
 			substring(#{quoId},8,4),
 			#{memo},
-			'2',
+			#{bill},
+			#{stateCode},
 			#{insMemId},
 			#{udtMemId}
 		);
@@ -666,6 +654,28 @@
 		</if>
 
 	</update>
+	
+	<insert id="billInsert" parameterType="quoModReq" >
+		INSERT INTO BILL_TB
+		(
+			SLS_YM,
+			SLS_SEQ,
+			BILL_SEQ,
+			BILL,
+			INS_MEM_ID,
+			UDT_MEM_ID
+		)
+        SELECT 
+	        SLS_YM,
+	        SLS_SEQ,
+	        (SELECT IFNULL(MAX(seq.BILL_SEQ)+1,1) billSeq FROM BILL_TB seq WHERE seq.SLS_YM = SLS_YM AND seq.sls_seq = SLS_SEQ) seq,
+			#{bill},
+			#{insMemId},
+			#{udtMemId}
+        FROM SLS_TB
+        WHERE quo_ym = substring(#{quoId},2,4)
+        AND quo_seq = substring(#{quoId},8,4)
+	</insert>
 	
 	<select id="hisList" parameterType="String" resultType="egovMap">
 		select 

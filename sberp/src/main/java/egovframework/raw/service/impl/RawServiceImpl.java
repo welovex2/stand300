@@ -219,25 +219,6 @@ public class RawServiceImpl implements RawService {
     if (detail != null) {
       // 측정설비
       detail.setMacList(macList("CE", rawSeq));
-
-      // 시험결과별도첨부
-      // FileVO fileVO = new FileVO();
-      // fileVO.setAtchFileId(detail.getResultUrl());
-      // List<FileVO> fileReulst;
-      // try {
-      // fileReulst = fileMngService.selectImageFileList(fileVO);
-      // List<String> resultList = new ArrayList<String>();
-      // if (fileReulst != null) {
-      // for (FileVO item : fileReulst) {
-      // resultList.add("/file/getImage.do?atchFileId=".concat(detail.getResultUrl()).concat("&fileSn=").concat(item.getFileSn()));
-      //
-      // }
-      // }
-      // detail.setResultList(resultList);
-      // } catch (Exception e) {
-      // // TODO Auto-generated catch block
-      // e.printStackTrace();
-      // }
     }
 
     return detail;
@@ -756,6 +737,11 @@ public class RawServiceImpl implements RawService {
     return methodMapper.macList(machineType, rawSeq);
   }
 
+  @Override
+  public List<RawMac> emptyMacList(String machineType, int rawSeq) {
+    return methodMapper.emptyMacList(machineType, rawSeq);
+  }
+  
   @Override
   public List<MethodEsdSub> esdSubList(int esdSeq) {
     return methodMapper.esdSubList(esdSeq);

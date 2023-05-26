@@ -8,27 +8,32 @@
 		from MACHINE_TB
 		where 1=1
 		AND STATE != 'D'
-		<if test="startDate != null and endDate != null">
-        	and date_format(MACHINE_TB.ins_dt, '%Y%m%d') between date_format(#{startDate}, '%Y%m%d') and date_format(#{endDate}, '%Y%m%d')
-        </if>
-		<foreach collection="searchVO" item="item">
-			<if test="item.searchCode != null and item.searchCode != ''">
-				<choose>
-					<when test="item.searchWord == 'CE'">and CE_YN = 1</when>
-					<when test="item.searchWord == 'RE'">and RE_YN = 1</when>
-					<when test="item.searchWord == 'ED'">and ESD_YN = 1</when>
-					<when test="item.searchWord == 'RS'">and RS_YN = 1</when>
-					<when test="item.searchWord == 'ET'">and EFT_YN = 1</when>
-					<when test="item.searchWord == 'SG'">and SURGE_YN = 1</when>
-					<when test="item.searchWord == 'CS'">and CS_YN = 1</when>
-					<when test="item.searchWord == 'MF'">and MFLD_YN = 1</when>
-					<when test="item.searchWord == 'VD'">and VDIP_YN = 1</when>
-					<when test="item.searchWord == 'CT'">and CTI_YN = 1</when>
-					<when test="item.searchWord == 'CA'">and CEA_YN = 1</when>
-					<when test="item.searchWord == 'CB'">and CEB_YN = 1</when>
-				</choose>
-			</if>
-		</foreach>
+        <if test="searchVO != null">
+			<foreach collection="searchVO" item="item">
+				<!-- 47	차기교정일 -->
+        		<if test="item.searchCode == 47">AND date_format(REFORM_DT, '%Y%m%d') between date_format(#{item.startDate}, '%Y%m%d') and date_format(#{item.endDate}, '%Y%m%d')</if>
+				<!-- 48	사용장비명 -->
+				<if test="item.searchCode == 48">AND name like concat('%',#{item.searchWord},'%')</if>
+				<!-- 27 모델명 -->
+   				<if test="item.searchCode == 27">AND model like concat('%',#{item.searchWord},'%')</if>
+				<!-- 2-작성자 -->
+   				<if test="item.searchCode == 2">AND ifnull(FN_MEM_NAME(TEST_STNDR_TB.INS_MEM_ID), '') like concat('%',#{item.searchWord},'%')</if>
+				<if test="item.searchCode == 10">
+					<choose>
+						<when test="item.searchWord == 'RE'">and RE_USE_YN = 1</when>
+						<when test="item.searchWord == 'ED'">and ESD_USE_YN = 1</when>
+						<when test="item.searchWord == 'RS'">and RS_USE_YN = 1</when>
+						<when test="item.searchWord == 'ET'">and EFT_USE_YN = 1</when>
+						<when test="item.searchWord == 'SG'">and SURGE_USE_YN = 1</when>
+						<when test="item.searchWord == 'CS'">and CS_USE_YN = 1</when>
+						<when test="item.searchWord == 'MF'">and MFLD_USE_YN = 1</when>
+						<when test="item.searchWord == 'VD'">and VDIP_USE_YN = 1</when>
+						<when test="item.searchWord == 'CA'">and CEA_USE_YN = 1</when>
+						<when test="item.searchWord == 'CB'">and CEB_USE_YN = 1</when>
+					</choose>
+				</if>
+			</foreach>
+		</if>
 	</select>
 
 	<select id="selectList" parameterType="comParam" resultType="egovMap">
@@ -37,44 +42,173 @@
 		select lst.*
 		from (
 			select
-				
 				@rownum:=@rownum+1 as no,
-				#ROW_NUMBER() OVER(ORDER BY MACHINE_TB.DIS_ORDR, MACHINE_SEQ) AS no,
 				MACHINE_SEQ,
-			    name,
+			    CEA_YN,
+                CEB_YN,
+                RE_YN,
+                ESD_YN,
+                RS_YN,
+                EFT_YN,
+                SURGE_YN,
+                CS_YN,
+                MFLD_YN,
+                VDIP_YN,
+                name,
 			    model,
 			    MNFCT_CMPNY,
 			    MNFCT_SERIAL,
 			    ifnull(date_format(REFORM_DT, '%Y-%m-%d'), '-') reformDtStr,
-			    REFORM_PERIOD
+			    REFORM_PERIOD,
+                memo,
+          <if test="searchVO != null">
+          <foreach collection="searchVO" item="item">
+			<if test="item.searchCode == 10">
+				<choose>
+					<when test="item.searchWord == 'RE'">RE_USE_YN useYn, RE_ORDR disOrdr,</when>
+					<when test="item.searchWord == 'ED'">ESD_USE_YN useYn, ESD_ORDR disOrdr,</when>
+					<when test="item.searchWord == 'RS'">RS_USE_YN useYn, RS_ORDR disOrdr,</when>
+					<when test="item.searchWord == 'ET'">EFT_USE_YN useYn, EFT_ORDR disOrdr,</when>
+					<when test="item.searchWord == 'SG'">SURGE_USE_YN useYn, SURGE_ORDR disOrdr,</when>
+					<when test="item.searchWord == 'CS'">CS_USE_YN useYn, CS_ORDR disOrdr,</when>
+					<when test="item.searchWord == 'MF'">MFLD_USE_YN useYn, MFLD_ORDR disOrdr,</when>
+					<when test="item.searchWord == 'VD'">VDIP_USE_YN useYn, VDIP_ORDR disOrdr,</when>
+					<when test="item.searchWord == 'CA'">CEA_USE_YN useYn, CEA_ORDR disOrdr,</when>
+					<when test="item.searchWord == 'CB'">CEB_USE_YN useYn, CEB_ORDR disOrdr,</when>
+				</choose>
+			</if>
+		</foreach>
+		</if>
+                ifnull(date_format(INS_DT, '%Y-%m-%d'), '-') InsDtStr,
+                ifnull(FN_MEM_NAME(INS_MEM_ID),'') insMemId,
+                ifnull(FN_MEM_NAME(UDT_MEM_ID),'') udtMemId
 			from MACHINE_TB
 			where 1=1
 			AND STATE != 'D'
-			<if test="startDate != null and endDate != null">
-	        	and date_format(MACHINE_TB.ins_dt, '%Y%m%d') between date_format(#{startDate}, '%Y%m%d') and date_format(#{endDate}, '%Y%m%d')
-	        </if>
+	        <if test="searchVO != null">
 			<foreach collection="searchVO" item="item">
-				<if test="item.searchCode != null and item.searchCode != ''">
+				<!-- 47	차기교정일 -->
+        		<if test="item.searchCode == 47">AND date_format(REFORM_DT, '%Y%m%d') between date_format(#{item.startDate}, '%Y%m%d') and date_format(#{item.endDate}, '%Y%m%d')</if>
+				<!-- 48	사용장비명 -->
+				<if test="item.searchCode == 48">AND name like concat('%',#{item.searchWord},'%')</if>
+				<!-- 27 모델명 -->
+   				<if test="item.searchCode == 27">AND model like concat('%',#{item.searchWord},'%')</if>
+				<!-- 2-작성자 -->
+   				<if test="item.searchCode == 2">AND ifnull(FN_MEM_NAME(TEST_STNDR_TB.INS_MEM_ID), '') like concat('%',#{item.searchWord},'%')</if>
+				<if test="item.searchCode == 10">
 					<choose>
-						<when test="item.searchWord == 'CE'">and CE_YN = 1</when>
-						<when test="item.searchWord == 'RE'">and RE_YN = 1</when>
-						<when test="item.searchWord == 'ED'">and ESD_YN = 1</when>
-						<when test="item.searchWord == 'RS'">and RS_YN = 1</when>
-						<when test="item.searchWord == 'ET'">and EFT_YN = 1</when>
-						<when test="item.searchWord == 'SG'">and SURGE_YN = 1</when>
-						<when test="item.searchWord == 'CS'">and CS_YN = 1</when>
-						<when test="item.searchWord == 'MF'">and MFLD_YN = 1</when>
-						<when test="item.searchWord == 'VD'">and VDIP_YN = 1</when>
-						<when test="item.searchWord == 'CT'">and CTI_YN = 1</when>
-						<when test="item.searchWord == 'CA'">and CEA_YN = 1</when>
-						<when test="item.searchWord == 'CB'">and CEB_YN = 1</when>
+						<when test="item.searchWord == 'RE'">and RE_USE_YN = 1 order by RE_ORDR ASC, MACHINE_SEQ DESC</when>
+						<when test="item.searchWord == 'ED'">and ESD_USE_YN = 1 order by ESD_ORDR ASC, MACHINE_SEQ DESC</when>
+						<when test="item.searchWord == 'RS'">and RS_USE_YN = 1 order by RS_ORDR ASC, MACHINE_SEQ DESC</when>
+						<when test="item.searchWord == 'ET'">and EFT_USE_YN = 1 order by EFT_ORDR ASC, MACHINE_SEQ DESC</when>
+						<when test="item.searchWord == 'SG'">and SURGE_USE_YN = 1 order by SURGE_ORDR ASC, MACHINE_SEQ DESC</when>
+						<when test="item.searchWord == 'CS'">and CS_USE_YN = 1 order by CS_ORDR ASC, MACHINE_SEQ DESC</when>
+						<when test="item.searchWord == 'MF'">and MFLD_USE_YN = 1 order by MFLD_ORDR ASC, MACHINE_SEQ DESC</when>
+						<when test="item.searchWord == 'VD'">and VDIP_USE__YN = 1 order by VDIP_ORDR ASC, MACHINE_SEQ DESC</when>
+						<when test="item.searchWord == 'CA'">and CEA_USE_YN = 1 order by CEA_ORDR ASC, MACHINE_SEQ DESC</when>
+						<when test="item.searchWord == 'CB'">and CEB_USE_YN = 1 order by CEB_ORDR ASC, MACHINE_SEQ DESC</when>
 					</choose>
 				</if>
 			</foreach>
-			order by MACHINE_TB.DIS_ORDR DESC, MACHINE_SEQ DESC
+			</if>
+			
 		) lst
-		order by no desc
+		order by no asc
 		LIMIT #{pageUnit} OFFSET #{firstIndex};
 	</select>
+	
+	<insert id="insert" parameterType="machineDTO">
+		<selectKey resultType="int" keyProperty="machineSeq" order="AFTER">
+	        SELECT MAX(MACHINE_SEQ) machineSeq FROM MACHINE_TB;
+	    </selectKey>
+	  INSERT INTO MACHINE_TB
+	  (
+	    MACHINE_SEQ,
+	    NAME,
+	    MODEL,
+	    MNFCT_CMPNY,
+	    MNFCT_SERIAL,
+	    REFORM_DT,
+	    REFORM_PERIOD,
+	    MEMO,
+	    CEA_YN,
+	    CEB_YN,
+	    RE_YN,
+	    ESD_YN,
+	    RS_YN,
+	    EFT_YN,
+	    SURGE_YN,
+	    CS_YN,
+	    MFLD_YN,
+	    VDIP_YN,
+	    INS_MEM_ID,
+	    UDT_MEM_ID
+	  )
+	  VALUES
+	  (
+	    IF(#{machineSeq}=0,(SELECT IFNULL(MAX(seq.MACHINE_SEQ)+1,1) machineSeq FROM MACHINE_TB seq), #{machineSeq}),
+	    #{name},
+	    #{model},
+	    #{mnfctCmpny},
+	    #{mnfctSerial},
+	    #{reformDt},
+	    #{reformPeriod},
+	    #{memo},
+	    #{ceaYn},
+	    #{cebYn},
+	    #{reYn},
+	    #{esdYn},
+	    #{rsYn},
+	    #{eftYn},
+	    #{surgeYn},
+	    #{csYn},
+	    #{mfldYn},
+	    #{vdipYn},
+	    #{insMemId},
+	    #{udtMemId}
+	  )
+	  ON DUPLICATE KEY UPDATE
+	    NAME = #{name},
+	    MODEL = #{model},
+	    MNFCT_CMPNY = #{mnfctCmpny},
+	    MNFCT_SERIAL = #{mnfctSerial},
+	    REFORM_DT = #{reformDt},
+	    REFORM_PERIOD = #{reformPeriod},
+	    MEMO = #{memo},
+	    CEA_YN = #{ceaYn},
+	    CEB_YN = #{cebYn},
+	    RE_YN = #{reYn},
+	    ESD_YN = #{esdYn},
+	    RS_YN = #{rsYn},
+	    EFT_YN = #{eftYn},
+	    SURGE_YN = #{surgeYn},
+	    CS_YN = #{csYn},
+	    MFLD_YN = #{mfldYn},
+	    VDIP_YN = #{vdipYn},
+	    UDT_DT = NOW(),
+	    UDT_MEM_ID = #{udtMemId},
+	    STATE = #{state}
+	</insert>
+	
+	<insert id="update">
+		UPDATE MACHINE_TB
+		SET 
+		<choose>
+			<when test="type == 'RE'"> RE_ORDR = #{disOrdr} , RE_USE_YN = #{useYn},</when>
+			<when test="type == 'ED'"> ESD_ORDR = #{disOrdr} , ESD_USE_YN = #{useYn},</when>
+			<when test="type == 'RS'"> RS_ORDR = #{disOrdr} , RS_USE_YN = #{useYn},</when>
+			<when test="type == 'ET'"> EFT_ORDR = #{disOrdr} , EFT_USE_YN = #{useYn},</when>
+			<when test="type == 'SG'"> SURGE_ORDR = #{disOrdr} , SURGE_USE_YN = #{useYn},</when>
+			<when test="type == 'CS'"> CS_ORDR = #{disOrdr} , CS_USE_YN = #{useYn},</when>
+			<when test="type == 'MF'"> MFLD_ORDR = #{disOrdr} , MFLD_USE_YN = #{useYn},</when>
+			<when test="type == 'VD'"> VDIP_ORDR = #{disOrdr} , VDIP_USE_YN = #{useYn},</when>
+			<when test="type == 'CT'"> CTI_ORDR = #{disOrdr} , CTI_USE_YN = #{useYn},</when>
+			<when test="type == 'CA'"> CEA_ORDR = #{disOrdr} , CEA_USE_YN = #{useYn},</when>
+			<when test="type == 'CB'"> CEB_ORDR = #{disOrdr} , CEB_USE_YN = #{useYn},</when>
+		</choose>
+			STATE = 'U', UDT_DT = NOW(), UDT_MEM_ID = #{udtMemId}
+		
+		WHERE MACHINE_SEQ = #{machineSeq}
+	</insert>
 	
 </mapper>

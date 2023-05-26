@@ -21,6 +21,10 @@ import lombok.ToString;
 @ToString
 public class ReportDTO {
 
+  @ApiModelProperty(value = "0 하단성적서번호  ", example = "")
+  @Column
+  private String sbkId;
+  
   @ApiModelProperty(value = "1	발급번호  ", example = "")
   @Column
   private String reportNo;

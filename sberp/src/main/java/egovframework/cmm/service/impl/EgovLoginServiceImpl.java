@@ -57,6 +57,8 @@ public class EgovLoginServiceImpl extends EgovAbstractServiceImpl implements Ego
       loginMapper.updateLogin(loginVO);
       return loginVO;
     } else {
+      // 5. 로그인 실패시 실패횟수 기록한다.
+      loginMapper.updateLoginFailCnt(vo);
       loginVO = null;
     }
 
@@ -93,37 +95,66 @@ public class EgovLoginServiceImpl extends EgovAbstractServiceImpl implements Ego
    * @return boolean
    * @exception Exception
    */
+//  @Override
+//  public boolean searchPassword(LoginVO vo) throws Exception {
+//
+//    boolean result = true;
+//
+//    // 1. 아이디, 이름, 이메일주소, 비밀번호 힌트, 비밀번호 정답이 DB와 일치하는 사용자 Password를 조회한다.
+//    LoginVO loginVO = loginMapper.searchPassword(vo);
+//    if (loginVO == null || loginVO.getPassword() == null || loginVO.getPassword().equals("")) {
+//      return false;
+//    }
+//
+//    // 2. 임시 비밀번호를 생성한다.(영+영+숫+영+영+숫=6자리)
+//    String newpassword = "";
+//    for (int i = 1; i <= 6; i++) {
+//      // 영자
+//      if (i % 3 != 0) {
+//        newpassword += EgovStringUtil.getRandomStr('a', 'z');
+//        // 숫자
+//      } else {
+//        newpassword += EgovNumberUtil.getRandomNum(0, 9);
+//      }
+//    }
+//
+//    // 3. 임시 비밀번호를 암호화하여 DB에 저장한다.
+//    LoginVO pwVO = new LoginVO();
+//    String enpassword = EgovFileScrty.encryptPassword(newpassword, vo.getId());
+//    pwVO.setId(vo.getId());
+//    pwVO.setPassword(enpassword);
+//    // pwVO.setUserSe(vo.getUserSe());
+//    loginMapper.updatePassword(pwVO);
+//
+//    return result;
+//  }
+  
+  /**
+   * 비밀번호 실패 횟수를 확인한다
+   * 
+   * @param vo LoginVO
+   * @return boolean
+   * @exception Exception
+   */
   @Override
-  public boolean searchPassword(LoginVO vo) throws Exception {
-
-    boolean result = true;
-
-    // 1. 아이디, 이름, 이메일주소, 비밀번호 힌트, 비밀번호 정답이 DB와 일치하는 사용자 Password를 조회한다.
-    LoginVO loginVO = loginMapper.searchPassword(vo);
-    if (loginVO == null || loginVO.getPassword() == null || loginVO.getPassword().equals("")) {
-      return false;
-    }
-
-    // 2. 임시 비밀번호를 생성한다.(영+영+숫+영+영+숫=6자리)
-    String newpassword = "";
-    for (int i = 1; i <= 6; i++) {
-      // 영자
-      if (i % 3 != 0) {
-        newpassword += EgovStringUtil.getRandomStr('a', 'z');
-        // 숫자
-      } else {
-        newpassword += EgovNumberUtil.getRandomNum(0, 9);
-      }
-    }
-
-    // 3. 임시 비밀번호를 암호화하여 DB에 저장한다.
-    LoginVO pwVO = new LoginVO();
-    String enpassword = EgovFileScrty.encryptPassword(newpassword, vo.getId());
-    pwVO.setId(vo.getId());
-    pwVO.setPassword(enpassword);
-    // pwVO.setUserSe(vo.getUserSe());
-    loginMapper.updatePassword(pwVO);
-
-    return result;
+  public LoginVO selectLoginFailCnt(LoginVO vo) throws Exception {
+    return loginMapper.selectLoginFailCnt(vo);
   }
+
+  /**
+   * 계정을 잠근다
+   */
+  @Override
+  public void lockLogin(LoginVO loginVO) {
+    loginMapper.lockLogin(loginVO);
+  }
+
+  /**
+   * 계정잠금 해제
+   */
+  @Override
+  public void clearLock(String id) {
+    loginMapper.clearLock(id);
+  }
+  
 }

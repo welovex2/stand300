@@ -37,27 +37,41 @@
 		FROM
 			(
 				SELECT
-					lpad (member_seq, 4, 0) memberSeq,
-					date_format (MEMBER_TB.INS_DT, '%Y-%m-%d') insDt,
+					LPAD (member_seq, 4, 0) memberSeq,
+					date_format (MEMBER_TB.IN_DT, '%Y-%m-%d') inDt,
 					FN_DEPT_NAME (id) deptName,
 					id,
 					mem_name,
 					FN_POS_NAME (id) posName,
+					REV_YN,
 					EMAIL,
-					PHONE,
+					FN_GET_PHONE_FORMAT (PHONE) PHONE,
 					AUTH_CODE,
-					concat (
+					CONCAT (
 					    FN_CODE_NAME (WORK_STATE, 'PW'),
-					    ' (',
-					    case
-					        when WORK_STATE = 2 then concat (
-					            date_format (MEMBER_TB.LEAVE_S_DT, '%Y-%m-%d'),
-					            '~',
-					            date_format (MEMBER_TB.LEAVE_E_DT, '%Y-%m-%d')
-					        )
-					        when WORK_STATE = 3 then date_format (MEMBER_TB.QUIT_DT, '%Y-%m-%d')
-					    end,
-					    ')'
+					    IFNULL (
+					        CASE
+					            WHEN WORK_STATE = 2 THEN CONCAT (
+					                ' (',
+					                IFNULL (
+					                    date_format (MEMBER_TB.LEAVE_S_DT, '%Y-%m-%d'),
+					                    ''
+					                ),
+					                '~',
+					                IFNULL (
+					                    date_format (MEMBER_TB.LEAVE_E_DT, '%Y-%m-%d'),
+					                    ''
+					                ),
+					                ')'
+					            )
+					            WHEN WORK_STATE = 3 THEN CONCAT (
+					                '(',
+					                IFNULL (date_format (MEMBER_TB.QUIT_DT, '%Y-%m-%d'), ''),
+					                ')'
+					            )
+					        END,
+					        ''
+					    )
 					) workSate,
 					date_format (MEMBER_TB.LEAVE_S_DT, '%Y-%m-%d') leaveSDt,
 					date_format (MEMBER_TB.LEAVE_S_DT, '%Y-%m-%d') leaveEDt,
@@ -84,7 +98,7 @@
 					</foreach>
 				</if>
 				order by
-					CMPY_TB.CMPY_SEQ ASC
+					MEMBER_TB.MEMBER_SEQ ASC
 			) lst
 		ORDER BY
 			no desc
@@ -107,7 +121,6 @@
 		    REV_YN,
 		    EMAIL,
 		    PHONE,
-		    TEL,
 		    AUTH_CODE,
 		    WORK_STATE,
 		    <if test="leaveSDt != null and leaveSDt != ''">LEAVE_S_DT,</if>
@@ -127,8 +140,7 @@
 			#{posSeq},
 			#{revYn},
 			#{email},
-			#{phone},
-			#{tel},
+			replace(#{phone},'-',''),
 			#{authCode},
 			#{workState},
 			<if test="leaveSDt != null and leaveSDt != ''">#{leaveSDt},</if>
@@ -146,15 +158,13 @@
 		    POS_SEQ = #{posSeq},
 		    REV_YN = #{revYn},
 		    EMAIL = #{email},
-		    PHONE = #{phone},
-		    TEL = #{tel},
+		    PHONE = replace(#{phone},'-',''),
 		    AUTH_CODE = #{authCode},
 		    WORK_STATE = #{workState},
 		    <if test="leaveSDt != null and leaveSDt != ''">LEAVE_S_DT = #{leaveSDt},</if>
 		    <if test="leaveEDt != null and leaveEDt != ''">LEAVE_E_DT = #{leaveEDt},</if>
 		    <if test="quitDt != null and quitDt != ''">QUIT_DT = #{quitDt},</if>
-		    INS_MEM_ID = #{insMemId},
-		    UDT_MEM_ID = #{udtMemId}
+		    UDT_MEM_ID = #{udtMemId},
 	        UDT_DT = NOW(),
 	        STATE = 'U'
 	</insert>
@@ -162,22 +172,177 @@
 	<select id="detail" parameterType="int" resultType="member">
 		SELECT
 			lpad (MEMBER_SEQ, 4, 0) memberSeq,
-		    date_format (INS_DT, '%Y-%m-%d') insDt,
+		    date_format (IN_DT, '%Y-%m-%d') inDt,
 		    DEPT_SEQ,
 		    ID,
 		    MEM_NAME,
 		    POS_SEQ,
 		    REV_YN,
 		    EMAIL,
-		    PHONE,
-		    TEL,
+		    FN_GET_PHONE_FORMAT(PHONE) PHONE,
 		    AUTH_CODE,
 		    WORK_STATE,
 		    date_format (LEAVE_S_DT, '%Y-%m-%d') leaveSDt,
 		    date_format (LEAVE_E_DT, '%Y-%m-%d') leaveEDt,
 		    date_format (QUIT_DT, '%Y-%m-%d') quitDt
 		FROM
-			CMPY_TB
+			MEMBER_TB
 		WHERE MEMBER_SEQ = #{memberSeq}
 	</select>
+	
+	
+	<!-- 비밀번호 찾기 -->
+	<select id="searchPassword" resultType="String">
+		<![CDATA[
+		SELECT password AS password
+		  FROM MEMBER_TB
+		 WHERE ID = #{id}
+		   AND PASSWORD = #{password}
+		]]>
+	</select>
+
+	<!-- 변경된 비밀번호를 저장 -->
+	<update id="updatePassword">
+		<![CDATA[
+		UPDATE MEMBER_TB
+		   SET PASSWORD = #{password}
+		 WHERE ID = #{id}
+		]]>
+	</update>
+	
+	<select id="selectDeptListCnt" parameterType="comParam" resultType="int">
+		SELECT
+			count(1)
+		FROM
+			DEPT_TB
+		WHERE
+			1 = 1
+		AND STATE != 'D'
+	</select>
+
+	<select id="selectDeptList" parameterType="comParam" resultType="egovMap">
+		set @rownum:=0;
+		
+		SELECT
+			@rownum:=@rownum+1 as no, 
+			lst.*
+		FROM
+			(
+				SELECT
+					DEPT_SEQ,
+					NAME,
+					MEMO,
+					TEST_YN,
+                    ODER
+				FROM
+					DEPT_TB
+				WHERE
+					1 = 1
+				AND STATE != 'D'
+				order by ODER ASC
+			) lst
+		ORDER BY
+			no asc
+		LIMIT #{pageUnit} OFFSET #{firstIndex};
+	</select>
+	
+	<insert id="insertDept" parameterType="dept">
+	    <selectKey resultType="int" keyProperty="deptSeq" order="AFTER">
+	        SELECT MAX(DEPT_SEQ) deptSeq FROM DEPT_TB;
+	    </selectKey>
+	    INSERT INTO DEPT_TB
+	    (
+			DEPT_SEQ,
+		    NAME,
+		    MEMO,
+		    TEST_YN,
+		    ODER,
+		    INS_MEM_ID,
+		    UDT_MEM_ID
+	    )
+	    VALUES
+		(
+	        IF(#{deptSeq}=0,(SELECT IFNULL(MAX(seq.DEPT_SEQ)+1,1) deptSeq FROM DEPT_TB seq), #{deptSeq}),
+			#{name},
+			#{memo},
+			#{testYn},
+			#{oder},
+			#{insMemId},
+			#{udtMemId}
+		)
+		ON DUPLICATE KEY UPDATE
+		    NAME = #{name},
+		    MEMO = #{memo},
+		    TEST_YN = #{testYn},
+		    ODER = #{oder},
+		    UDT_MEM_ID = #{udtMemId},
+	        UDT_DT = NOW(),
+	        STATE = #{state}
+	</insert>
+	
+	<select id="selectPosListCnt" parameterType="comParam" resultType="int">
+		SELECT
+			count(1)
+		FROM
+			POS_TB
+		WHERE
+			1 = 1
+		AND STATE != 'D'
+	</select>
+
+	<select id="selectPosList" parameterType="comParam" resultType="egovMap">
+		set @rownum:=0;
+		
+		SELECT
+			@rownum:=@rownum+1 as no, 
+			lst.*
+		FROM
+			(
+				SELECT
+					POS_SEQ,
+					NAME,
+					MEMO,
+                    ODER
+				FROM
+					POS_TB
+				WHERE
+					1 = 1
+				AND STATE != 'D'
+				order by ODER ASC
+			) lst
+		ORDER BY
+			no asc
+		LIMIT #{pageUnit} OFFSET #{firstIndex};
+	</select>
+	
+	<insert id="insertPos" parameterType="pos">
+	    <selectKey resultType="int" keyProperty="posSeq" order="AFTER">
+	        SELECT MAX(POS_SEQ) posSeq FROM POS_TB;
+	    </selectKey>
+	    INSERT INTO POS_TB
+	    (
+			POS_SEQ,
+		    NAME,
+		    MEMO,
+		    ODER,
+		    INS_MEM_ID,
+		    UDT_MEM_ID
+	    )
+	    VALUES
+		(
+	        IF(#{posSeq}=0,(SELECT IFNULL(MAX(seq.POS_SEQ)+1,1) posSeq FROM POS_TB seq), #{posSeq}),
+			#{name},
+			#{memo},
+			#{oder},
+			#{insMemId},
+			#{udtMemId}
+		)
+		ON DUPLICATE KEY UPDATE
+		    NAME = #{name},
+		    MEMO = #{memo},
+		    ODER = #{oder},
+		    UDT_MEM_ID = #{udtMemId},
+	        UDT_DT = NOW(),
+	        STATE = #{state}
+	</insert>
 </mapper>

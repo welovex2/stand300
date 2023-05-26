@@ -72,6 +72,14 @@
     	<!-- 환경설정 -->
     	<typeAlias alias="cmpyDTO" type="egovframework.cnf.service.CmpyDTO"/>
     	<typeAlias alias="member" type="egovframework.cnf.service.Member"/>
+    	<typeAlias alias="testStndrDTO" type="egovframework.sys.service.TestStndrDTO"/>
+    	<typeAlias alias="testCateDTO" type="egovframework.tst.service.TestCateDTO"/>
+    	<typeAlias alias="dept" type="egovframework.cmm.service.Dept"/>
+    	<typeAlias alias="pos" type="egovframework.cmm.service.Pos"/>
+    	<typeAlias alias="machineDTO" type="egovframework.sys.service.MachineDTO"/>
     	
+    	<!-- 사진통관 -->
+    	<typeAlias alias="ppDTO" type="egovframework.ppc.dto.PpDTO"/>
+    	<typeAlias alias="ppHis" type="egovframework.ppc.service.PpHis"/>
     </typeAliases>
 </configuration>

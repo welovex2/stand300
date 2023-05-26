@@ -814,6 +814,8 @@
         </collection>
 	</resultMap>
 	<select id="selectList" parameterType="comParam" resultMap="sbkMap">
+		set @dense_rank:=0;
+		
 		select * from (
 			select
 			    if(
@@ -932,11 +934,7 @@
 			        </foreach>
 		        </if>
 		        order by SBK_TB.sbk_ym, SBK_TB.sbk_seq
-	        ) lst,
-            (
-                select
-                    @dense_rank := 0
-            ) as row
+	        ) lst
 	        WHERE 1=1
 	        order by no desc
         ) paging
